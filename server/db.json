@@ -1069,6 +1069,20 @@
       "homeScore": 1,
       "awayScore": 1,
       "updatedAt": "2026-06-11T03:05:00.846Z"
+    },
+    {
+      "user": "Maicon",
+      "matchId": "1",
+      "homeScore": 1,
+      "awayScore": 0,
+      "updatedAt": "2026-06-11T03:08:00.968Z"
+    },
+    {
+      "user": "Maicon",
+      "matchId": "2",
+      "homeScore": 2,
+      "awayScore": 1,
+      "updatedAt": "2026-06-11T03:08:00.973Z"
     }
   ],
   "groupQualifiers": [],
