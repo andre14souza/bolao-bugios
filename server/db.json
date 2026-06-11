@@ -1041,7 +1041,36 @@
       "group": "Final"
     }
   ],
-  "guesses": [],
+  "guesses": [
+    {
+      "user": "Brenno",
+      "matchId": "1",
+      "homeScore": 2,
+      "awayScore": 0,
+      "updatedAt": "2026-06-11T03:04:47.215Z"
+    },
+    {
+      "user": "Brenno",
+      "matchId": "2",
+      "homeScore": 2,
+      "awayScore": 0,
+      "updatedAt": "2026-06-11T03:04:47.224Z"
+    },
+    {
+      "user": "André",
+      "matchId": "1",
+      "homeScore": 2,
+      "awayScore": 0,
+      "updatedAt": "2026-06-11T03:05:00.837Z"
+    },
+    {
+      "user": "André",
+      "matchId": "2",
+      "homeScore": 1,
+      "awayScore": 1,
+      "updatedAt": "2026-06-11T03:05:00.846Z"
+    }
+  ],
   "groupQualifiers": [],
   "groupQualifiersResults": {
     "Grupo A": {
