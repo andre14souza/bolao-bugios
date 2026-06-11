@@ -1,0 +1,1114 @@
+{
+  "matches": [
+    {
+      "id": "1",
+      "homeTeam": "México",
+      "awayTeam": "África do Sul",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-11T17:00:00",
+      "stage": "group",
+      "group": "Grupo A"
+    },
+    {
+      "id": "2",
+      "homeTeam": "Coreia do Sul",
+      "awayTeam": "Tchéquia",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-11T20:00:00",
+      "stage": "group",
+      "group": "Grupo A"
+    },
+    {
+      "id": "3",
+      "homeTeam": "Tchéquia",
+      "awayTeam": "África do Sul",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-18T14:00:00",
+      "stage": "group",
+      "group": "Grupo A"
+    },
+    {
+      "id": "4",
+      "homeTeam": "México",
+      "awayTeam": "Coreia do Sul",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-18T17:00:00",
+      "stage": "group",
+      "group": "Grupo A"
+    },
+    {
+      "id": "5",
+      "homeTeam": "Tchéquia",
+      "awayTeam": "México",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-24T16:00:00",
+      "stage": "group",
+      "group": "Grupo A"
+    },
+    {
+      "id": "6",
+      "homeTeam": "África do Sul",
+      "awayTeam": "Coreia do Sul",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-24T20:00:00",
+      "stage": "group",
+      "group": "Grupo A"
+    },
+    {
+      "id": "7",
+      "homeTeam": "Canadá",
+      "awayTeam": "Bósnia e Herzegovina",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-12T14:00:00",
+      "stage": "group",
+      "group": "Grupo B"
+    },
+    {
+      "id": "8",
+      "homeTeam": "Catar",
+      "awayTeam": "Suíça",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-13T11:00:00",
+      "stage": "group",
+      "group": "Grupo B"
+    },
+    {
+      "id": "9",
+      "homeTeam": "Suíça",
+      "awayTeam": "Bósnia e Herzegovina",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-18T14:00:00",
+      "stage": "group",
+      "group": "Grupo B"
+    },
+    {
+      "id": "10",
+      "homeTeam": "Canadá",
+      "awayTeam": "Catar",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-18T17:00:00",
+      "stage": "group",
+      "group": "Grupo B"
+    },
+    {
+      "id": "11",
+      "homeTeam": "Suíça",
+      "awayTeam": "Canadá",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-24T14:00:00",
+      "stage": "group",
+      "group": "Grupo B"
+    },
+    {
+      "id": "12",
+      "homeTeam": "Bósnia e Herzegovina",
+      "awayTeam": "Catar",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-24T17:00:00",
+      "stage": "group",
+      "group": "Grupo B"
+    },
+    {
+      "id": "13",
+      "homeTeam": "Brasil",
+      "awayTeam": "Marrocos",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-13T14:00:00",
+      "stage": "group",
+      "group": "Grupo C"
+    },
+    {
+      "id": "14",
+      "homeTeam": "Haiti",
+      "awayTeam": "Escócia",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-13T17:00:00",
+      "stage": "group",
+      "group": "Grupo C"
+    },
+    {
+      "id": "15",
+      "homeTeam": "Escócia",
+      "awayTeam": "Marrocos",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-19T11:00:00",
+      "stage": "group",
+      "group": "Grupo C"
+    },
+    {
+      "id": "16",
+      "homeTeam": "Brasil",
+      "awayTeam": "Haiti",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-19T14:00:00",
+      "stage": "group",
+      "group": "Grupo C"
+    },
+    {
+      "id": "17",
+      "homeTeam": "Escócia",
+      "awayTeam": "Brasil",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-24T14:00:00",
+      "stage": "group",
+      "group": "Grupo C"
+    },
+    {
+      "id": "18",
+      "homeTeam": "Marrocos",
+      "awayTeam": "Haiti",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-24T17:00:00",
+      "stage": "group",
+      "group": "Grupo C"
+    },
+    {
+      "id": "19",
+      "homeTeam": "Estados Unidos",
+      "awayTeam": "Paraguai",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-12T17:00:00",
+      "stage": "group",
+      "group": "Grupo D"
+    },
+    {
+      "id": "20",
+      "homeTeam": "Austrália",
+      "awayTeam": "Turquia",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-13T20:00:00",
+      "stage": "group",
+      "group": "Grupo D"
+    },
+    {
+      "id": "21",
+      "homeTeam": "Estados Unidos",
+      "awayTeam": "Austrália",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-19T17:00:00",
+      "stage": "group",
+      "group": "Grupo D"
+    },
+    {
+      "id": "22",
+      "homeTeam": "Turquia",
+      "awayTeam": "Paraguai",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-20T11:00:00",
+      "stage": "group",
+      "group": "Grupo D"
+    },
+    {
+      "id": "23",
+      "homeTeam": "Turquia",
+      "awayTeam": "Estados Unidos",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-25T14:00:00",
+      "stage": "group",
+      "group": "Grupo D"
+    },
+    {
+      "id": "24",
+      "homeTeam": "Paraguai",
+      "awayTeam": "Austrália",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-25T17:00:00",
+      "stage": "group",
+      "group": "Grupo D"
+    },
+    {
+      "id": "25",
+      "homeTeam": "Alemanha",
+      "awayTeam": "Curaçao",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-14T11:00:00",
+      "stage": "group",
+      "group": "Grupo E"
+    },
+    {
+      "id": "26",
+      "homeTeam": "Costa do Marfim",
+      "awayTeam": "Equador",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-14T14:00:00",
+      "stage": "group",
+      "group": "Grupo E"
+    },
+    {
+      "id": "27",
+      "homeTeam": "Alemanha",
+      "awayTeam": "Costa do Marfim",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-20T14:00:00",
+      "stage": "group",
+      "group": "Grupo E"
+    },
+    {
+      "id": "28",
+      "homeTeam": "Equador",
+      "awayTeam": "Curaçao",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-20T17:00:00",
+      "stage": "group",
+      "group": "Grupo E"
+    },
+    {
+      "id": "29",
+      "homeTeam": "Equador",
+      "awayTeam": "Alemanha",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-25T14:00:00",
+      "stage": "group",
+      "group": "Grupo E"
+    },
+    {
+      "id": "30",
+      "homeTeam": "Curaçao",
+      "awayTeam": "Costa do Marfim",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-25T17:00:00",
+      "stage": "group",
+      "group": "Grupo E"
+    },
+    {
+      "id": "31",
+      "homeTeam": "Holanda",
+      "awayTeam": "Japão",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-14T17:00:00",
+      "stage": "group",
+      "group": "Grupo F"
+    },
+    {
+      "id": "32",
+      "homeTeam": "Suécia",
+      "awayTeam": "Tunísia",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-14T20:00:00",
+      "stage": "group",
+      "group": "Grupo F"
+    },
+    {
+      "id": "33",
+      "homeTeam": "Holanda",
+      "awayTeam": "Suécia",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-20T20:00:00",
+      "stage": "group",
+      "group": "Grupo F"
+    },
+    {
+      "id": "34",
+      "homeTeam": "Tunísia",
+      "awayTeam": "Japão",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-21T11:00:00",
+      "stage": "group",
+      "group": "Grupo F"
+    },
+    {
+      "id": "35",
+      "homeTeam": "Japão",
+      "awayTeam": "Suécia",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-25T14:00:00",
+      "stage": "group",
+      "group": "Grupo F"
+    },
+    {
+      "id": "36",
+      "homeTeam": "Tunísia",
+      "awayTeam": "Holanda",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-25T17:00:00",
+      "stage": "group",
+      "group": "Grupo F"
+    },
+    {
+      "id": "37",
+      "homeTeam": "Bélgica",
+      "awayTeam": "Egito",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-15T11:00:00",
+      "stage": "group",
+      "group": "Grupo G"
+    },
+    {
+      "id": "38",
+      "homeTeam": "Irã",
+      "awayTeam": "Nova Zelândia",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-15T14:00:00",
+      "stage": "group",
+      "group": "Grupo G"
+    },
+    {
+      "id": "39",
+      "homeTeam": "Bélgica",
+      "awayTeam": "Irã",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-21T14:00:00",
+      "stage": "group",
+      "group": "Grupo G"
+    },
+    {
+      "id": "40",
+      "homeTeam": "Nova Zelândia",
+      "awayTeam": "Egito",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-21T17:00:00",
+      "stage": "group",
+      "group": "Grupo G"
+    },
+    {
+      "id": "41",
+      "homeTeam": "Egito",
+      "awayTeam": "Irã",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-27T14:00:00",
+      "stage": "group",
+      "group": "Grupo G"
+    },
+    {
+      "id": "42",
+      "homeTeam": "Nova Zelândia",
+      "awayTeam": "Bélgica",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-27T17:00:00",
+      "stage": "group",
+      "group": "Grupo G"
+    },
+    {
+      "id": "43",
+      "homeTeam": "Espanha",
+      "awayTeam": "Cabo Verde",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-15T17:00:00",
+      "stage": "group",
+      "group": "Grupo H"
+    },
+    {
+      "id": "44",
+      "homeTeam": "Arábia Saudita",
+      "awayTeam": "Uruguai",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-15T20:00:00",
+      "stage": "group",
+      "group": "Grupo H"
+    },
+    {
+      "id": "45",
+      "homeTeam": "Espanha",
+      "awayTeam": "Arábia Saudita",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-21T20:00:00",
+      "stage": "group",
+      "group": "Grupo H"
+    },
+    {
+      "id": "46",
+      "homeTeam": "Uruguai",
+      "awayTeam": "Cabo Verde",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-21T23:00:00",
+      "stage": "group",
+      "group": "Grupo H"
+    },
+    {
+      "id": "47",
+      "homeTeam": "Cabo Verde",
+      "awayTeam": "Arábia Saudita",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-26T14:00:00",
+      "stage": "group",
+      "group": "Grupo H"
+    },
+    {
+      "id": "48",
+      "homeTeam": "Uruguai",
+      "awayTeam": "Espanha",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-26T17:00:00",
+      "stage": "group",
+      "group": "Grupo H"
+    },
+    {
+      "id": "49",
+      "homeTeam": "França",
+      "awayTeam": "Senegal",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-16T11:00:00",
+      "stage": "group",
+      "group": "Grupo I"
+    },
+    {
+      "id": "50",
+      "homeTeam": "Iraque",
+      "awayTeam": "Noruega",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-16T14:00:00",
+      "stage": "group",
+      "group": "Grupo I"
+    },
+    {
+      "id": "51",
+      "homeTeam": "França",
+      "awayTeam": "Iraque",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-22T14:00:00",
+      "stage": "group",
+      "group": "Grupo I"
+    },
+    {
+      "id": "52",
+      "homeTeam": "Noruega",
+      "awayTeam": "Senegal",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-22T17:00:00",
+      "stage": "group",
+      "group": "Grupo I"
+    },
+    {
+      "id": "53",
+      "homeTeam": "Noruega",
+      "awayTeam": "França",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-26T14:00:00",
+      "stage": "group",
+      "group": "Grupo I"
+    },
+    {
+      "id": "54",
+      "homeTeam": "Senegal",
+      "awayTeam": "Iraque",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-26T17:00:00",
+      "stage": "group",
+      "group": "Grupo I"
+    },
+    {
+      "id": "55",
+      "homeTeam": "Argentina",
+      "awayTeam": "Argélia",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-16T17:00:00",
+      "stage": "group",
+      "group": "Grupo J"
+    },
+    {
+      "id": "56",
+      "homeTeam": "Áustria",
+      "awayTeam": "Jordânia",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-16T20:00:00",
+      "stage": "group",
+      "group": "Grupo J"
+    },
+    {
+      "id": "57",
+      "homeTeam": "Argentina",
+      "awayTeam": "Áustria",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-22T20:00:00",
+      "stage": "group",
+      "group": "Grupo J"
+    },
+    {
+      "id": "58",
+      "homeTeam": "Jordânia",
+      "awayTeam": "Argélia",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-23T11:00:00",
+      "stage": "group",
+      "group": "Grupo J"
+    },
+    {
+      "id": "59",
+      "homeTeam": "Argélia",
+      "awayTeam": "Áustria",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-27T14:00:00",
+      "stage": "group",
+      "group": "Grupo J"
+    },
+    {
+      "id": "60",
+      "homeTeam": "Jordânia",
+      "awayTeam": "Argentina",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-27T17:00:00",
+      "stage": "group",
+      "group": "Grupo J"
+    },
+    {
+      "id": "61",
+      "homeTeam": "Portugal",
+      "awayTeam": "RD Congo",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-17T11:00:00",
+      "stage": "group",
+      "group": "Grupo K"
+    },
+    {
+      "id": "62",
+      "homeTeam": "Uzbequistão",
+      "awayTeam": "Colômbia",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-17T14:00:00",
+      "stage": "group",
+      "group": "Grupo K"
+    },
+    {
+      "id": "63",
+      "homeTeam": "Portugal",
+      "awayTeam": "Uzbequistão",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-23T14:00:00",
+      "stage": "group",
+      "group": "Grupo K"
+    },
+    {
+      "id": "64",
+      "homeTeam": "Colômbia",
+      "awayTeam": "RD Congo",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-23T17:00:00",
+      "stage": "group",
+      "group": "Grupo K"
+    },
+    {
+      "id": "65",
+      "homeTeam": "Colômbia",
+      "awayTeam": "Portugal",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-27T14:00:00",
+      "stage": "group",
+      "group": "Grupo K"
+    },
+    {
+      "id": "66",
+      "homeTeam": "RD Congo",
+      "awayTeam": "Uzbequistão",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-27T17:00:00",
+      "stage": "group",
+      "group": "Grupo K"
+    },
+    {
+      "id": "67",
+      "homeTeam": "Inglaterra",
+      "awayTeam": "Croácia",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-17T17:00:00",
+      "stage": "group",
+      "group": "Grupo L"
+    },
+    {
+      "id": "68",
+      "homeTeam": "Gana",
+      "awayTeam": "Panamá",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-17T20:00:00",
+      "stage": "group",
+      "group": "Grupo L"
+    },
+    {
+      "id": "69",
+      "homeTeam": "Inglaterra",
+      "awayTeam": "Gana",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-23T20:00:00",
+      "stage": "group",
+      "group": "Grupo L"
+    },
+    {
+      "id": "70",
+      "homeTeam": "Panamá",
+      "awayTeam": "Croácia",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-23T23:00:00",
+      "stage": "group",
+      "group": "Grupo L"
+    },
+    {
+      "id": "71",
+      "homeTeam": "Panamá",
+      "awayTeam": "Inglaterra",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-27T14:00:00",
+      "stage": "group",
+      "group": "Grupo L"
+    },
+    {
+      "id": "72",
+      "homeTeam": "Croácia",
+      "awayTeam": "Gana",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-27T17:00:00",
+      "stage": "group",
+      "group": "Grupo L"
+    },
+    {
+      "id": "73",
+      "homeTeam": "16-avos (Casa #1)",
+      "awayTeam": "16-avos (Fora #1)",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-28T14:00:00",
+      "stage": "knockout",
+      "group": "16-avos de Final"
+    },
+    {
+      "id": "74",
+      "homeTeam": "16-avos (Casa #2)",
+      "awayTeam": "16-avos (Fora #2)",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-28T20:00:00",
+      "stage": "knockout",
+      "group": "16-avos de Final"
+    },
+    {
+      "id": "75",
+      "homeTeam": "16-avos (Casa #3)",
+      "awayTeam": "16-avos (Fora #3)",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-29T14:00:00",
+      "stage": "knockout",
+      "group": "16-avos de Final"
+    },
+    {
+      "id": "76",
+      "homeTeam": "16-avos (Casa #4)",
+      "awayTeam": "16-avos (Fora #4)",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-29T20:00:00",
+      "stage": "knockout",
+      "group": "16-avos de Final"
+    },
+    {
+      "id": "77",
+      "homeTeam": "16-avos (Casa #5)",
+      "awayTeam": "16-avos (Fora #5)",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-30T14:00:00",
+      "stage": "knockout",
+      "group": "16-avos de Final"
+    },
+    {
+      "id": "78",
+      "homeTeam": "16-avos (Casa #6)",
+      "awayTeam": "16-avos (Fora #6)",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-30T20:00:00",
+      "stage": "knockout",
+      "group": "16-avos de Final"
+    },
+    {
+      "id": "79",
+      "homeTeam": "16-avos (Casa #7)",
+      "awayTeam": "16-avos (Fora #7)",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-07-01T14:00:00",
+      "stage": "knockout",
+      "group": "16-avos de Final"
+    },
+    {
+      "id": "80",
+      "homeTeam": "16-avos (Casa #8)",
+      "awayTeam": "16-avos (Fora #8)",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-07-01T20:00:00",
+      "stage": "knockout",
+      "group": "16-avos de Final"
+    },
+    {
+      "id": "81",
+      "homeTeam": "16-avos (Casa #9)",
+      "awayTeam": "16-avos (Fora #9)",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-07-02T11:00:00",
+      "stage": "knockout",
+      "group": "16-avos de Final"
+    },
+    {
+      "id": "82",
+      "homeTeam": "16-avos (Casa #10)",
+      "awayTeam": "16-avos (Fora #10)",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-07-02T15:00:00",
+      "stage": "knockout",
+      "group": "16-avos de Final"
+    },
+    {
+      "id": "83",
+      "homeTeam": "16-avos (Casa #11)",
+      "awayTeam": "16-avos (Fora #11)",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-07-02T20:00:00",
+      "stage": "knockout",
+      "group": "16-avos de Final"
+    },
+    {
+      "id": "84",
+      "homeTeam": "16-avos (Casa #12)",
+      "awayTeam": "16-avos (Fora #12)",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-07-03T11:00:00",
+      "stage": "knockout",
+      "group": "16-avos de Final"
+    },
+    {
+      "id": "85",
+      "homeTeam": "16-avos (Casa #13)",
+      "awayTeam": "16-avos (Fora #13)",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-07-03T15:00:00",
+      "stage": "knockout",
+      "group": "16-avos de Final"
+    },
+    {
+      "id": "86",
+      "homeTeam": "16-avos (Casa #14)",
+      "awayTeam": "16-avos (Fora #14)",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-07-03T18:00:00",
+      "stage": "knockout",
+      "group": "16-avos de Final"
+    },
+    {
+      "id": "87",
+      "homeTeam": "16-avos (Casa #15)",
+      "awayTeam": "16-avos (Fora #15)",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-07-03T20:00:00",
+      "stage": "knockout",
+      "group": "16-avos de Final"
+    },
+    {
+      "id": "88",
+      "homeTeam": "16-avos (Casa #16)",
+      "awayTeam": "16-avos (Fora #16)",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-07-03T22:00:00",
+      "stage": "knockout",
+      "group": "16-avos de Final"
+    },
+    {
+      "id": "89",
+      "homeTeam": "Oitavas (Casa #1)",
+      "awayTeam": "Oitavas (Fora #1)",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-07-04T14:00:00",
+      "stage": "knockout",
+      "group": "Oitavas de Final"
+    },
+    {
+      "id": "90",
+      "homeTeam": "Oitavas (Casa #2)",
+      "awayTeam": "Oitavas (Fora #2)",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-07-04T20:00:00",
+      "stage": "knockout",
+      "group": "Oitavas de Final"
+    },
+    {
+      "id": "91",
+      "homeTeam": "Oitavas (Casa #3)",
+      "awayTeam": "Oitavas (Fora #3)",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-07-05T14:00:00",
+      "stage": "knockout",
+      "group": "Oitavas de Final"
+    },
+    {
+      "id": "92",
+      "homeTeam": "Oitavas (Casa #4)",
+      "awayTeam": "Oitavas (Fora #4)",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-07-05T20:00:00",
+      "stage": "knockout",
+      "group": "Oitavas de Final"
+    },
+    {
+      "id": "93",
+      "homeTeam": "Oitavas (Casa #5)",
+      "awayTeam": "Oitavas (Fora #5)",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-07-06T14:00:00",
+      "stage": "knockout",
+      "group": "Oitavas de Final"
+    },
+    {
+      "id": "94",
+      "homeTeam": "Oitavas (Casa #6)",
+      "awayTeam": "Oitavas (Fora #6)",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-07-06T20:00:00",
+      "stage": "knockout",
+      "group": "Oitavas de Final"
+    },
+    {
+      "id": "95",
+      "homeTeam": "Oitavas (Casa #7)",
+      "awayTeam": "Oitavas (Fora #7)",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-07-07T14:00:00",
+      "stage": "knockout",
+      "group": "Oitavas de Final"
+    },
+    {
+      "id": "96",
+      "homeTeam": "Oitavas (Casa #8)",
+      "awayTeam": "Oitavas (Fora #8)",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-07-07T20:00:00",
+      "stage": "knockout",
+      "group": "Oitavas de Final"
+    },
+    {
+      "id": "97",
+      "homeTeam": "Quartas (Casa #1)",
+      "awayTeam": "Quartas (Fora #1)",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-07-09T17:00:00",
+      "stage": "knockout",
+      "group": "Quartas de Final"
+    },
+    {
+      "id": "98",
+      "homeTeam": "Quartas (Casa #2)",
+      "awayTeam": "Quartas (Fora #2)",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-07-10T17:00:00",
+      "stage": "knockout",
+      "group": "Quartas de Final"
+    },
+    {
+      "id": "99",
+      "homeTeam": "Quartas (Casa #3)",
+      "awayTeam": "Quartas (Fora #3)",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-07-11T14:00:00",
+      "stage": "knockout",
+      "group": "Quartas de Final"
+    },
+    {
+      "id": "100",
+      "homeTeam": "Quartas (Casa #4)",
+      "awayTeam": "Quartas (Fora #4)",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-07-11T20:00:00",
+      "stage": "knockout",
+      "group": "Quartas de Final"
+    },
+    {
+      "id": "101",
+      "homeTeam": "Semifinalista #1",
+      "awayTeam": "Semifinalista #2",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-07-14T20:00:00",
+      "stage": "knockout",
+      "group": "Semifinal"
+    },
+    {
+      "id": "102",
+      "homeTeam": "Semifinalista #3",
+      "awayTeam": "Semifinalista #4",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-07-15T20:00:00",
+      "stage": "knockout",
+      "group": "Semifinal"
+    },
+    {
+      "id": "103",
+      "homeTeam": "Perdedor Semi 1",
+      "awayTeam": "Perdedor Semi 2",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-07-18T17:00:00",
+      "stage": "knockout",
+      "group": "Disputa do 3º Lugar"
+    },
+    {
+      "id": "104",
+      "homeTeam": "Finalista #1",
+      "awayTeam": "Finalista #2",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-07-19T17:00:00",
+      "stage": "knockout",
+      "group": "Final"
+    }
+  ],
+  "guesses": [],
+  "groupQualifiers": [],
+  "groupQualifiersResults": {
+    "Grupo A": {
+      "first": null,
+      "second": null
+    },
+    "Grupo B": {
+      "first": null,
+      "second": null
+    },
+    "Grupo C": {
+      "first": null,
+      "second": null
+    },
+    "Grupo D": {
+      "first": null,
+      "second": null
+    },
+    "Grupo E": {
+      "first": null,
+      "second": null
+    },
+    "Grupo F": {
+      "first": null,
+      "second": null
+    },
+    "Grupo G": {
+      "first": null,
+      "second": null
+    },
+    "Grupo H": {
+      "first": null,
+      "second": null
+    },
+    "Grupo I": {
+      "first": null,
+      "second": null
+    },
+    "Grupo J": {
+      "first": null,
+      "second": null
+    },
+    "Grupo K": {
+      "first": null,
+      "second": null
+    },
+    "Grupo L": {
+      "first": null,
+      "second": null
+    }
+  },
+  "bracketGuesses": [],
+  "bracketResults": {
+    "oitavas": [],
+    "quartas": [],
+    "semis": [],
+    "finalists": [],
+    "champion": null
+  },
+  "oracle": [],
+  "oracleResults": {
+    "champion": null,
+    "topScorer": null,
+    "bestAttack": null,
+    "zebra": null,
+    "firstRedCard": null,
+    "deception": null,
+    "mostGoalsMatch": null
+  }
+}

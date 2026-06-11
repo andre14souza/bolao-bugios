@@ -1,0 +1,517 @@
+import { calculateMatchScore } from './points';
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+
+const isSupabaseEnabled = supabaseUrl !== '' && supabaseAnonKey !== '';
+const supabase = isSupabaseEnabled ? createClient(supabaseUrl, supabaseAnonKey) : null;
+
+// ==========================================
+// SERVIÇOS DE PARTIDAS E PALPITES DE GOLS
+// ==========================================
+
+export async function fetchMatches() {
+  if (isSupabaseEnabled) {
+    const { data, error } = await supabase.from('matches').select('*').order('date', { ascending: true });
+    if (error) throw error;
+    return data.map(m => ({
+      id: String(m.id),
+      homeTeam: m.home_team,
+      awayTeam: m.away_team,
+      homeScore: m.home_score,
+      awayScore: m.away_score,
+      date: m.date,
+      stage: m.stage,
+      group: m.group_name
+    }));
+  } else {
+    const res = await fetch('/api/matches');
+    return await res.json();
+  }
+}
+
+export async function updateMatch(matchData) {
+  const hScore = matchData.homeScore === null || matchData.homeScore === "" || matchData.homeScore === undefined ? null : parseInt(matchData.homeScore, 10);
+  const aScore = matchData.awayScore === null || matchData.awayScore === "" || matchData.awayScore === undefined ? null : parseInt(matchData.awayScore, 10);
+
+  if (isSupabaseEnabled) {
+    const dbData = { home_score: hScore, away_score: aScore };
+    if (matchData.homeTeam) dbData.home_team = matchData.homeTeam;
+    if (matchData.awayTeam) dbData.away_team = matchData.awayTeam;
+    if (matchData.date) dbData.date = matchData.date;
+    if (matchData.stage) dbData.stage = matchData.stage;
+    if (matchData.group) dbData.group_name = matchData.group;
+
+    const { data, error } = await supabase.from('matches').update(dbData).eq('id', parseInt(matchData.id, 10)).select();
+    if (error) throw error;
+    return data;
+  } else {
+    const res = await fetch('/api/matches', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...matchData, homeScore: hScore, awayScore: aScore })
+    });
+    return await res.json();
+  }
+}
+
+export async function fetchGuesses() {
+  if (isSupabaseEnabled) {
+    const { data, error } = await supabase.from('guesses').select('*');
+    if (error) throw error;
+    return data.map(g => ({
+      user: g.user_name,
+      matchId: String(g.match_id),
+      homeScore: g.guess_home,
+      awayScore: g.guess_away
+    }));
+  } else {
+    const res = await fetch('/api/guesses');
+    return await res.json();
+  }
+}
+
+export async function saveGuess(user, matchId, homeScore, awayScore) {
+  const hScore = homeScore === "" || homeScore === null || homeScore === undefined ? null : parseInt(homeScore, 10);
+  const aScore = awayScore === "" || awayScore === null || awayScore === undefined ? null : parseInt(awayScore, 10);
+
+  if (isSupabaseEnabled) {
+    if (hScore === null || aScore === null) {
+      const { error } = await supabase.from('guesses').delete().eq('user_name', user).eq('match_id', parseInt(matchId, 10));
+      if (error) throw error;
+      return { success: true };
+    } else {
+      const { data, error } = await supabase.from('guesses').upsert({
+        user_name: user,
+        match_id: parseInt(matchId, 10),
+        guess_home: hScore,
+        guess_away: aScore,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'user_name,match_id' }).select();
+      if (error) throw error;
+      return { success: true, data };
+    }
+  } else {
+    const res = await fetch('/api/guesses', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user, matchId, homeScore: hScore, awayScore: aScore })
+    });
+    return await res.json();
+  }
+}
+
+// ==========================================
+// SERVIÇOS DE CLASSIFICAÇÃO DE GRUPOS
+// ==========================================
+
+export async function fetchGroupQualifiers() {
+  if (isSupabaseEnabled) {
+    const [guessesRes, resultsRes] = await Promise.all([
+      supabase.from('group_qualifiers').select('*'),
+      supabase.from('group_qualifiers_results').select('*')
+    ]);
+    if (guessesRes.error) throw guessesRes.error;
+    if (resultsRes.error) throw resultsRes.error;
+
+    const resultsMap = {};
+    resultsRes.data.forEach(r => {
+      resultsMap[r.group_name] = { first: r.first_place, second: r.second_place };
+    });
+
+    return {
+      guesses: guessesRes.data.map(g => ({
+        user: g.user_name,
+        group: g.group_name,
+        first: g.first_place,
+        second: g.second_place
+      })),
+      results: resultsMap
+    };
+  } else {
+    const res = await fetch('/api/group-qualifiers');
+    return await res.json();
+  }
+}
+
+export async function saveGroupQualifier(user, group, first, second) {
+  if (isSupabaseEnabled) {
+    const { data, error } = await supabase.from('group_qualifiers').upsert({
+      user_name: user,
+      group_name: group,
+      first_place: first,
+      second_place: second,
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'user_name,group_name' }).select();
+    if (error) throw error;
+    return { success: true, data };
+  } else {
+    const res = await fetch('/api/group-qualifiers', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user, group, first, second })
+    });
+    return await res.json();
+  }
+}
+
+export async function saveGroupQualifierResults(group, first, second) {
+  if (isSupabaseEnabled) {
+    const { data, error } = await supabase.from('group_qualifiers_results').upsert({
+      group_name: group,
+      first_place: first,
+      second_place: second,
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'group_name' }).select();
+    if (error) throw error;
+    return { success: true, data };
+  } else {
+    const res = await fetch('/api/group-qualifiers/results', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ group, first, second })
+    });
+    return await res.json();
+  }
+}
+
+// ==========================================
+// SERVIÇOS DE CHAVEAMENTO (MATA-MATA)
+// ==========================================
+
+export async function fetchBracket() {
+  if (isSupabaseEnabled) {
+    const [guessesRes, resultsRes] = await Promise.all([
+      supabase.from('bracket_guesses').select('*'),
+      supabase.from('bracket_results').select('*').single()
+    ]);
+    if (guessesRes.error) throw guessesRes.error;
+    
+    // Suporta o caso em que o registro de resultados do chaveamento não existe
+    let bracketResult = { oitavas: [], quartas: [], semis: [], finalists: [], champion: null };
+    if (!resultsRes.error && resultsRes.data) {
+      bracketResult = {
+        oitavas: resultsRes.data.oitavas || [],
+        quartas: resultsRes.data.quartas || [],
+        semis: resultsRes.data.semis || [],
+        finalists: resultsRes.data.finalists || [],
+        champion: resultsRes.data.champion
+      };
+    }
+
+    return {
+      guesses: guessesRes.data.map(b => ({
+        user: b.user_name,
+        oitavas: b.oitavas || [],
+        quartas: b.quartas || [],
+        semis: b.semis || [],
+        finalists: b.finalists || [],
+        champion: b.champion
+      })),
+      results: bracketResult
+    };
+  } else {
+    const res = await fetch('/api/bracket');
+    return await res.json();
+  }
+}
+
+export async function saveBracket(user, oitavas, quartas, semis, finalists, champion) {
+  if (isSupabaseEnabled) {
+    const { data, error } = await supabase.from('bracket_guesses').upsert({
+      user_name: user,
+      oitavas,
+      quartas,
+      semis,
+      finalists,
+      champion,
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'user_name' }).select();
+    if (error) throw error;
+    return { success: true, data };
+  } else {
+    const res = await fetch('/api/bracket', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user, oitavas, quartas, semis, finalists, champion })
+    });
+    return await res.json();
+  }
+}
+
+export async function saveBracketResults(oitavas, quartas, semis, finalists, champion) {
+  if (isSupabaseEnabled) {
+    // Seta ID fixo = 1 para termos apenas uma linha de resultado oficial
+    const { data, error } = await supabase.from('bracket_results').upsert({
+      id: 1,
+      oitavas,
+      quartas,
+      semis,
+      finalists,
+      champion,
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'id' }).select();
+    if (error) throw error;
+    return { success: true, data };
+  } else {
+    const res = await fetch('/api/bracket/results', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ oitavas, quartas, semis, finalists, champion })
+    });
+    return await res.json();
+  }
+}
+
+// ==========================================
+// SERVIÇOS DO ORÁCULO (PERGUNTAS BÔNUS)
+// ==========================================
+
+export async function fetchOracle() {
+  if (isSupabaseEnabled) {
+    const [guessesRes, resultsRes] = await Promise.all([
+      supabase.from('oracle_guesses').select('*'),
+      supabase.from('oracle_results').select('*').single()
+    ]);
+    if (guessesRes.error) throw guessesRes.error;
+
+    let resultsData = {};
+    if (!resultsRes.error && resultsRes.data) {
+      resultsData = {
+        champion: resultsRes.data.champion,
+        topScorer: resultsRes.data.top_scorer,
+        bestAttack: resultsRes.data.best_attack,
+        zebra: resultsRes.data.zebra,
+        firstRedCard: resultsRes.data.first_red_card,
+        deception: resultsRes.data.deception,
+        mostGoalsMatch: resultsRes.data.most_goals_match
+      };
+    }
+
+    return {
+      guesses: guessesRes.data.map(o => ({
+        user: o.user_name,
+        champion: o.champion,
+        topScorer: o.top_scorer,
+        bestAttack: o.best_attack,
+        zebra: o.zebra,
+        firstRedCard: o.first_red_card,
+        deception: o.deception,
+        mostGoalsMatch: o.most_goals_match
+      })),
+      results: resultsData
+    };
+  } else {
+    const res = await fetch('/api/oracle');
+    return await res.json();
+  }
+}
+
+export async function saveOracle(oracleData) {
+  if (isSupabaseEnabled) {
+    const { user, champion, topScorer, bestAttack, zebra, firstRedCard, deception, mostGoalsMatch } = oracleData;
+    const { data, error } = await supabase.from('oracle_guesses').upsert({
+      user_name: user,
+      champion,
+      top_scorer: topScorer,
+      best_attack: bestAttack,
+      zebra,
+      first_red_card: firstRedCard,
+      deception,
+      most_goals_match: mostGoalsMatch,
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'user_name' }).select();
+    if (error) throw error;
+    return { success: true, data };
+  } else {
+    const res = await fetch('/api/oracle', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(oracleData)
+    });
+    if (!res.ok) {
+      const errData = await res.json();
+      throw new Error(errData.error || "Erro ao salvar Oráculo");
+    }
+    return await res.json();
+  }
+}
+
+export async function saveOracleResults(oracleResultsData) {
+  if (isSupabaseEnabled) {
+    const { champion, topScorer, bestAttack, zebra, firstRedCard, deception, mostGoalsMatch } = oracleResultsData;
+    const { data, error } = await supabase.from('oracle_results').upsert({
+      id: 1,
+      champion,
+      top_scorer: topScorer,
+      best_attack: bestAttack,
+      zebra,
+      first_red_card: firstRedCard,
+      deception,
+      most_goals_match: mostGoalsMatch,
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'id' }).select();
+    if (error) throw error;
+    return { success: true, data };
+  } else {
+    const res = await fetch('/api/oracle/results', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(oracleResultsData)
+    });
+    return await res.json();
+  }
+}
+
+// ==========================================
+// CÁLCULO GERAL DE RANKING DINÂMICO
+// ==========================================
+
+export function computeRanking(users, matches, guesses, groupQualifiersData = {}, bracketData = {}, oracleData = {}) {
+  // Inicializa a pontuação dos 7 amigos
+  const ranking = users.map(u => ({
+    user: u,
+    points: 0,
+    matchPoints: 0,
+    groupPoints: 0,
+    bracketPoints: 0,
+    oraclePoints: 0,
+    exactMatches: 0, // Mosca
+    winnerMatches: 0, // Vencedor/Saldo/Empate
+    totalGuesses: 0
+  }));
+
+  // 1. Pontos das partidas individuais (placar por aproximação)
+  guesses.forEach(g => {
+    const match = matches.find(m => String(m.id) === String(g.matchId));
+    if (match && match.homeScore !== null && match.awayScore !== null) {
+      const userRank = ranking.find(r => r.user === g.user);
+      if (userRank) {
+        const score = calculateMatchScore(g.homeScore, g.awayScore, match.homeScore, match.awayScore);
+        userRank.matchPoints += score.points;
+        userRank.points += score.points;
+        userRank.totalGuesses += 1;
+        if (score.isExact) {
+          userRank.exactMatches += 1;
+        } else if (score.isWinner) {
+          userRank.winnerMatches += 1;
+        }
+      }
+    }
+  });
+
+  // 2. Pontos de classificação de grupo (1º e 2º)
+  const gGuesses = groupQualifiersData.guesses || [];
+  const gResults = groupQualifiersData.results || {};
+
+  gGuesses.forEach(g => {
+    const actual = gResults[g.group];
+    // Se o admin inseriu resultado oficial para o grupo
+    if (actual && (actual.first !== null || actual.second !== null)) {
+      const userRank = ranking.find(r => r.user === g.user);
+      if (userRank) {
+        let pts = 0;
+        // Valida o palpite de 1º lugar
+        if (g.first) {
+          if (g.first === actual.first) {
+            pts += 5; // Posição exata
+          } else if (g.first === actual.second) {
+            pts += 3; // Passou em 2º
+          }
+        }
+        // Valida o palpite de 2º lugar
+        if (g.second) {
+          if (g.second === actual.second) {
+            pts += 5; // Posição exata
+          } else if (g.second === actual.first) {
+            pts += 3; // Passou em 1º
+          }
+        }
+        userRank.groupPoints += pts;
+        userRank.points += pts;
+      }
+    }
+  });
+
+  // 3. Pontos de Mata-mata (Chaveamento)
+  const bGuesses = bracketData.guesses || [];
+  const bResults = bracketData.results || { oitavas: [], quartas: [], semis: [], finalists: [], champion: null };
+
+  bGuesses.forEach(b => {
+    const userRank = ranking.find(r => r.user === b.user);
+    if (userRank) {
+      let pts = 0;
+      
+      // Oitavas (2 pts por time correto)
+      if (b.oitavas && bResults.oitavas && bResults.oitavas.length > 0) {
+        b.oitavas.forEach(team => {
+          if (team && bResults.oitavas.includes(team)) pts += 2;
+        });
+      }
+
+      // Quartas (4 pts por time correto)
+      if (b.quartas && bResults.quartas && bResults.quartas.length > 0) {
+        b.quartas.forEach(team => {
+          if (team && bResults.quartas.includes(team)) pts += 4;
+        });
+      }
+
+      // Semis (8 pts por time correto)
+      if (b.semis && bResults.semis && bResults.semis.length > 0) {
+        b.semis.forEach(team => {
+          if (team && bResults.semis.includes(team)) pts += 8;
+        });
+      }
+
+      // Finalistas (12 pts por time correto)
+      if (b.finalists && bResults.finalists && bResults.finalists.length > 0) {
+        b.finalists.forEach(team => {
+          if (team && bResults.finalists.includes(team)) pts += 12;
+        });
+      }
+
+      // Campeão (16 pts)
+      if (b.champion && bResults.champion && b.champion === bResults.champion) {
+        pts += 16;
+      }
+
+      userRank.bracketPoints += pts;
+      userRank.points += pts;
+    }
+  });
+
+  // 4. Pontos do Oráculo (Perguntas Bônus)
+  const oGuesses = oracleData.guesses || [];
+  const oResults = oracleData.results || {};
+
+  oGuesses.forEach(o => {
+    const userRank = ranking.find(r => r.user === o.user);
+    if (userRank) {
+      let pts = 0;
+      const keys = ['champion', 'topScorer', 'bestAttack', 'zebra', 'firstRedCard', 'deception', 'mostGoalsMatch'];
+      
+      keys.forEach(k => {
+        const userAns = o[k] ? String(o[k]).trim().toLowerCase() : '';
+        const realAns = oResults[k] ? String(oResults[k]).trim().toLowerCase() : '';
+        // Pontua apenas se o palpite do usuário bater com o oficial do administrador
+        if (userAns && realAns && userAns === realAns) {
+          pts += 5;
+        }
+      });
+      
+      userRank.oraclePoints += pts;
+      userRank.points += pts;
+    }
+  });
+
+  // Ordena a classificação: Pontos Totais (desc), Placares Exatos (desc), Acertos Vencedores (desc), Nome Alfabético (asc)
+  ranking.sort((a, b) => {
+    if (b.points !== a.points) return b.points - a.points;
+    if (b.exactMatches !== a.exactMatches) return b.exactMatches - a.exactMatches;
+    if (b.winnerMatches !== a.winnerMatches) return b.winnerMatches - a.winnerMatches;
+    return a.user.localeCompare(b.user);
+  });
+
+  return ranking;
+}
