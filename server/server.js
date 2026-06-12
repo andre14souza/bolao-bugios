@@ -52,6 +52,98 @@ const writeDB = (data) => {
   }
 };
 
+// Inicializar usuários padrão e remover excluídos (Charles, Eduardo, Paulo)
+const initDB = () => {
+  const db = readDB();
+  let modified = false;
+
+  if (!db.users || db.users.length === 0) {
+    db.users = [
+      { username: "André", password: "123" },
+      { username: "Maicon", password: "123" },
+      { username: "Brenno", password: "123" },
+      { username: "Victor", password: "123" }
+    ];
+    modified = true;
+  } else {
+    // Garantir exclusão dos perfis charles, eduardo e paulo na lista de usuários
+    const originalCount = db.users.length;
+    db.users = db.users.filter(u => !['charles', 'eduardo', 'paulo'].includes(u.username.toLowerCase()));
+    if (db.users.length !== originalCount) {
+      modified = true;
+    }
+  }
+
+  // Limpar outros dados associados a estes usuários se existirem
+  const excluded = ['charles', 'eduardo', 'paulo'];
+  if (db.guesses) {
+    const orig = db.guesses.length;
+    db.guesses = db.guesses.filter(g => !excluded.includes(g.user.toLowerCase()));
+    if (db.guesses.length !== orig) modified = true;
+  }
+  if (db.groupQualifiers) {
+    const orig = db.groupQualifiers.length;
+    db.groupQualifiers = db.groupQualifiers.filter(g => !excluded.includes(g.user.toLowerCase()));
+    if (db.groupQualifiers.length !== orig) modified = true;
+  }
+  if (db.bracketGuesses) {
+    const orig = db.bracketGuesses.length;
+    db.bracketGuesses = db.bracketGuesses.filter(b => !excluded.includes(b.user.toLowerCase()));
+    if (db.bracketGuesses.length !== orig) modified = true;
+  }
+  if (db.oracle) {
+    const orig = db.oracle.length;
+    db.oracle = db.oracle.filter(o => !excluded.includes(o.user.toLowerCase()));
+    if (db.oracle.length !== orig) modified = true;
+  }
+
+  if (modified) {
+    writeDB(db);
+  }
+};
+initDB();
+
+// Rotas de Autenticação e Usuários
+app.post('/api/register', (req, res) => {
+  const { username, password } = req.body;
+  if (!username || !password) {
+    return res.status(400).json({ error: "Nome de usuário e senha são obrigatórios." });
+  }
+  const db = readDB();
+  if (!db.users) db.users = [];
+  
+  const trimmedUser = username.trim();
+  const exists = db.users.some(u => u.username.toLowerCase() === trimmedUser.toLowerCase());
+  if (exists) {
+    return res.status(400).json({ error: "Este usuário já existe." });
+  }
+  
+  db.users.push({ username: trimmedUser, password });
+  writeDB(db);
+  res.json({ success: true });
+});
+
+app.post('/api/login', (req, res) => {
+  const { username, password } = req.body;
+  if (!username || !password) {
+    return res.status(400).json({ error: "Nome de usuário e senha são obrigatórios." });
+  }
+  const db = readDB();
+  if (!db.users) db.users = [];
+  
+  const user = db.users.find(u => u.username.toLowerCase() === username.trim().toLowerCase() && u.password === password);
+  if (!user) {
+    return res.status(401).json({ error: "Usuário ou senha incorretos." });
+  }
+  res.json({ success: true, username: user.username });
+});
+
+app.get('/api/users', (req, res) => {
+  const db = readDB();
+  if (!db.users) db.users = [];
+  res.json(db.users.map(u => u.username));
+});
+
 // ==========================================
 // ROTAS DE PARTIDAS E PALPITES DE PLACAR
 // ==========================================

@@ -1235,5 +1235,23 @@
     "firstRedCard": null,
     "deception": null,
     "mostGoalsMatch": null
-  }
+  },
+  "users": [
+    {
+      "username": "André",
+      "password": "123"
+    },
+    {
+      "username": "Maicon",
+      "password": "123"
+    },
+    {
+      "username": "Brenno",
+      "password": "123"
+    },
+    {
+      "username": "Victor",
+      "password": "123"
+    }
+  ]
 }

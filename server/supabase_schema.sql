@@ -5,6 +5,12 @@
 
 -- 1. Criação das Tabelas
 
+CREATE TABLE IF NOT EXISTS users (
+    username TEXT PRIMARY KEY,
+    password TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
+);
+
 CREATE TABLE IF NOT EXISTS matches (
     id SERIAL PRIMARY KEY,
     home_team TEXT NOT NULL,
@@ -87,7 +93,8 @@ CREATE TABLE IF NOT EXISTS oracle_results (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );
 
--- Habilitar acesso público para testes simples (sem políticas de RLS ou desabilitando RLS para simplificar)
+-- Habilitar acesso público
+ALTER TABLE users DISABLE ROW LEVEL SECURITY;
 ALTER TABLE matches DISABLE ROW LEVEL SECURITY;
 ALTER TABLE guesses DISABLE ROW LEVEL SECURITY;
 ALTER TABLE group_qualifiers DISABLE ROW LEVEL SECURITY;
@@ -97,8 +104,23 @@ ALTER TABLE bracket_results DISABLE ROW LEVEL SECURITY;
 ALTER TABLE oracle_guesses DISABLE ROW LEVEL SECURITY;
 ALTER TABLE oracle_results DISABLE ROW LEVEL SECURITY;
 
--- 2. Limpar partidas antigas
+-- Limpar dados antigos
+TRUNCATE TABLE guesses CASCADE;
+TRUNCATE TABLE group_qualifiers CASCADE;
+TRUNCATE TABLE group_qualifiers_results CASCADE;
+TRUNCATE TABLE bracket_guesses CASCADE;
+TRUNCATE TABLE bracket_results CASCADE;
+TRUNCATE TABLE oracle_guesses CASCADE;
+TRUNCATE TABLE oracle_results CASCADE;
 TRUNCATE TABLE matches CASCADE;
+TRUNCATE TABLE users CASCADE;
+
+-- 2. Inserir Usuários Iniciais
+INSERT INTO users (username, password) VALUES
+('André', '123'),
+('Maicon', '123'),
+('Brenno', '123'),
+('Victor', '123');
 
 -- 3. Inserir Partidas Iniciais
 INSERT INTO matches (id, home_team, away_team, home_score, away_score, date, stage, group_name) VALUES
@@ -206,3 +228,50 @@ INSERT INTO matches (id, home_team, away_team, home_score, away_score, date, sta
 (102, 'Semifinalista #3', 'Semifinalista #4', NULL, NULL, '2026-07-15T20:00:00', 'knockout', 'Semifinal'),
 (103, 'Perdedor Semi 1', 'Perdedor Semi 2', NULL, NULL, '2026-07-18T17:00:00', 'knockout', 'Disputa do 3º Lugar'),
 (104, 'Finalista #1', 'Finalista #2', NULL, NULL, '2026-07-19T17:00:00', 'knockout', 'Final');
+
+
+-- 4. Inserir Palpites de Placar
+INSERT INTO guesses (user_name, match_id, guess_home, guess_away) VALUES
+('Brenno', 1, 2, 0),
+('Brenno', 2, 2, 0),
+('André', 1, 2, 0),
+('André', 2, 1, 1),
+('Maicon', 1, 1, 0),
+('Maicon', 2, 2, 1),
+('Victor', 1, 2, 0),
+('Victor', 2, 1, 2),
+('André', 7, 1, 0),
+('André', 19, 2, 1),
+('Brenno', 7, 2, 0),
+('Brenno', 19, 0, 1),
+('Maicon', 7, 2, 0),
+('Maicon', 19, 2, 0),
+('Victor', 7, 1, 1),
+('Victor', 19, 1, 1);
+
+
+-- 6. Inserir Resultados Oficiais dos Grupos
+INSERT INTO group_qualifiers_results (group_name, first_place, second_place, third_place) VALUES
+('Grupo A', NULL, NULL, NULL),
+('Grupo B', NULL, NULL, NULL),
+('Grupo C', NULL, NULL, NULL),
+('Grupo D', NULL, NULL, NULL),
+('Grupo E', NULL, NULL, NULL),
+('Grupo F', NULL, NULL, NULL),
+('Grupo G', NULL, NULL, NULL),
+('Grupo H', NULL, NULL, NULL),
+('Grupo I', NULL, NULL, NULL),
+('Grupo J', NULL, NULL, NULL),
+('Grupo K', NULL, NULL, NULL),
+('Grupo L', NULL, NULL, NULL);
+
+
+-- 8. Inserir Resultados Oficiais de Chaveamento
+INSERT INTO bracket_results (id, oitavas, quartas, semis, finalists, champion) VALUES
+(1, '[]', '[]', '[]', '[]', NULL);
+
+
+-- 10. Inserir Resultados Oficiais do Oraculo
+INSERT INTO oracle_results (id, champion, top_scorer, best_attack, zebra, first_red_card, deception, most_goals_match) VALUES
+(1, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+

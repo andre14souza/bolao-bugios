@@ -2,10 +2,8 @@ import React from 'react';
 import { Target, Check, Trophy, Calendar, Award, Star, Compass } from 'lucide-react';
 import { computeRanking } from '../services/api';
 
-const FRIENDS = ['André', 'Maicon', 'Charles', 'Paulo', 'Brenno', 'Eduardo', 'Victor'];
-
-export default function Ranking({ matches, guesses, groupQualifiers, bracketGuesses, oracle }) {
-  const ranking = computeRanking(FRIENDS, matches, guesses, groupQualifiers, bracketGuesses, oracle);
+export default function Ranking({ users, matches, guesses, groupQualifiers, bracketGuesses, oracle }) {
+  const ranking = computeRanking(users || [], matches, guesses, groupQualifiers, bracketGuesses, oracle);
 
   const first = ranking[0];
   const second = ranking[1];

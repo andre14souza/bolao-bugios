@@ -9,7 +9,7 @@ import BracketPredictions from './views/BracketPredictions';
 import Oracle from './views/Oracle';
 import Ranking from './views/Ranking';
 import Admin from './views/Admin';
-import { fetchMatches, fetchGuesses, fetchGroupQualifiers, fetchBracket, fetchOracle } from './services/api';
+import { fetchMatches, fetchGuesses, fetchGroupQualifiers, fetchBracket, fetchOracle, fetchUsers } from './services/api';
 import { Trophy } from 'lucide-react';
 
 export default function App() {
@@ -22,6 +22,7 @@ export default function App() {
   const [groupQualifiers, setGroupQualifiers] = useState({ guesses: [], results: {} });
   const [bracketGuesses, setBracketGuesses] = useState({ guesses: [], results: { quartas: [], semis: [], finalists: [], champion: null } });
   const [oracle, setOracle] = useState({ guesses: [], results: {} });
+  const [users, setUsers] = useState([]);
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -44,19 +45,22 @@ export default function App() {
         guessesData,
         groupQualifiersData,
         bracketData,
-        oracleData
+        oracleData,
+        usersData
       ] = await Promise.all([
         fetchMatches(),
         fetchGuesses(),
         fetchGroupQualifiers(),
         fetchBracket(),
-        fetchOracle()
+        fetchOracle(),
+        fetchUsers()
       ]);
       setMatches(matchesData);
       setGuesses(guessesData);
       setGroupQualifiers(groupQualifiersData);
       setBracketGuesses(bracketData);
       setOracle(oracleData);
+      setUsers(usersData);
     } catch (err) {
       console.error("Erro ao carregar dados do bolão:", err);
       setError("Não foi possível conectar ao servidor. Certifique-se de que o backend Express está ativo!");
@@ -138,6 +142,7 @@ export default function App() {
       case 'ranking':
         return (
           <Ranking
+            users={users}
             matches={matches}
             guesses={guesses}
             groupQualifiers={groupQualifiers}

@@ -370,6 +370,83 @@ export async function saveOracleResults(oracleResultsData) {
 }
 
 // ==========================================
+// SERVIÇOS DE USUÁRIOS E AUTENTICAÇÃO
+// ==========================================
+
+export async function fetchUsers() {
+  if (isSupabaseEnabled) {
+    const { data, error } = await supabase.from('users').select('username');
+    if (error) throw error;
+    return data.map(u => u.username);
+  } else {
+    const res = await fetch(`${API_BASE}/api/users`);
+    return await res.json();
+  }
+}
+
+export async function loginUser(username, password) {
+  if (isSupabaseEnabled) {
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('username', username.trim())
+      .maybeSingle();
+    
+    if (error) throw error;
+    if (!data || data.password !== password) {
+      throw new Error("Usuário ou senha incorretos.");
+    }
+    return data.username;
+  } else {
+    const res = await fetch(`${API_BASE}/api/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+    const result = await res.json();
+    if (!res.ok) {
+      throw new Error(result.error || "Erro ao fazer login.");
+    }
+    return result.username;
+  }
+}
+
+export async function registerUser(username, password) {
+  const trimmed = username.trim();
+  if (isSupabaseEnabled) {
+    // Verificar se usuário já existe
+    const { data: existing, error: existError } = await supabase
+      .from('users')
+      .select('username')
+      .eq('username', trimmed)
+      .maybeSingle();
+    
+    if (existError) throw existError;
+    if (existing) {
+      throw new Error("Este usuário já existe.");
+    }
+    
+    const { error } = await supabase
+      .from('users')
+      .insert({ username: trimmed, password });
+      
+    if (error) throw error;
+    return trimmed;
+  } else {
+    const res = await fetch(`${API_BASE}/api/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: trimmed, password })
+    });
+    const result = await res.json();
+    if (!res.ok) {
+      throw new Error(result.error || "Erro ao registrar usuário.");
+    }
+    return trimmed;
+  }
+}
+
+// ==========================================
 // CÁLCULO GERAL DE RANKING DINÂMICO
 // ==========================================
 
