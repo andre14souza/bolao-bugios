@@ -378,11 +378,11 @@ export default function BracketPredictions({ matches, bracketGuesses, groupQuali
       </div>
 
       {/* Árvore de Chaveamento Horizontal - Fluxo da Esquerda para a Direita */}
-      <div className="w-full overflow-x-auto py-4 scroll-smooth select-none no-scrollbar">
-        <div className="flex gap-8 items-center min-w-[1400px] h-[1650px] px-4">
+      <div className="w-full overflow-auto max-h-[70vh] border border-white/5 rounded-3xl bg-black/20 p-4 select-none scroll-smooth">
+        <div className="flex gap-8 items-center min-w-[1400px] h-[1250px] px-4">
           
           {/* COLUNA 1: 16-avos de Final (16 jogos) */}
-          <div className="flex flex-col justify-between h-full py-4">
+          <div className="flex flex-col justify-between h-full py-2">
             <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-widest text-center border-b border-white/5 pb-2">16-avos (2 pts)</h3>
             <MatchCard matchId={73} teamA={r32Matches[0].home} teamB={r32Matches[0].away} winner={localBracket.oitavas[0]} onSelect={(team) => handleSelect('r32', 0, team)} stageName="16-avos" actualWinner={actual.oitavas?.[0]} />
             <MatchCard matchId={75} teamA={r32Matches[2].home} teamB={r32Matches[2].away} winner={localBracket.oitavas[2]} onSelect={(team) => handleSelect('r32', 2, team)} stageName="16-avos" actualWinner={actual.oitavas?.[2]} />
@@ -403,7 +403,7 @@ export default function BracketPredictions({ matches, bracketGuesses, groupQuali
           </div>
 
           {/* COLUNA 2: Oitavas de Final (8 jogos) */}
-          <div className="flex flex-col justify-between h-full py-16">
+          <div className="flex flex-col justify-between h-full py-10">
             <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-widest text-center border-b border-white/5 pb-2">Oitavas (4 pts)</h3>
             <MatchCard matchId={89} teamA={localBracket.oitavas[0]} teamB={localBracket.oitavas[2]} winner={localBracket.quartas[0]} onSelect={(team) => handleSelect('oitavas', 0, team)} stageName="Oitavas" actualWinner={actual.quartas?.[0]} />
             <MatchCard matchId={90} teamA={localBracket.oitavas[1]} teamB={localBracket.oitavas[4]} winner={localBracket.quartas[1]} onSelect={(team) => handleSelect('oitavas', 1, team)} stageName="Oitavas" actualWinner={actual.quartas?.[1]} />
@@ -416,7 +416,7 @@ export default function BracketPredictions({ matches, bracketGuesses, groupQuali
           </div>
 
           {/* COLUNA 3: Quartas de Final (4 jogos) */}
-          <div className="flex flex-col justify-between h-full py-36">
+          <div className="flex flex-col justify-between h-full py-24">
             <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-widest text-center border-b border-white/5 pb-2">Quartas (8 pts)</h3>
             <MatchCard matchId={97} teamA={localBracket.quartas[0]} teamB={localBracket.quartas[1]} winner={localBracket.semis[0]} onSelect={(team) => handleSelect('quartas', 0, team)} stageName="Quartas" actualWinner={actual.semis?.[0]} />
             <MatchCard matchId={98} teamA={localBracket.quartas[2]} teamB={localBracket.quartas[3]} winner={localBracket.semis[1]} onSelect={(team) => handleSelect('quartas', 1, team)} stageName="Quartas" actualWinner={actual.semis?.[1]} />
@@ -425,7 +425,7 @@ export default function BracketPredictions({ matches, bracketGuesses, groupQuali
           </div>
 
           {/* COLUNA 4: Semifinais (2 jogos) */}
-          <div className="flex flex-col justify-between h-full py-[320px]">
+          <div className="flex flex-col justify-between h-full py-[240px]">
             <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-widest text-center border-b border-white/5 pb-2">Semis (12 pts)</h3>
             <MatchCard matchId={101} teamA={localBracket.semis[0]} teamB={localBracket.semis[1]} winner={localBracket.finalists[0]} onSelect={(team) => handleSelect('semis', 0, team)} stageName="Semi" actualWinner={actual.finalists?.[0]} />
             <MatchCard matchId={102} teamA={localBracket.semis[2]} teamB={localBracket.semis[3]} winner={localBracket.finalists[1]} onSelect={(team) => handleSelect('semis', 1, team)} stageName="Semi" actualWinner={actual.finalists?.[1]} />
