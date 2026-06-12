@@ -189,7 +189,7 @@ export async function fetchBracket() {
   if (isSupabaseEnabled) {
     const [guessesRes, resultsRes] = await Promise.all([
       supabase.from('bracket_guesses').select('*'),
-      supabase.from('bracket_results').select('*').single()
+      supabase.from('bracket_results').select('*').maybeSingle()
     ]);
     if (guessesRes.error) throw guessesRes.error;
     
@@ -277,7 +277,7 @@ export async function fetchOracle() {
   if (isSupabaseEnabled) {
     const [guessesRes, resultsRes] = await Promise.all([
       supabase.from('oracle_guesses').select('*'),
-      supabase.from('oracle_results').select('*').single()
+      supabase.from('oracle_results').select('*').maybeSingle()
     ]);
     if (guessesRes.error) throw guessesRes.error;
 
