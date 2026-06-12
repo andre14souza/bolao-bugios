@@ -22,7 +22,7 @@ const readDB = () => {
         groupQualifiers: [], 
         groupQualifiersResults: {}, 
         bracketGuesses: [], 
-        bracketResults: { quartas: [], semis: [], finalists: [], champion: null }, 
+        bracketResults: { oitavas: [], quartas: [], semis: [], finalists: [], champion: null }, 
         oracle: [], 
         oracleResults: {} 
       };
@@ -37,7 +37,7 @@ const readDB = () => {
       groupQualifiers: [], 
       groupQualifiersResults: {}, 
       bracketGuesses: [], 
-      bracketResults: { quartas: [], semis: [], finalists: [], champion: null }, 
+      bracketResults: { oitavas: [], quartas: [], semis: [], finalists: [], champion: null }, 
       oracle: [], 
       oracleResults: {} 
     };
@@ -282,19 +282,19 @@ app.get('/api/bracket', (req, res) => {
   const db = readDB();
   res.json({
     guesses: db.bracketGuesses || [],
-    results: db.bracketResults || { quartas: [], semis: [], finalists: [], champion: null }
+    results: db.bracketResults || { oitavas: [], quartas: [], semis: [], finalists: [], champion: null }
   });
 });
 
 app.post('/api/bracket', (req, res) => {
-  const { user, quartas, semis, finalists, champion } = req.body;
+  const { user, oitavas, quartas, semis, finalists, champion } = req.body;
   const db = readDB();
   
   if (!db.bracketGuesses) db.bracketGuesses = [];
   
   const idx = db.bracketGuesses.findIndex(b => b.user === user);
   
-  const data = { user, quartas, semis, finalists, champion, updatedAt: new Date().toISOString() };
+  const data = { user, oitavas, quartas, semis, finalists, champion, updatedAt: new Date().toISOString() };
   
   if (idx !== -1) {
     db.bracketGuesses[idx] = data;
@@ -307,10 +307,11 @@ app.post('/api/bracket', (req, res) => {
 });
 
 app.post('/api/bracket/results', (req, res) => {
-  const { quartas, semis, finalists, champion } = req.body;
+  const { oitavas, quartas, semis, finalists, champion } = req.body;
   const db = readDB();
   
   db.bracketResults = {
+    oitavas: oitavas || [],
     quartas: quartas || [],
     semis: semis || [],
     finalists: finalists || [],

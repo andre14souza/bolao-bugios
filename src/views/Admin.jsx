@@ -18,6 +18,7 @@ export default function Admin({ matches, groupQualifiers, bracketGuesses, oracle
   const [groupTeams, setGroupTeams] = useState({});
   const [allTeams, setAllTeams] = useState([]);
   const [bracketResults, setBracketResults] = useState({
+    oitavas: Array(16).fill(''),
     quartas: Array(8).fill(''),
     semis: Array(4).fill(''),
     finalists: Array(2).fill(''),
@@ -85,8 +86,9 @@ export default function Admin({ matches, groupQualifiers, bracketGuesses, oracle
     setGroupResults(gResults);
 
     // 4. Resultados do Mata-mata
-    const bAct = bracketGuesses.results || { quartas: [], semis: [], finalists: [], champion: null };
+    const bAct = bracketGuesses.results || { oitavas: [], quartas: [], semis: [], finalists: [], champion: null };
     setBracketResults({
+      oitavas: bAct.oitavas || Array(16).fill(''),
       quartas: bAct.quartas || Array(8).fill(''),
       semis: bAct.semis || Array(4).fill(''),
       finalists: bAct.finalists || Array(2).fill(''),
@@ -220,6 +222,7 @@ export default function Admin({ matches, groupQualifiers, bracketGuesses, oracle
     setErrorId(null);
     try {
       await saveBracketResults(
+        bracketResults.oitavas,
         bracketResults.quartas,
         bracketResults.semis,
         bracketResults.finalists,
@@ -530,30 +533,54 @@ export default function Admin({ matches, groupQualifiers, bracketGuesses, oracle
             Chaveamento Oficial da Copa
           </h3>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            {/* Oitavas */}
+            <div className="flex flex-col gap-2">
+              <h4 className="font-extrabold text-[10px] text-slate-300 border-b border-white/5 pb-1.5 uppercase tracking-widest select-none">
+                Oitavas (16 times)
+              </h4>
+              <div className="flex flex-col gap-1.5 max-h-[300px] overflow-y-auto pr-1 no-scrollbar">
+                {Array(16).fill('').map((_, i) => (
+                  <select
+                    key={i}
+                    value={bracketResults.oitavas[i] || ''}
+                    onChange={(e) => handleBracketSelect('oitavas', i, e.target.value)}
+                    className="p-2.5 rounded-xl glass-input text-xs font-semibold w-full focus:border-football-gold"
+                  >
+                    <option value="">Time #{i+1}...</option>
+                    {allTeams.map(t => (
+                      <option key={t} value={t}>{TEAM_FLAGS[t]} {t}</option>
+                    ))}
+                  </select>
+                ))}
+              </div>
+            </div>
+
             {/* Quartas */}
             <div className="flex flex-col gap-2">
-              <h4 className="font-extrabold text-xs text-slate-300 border-b border-white/5 pb-1.5 uppercase tracking-widest select-none">
+              <h4 className="font-extrabold text-[10px] text-slate-300 border-b border-white/5 pb-1.5 uppercase tracking-widest select-none">
                 Quartas de Final (8 times)
               </h4>
-              {Array(8).fill('').map((_, i) => (
-                <select
-                  key={i}
-                  value={bracketResults.quartas[i] || ''}
-                  onChange={(e) => handleBracketSelect('quartas', i, e.target.value)}
-                  className="p-2.5 rounded-xl glass-input text-xs font-semibold w-full focus:border-football-gold"
-                >
-                  <option value="">Time #{i+1}...</option>
-                  {allTeams.map(t => (
-                    <option key={t} value={t}>{TEAM_FLAGS[t]} {t}</option>
-                  ))}
-                </select>
-              ))}
+              <div className="flex flex-col gap-1.5 max-h-[300px] overflow-y-auto pr-1 no-scrollbar">
+                {Array(8).fill('').map((_, i) => (
+                  <select
+                    key={i}
+                    value={bracketResults.quartas[i] || ''}
+                    onChange={(e) => handleBracketSelect('quartas', i, e.target.value)}
+                    className="p-2.5 rounded-xl glass-input text-xs font-semibold w-full focus:border-football-gold"
+                  >
+                    <option value="">Time #{i+1}...</option>
+                    {allTeams.map(t => (
+                      <option key={t} value={t}>{TEAM_FLAGS[t]} {t}</option>
+                    ))}
+                  </select>
+                ))}
+              </div>
             </div>
 
             {/* Semis */}
             <div className="flex flex-col gap-2">
-              <h4 className="font-extrabold text-xs text-slate-300 border-b border-white/5 pb-1.5 uppercase tracking-widest select-none">
+              <h4 className="font-extrabold text-[10px] text-slate-300 border-b border-white/5 pb-1.5 uppercase tracking-widest select-none">
                 Semifinais (4 times)
               </h4>
               {Array(4).fill('').map((_, i) => (
@@ -573,7 +600,7 @@ export default function Admin({ matches, groupQualifiers, bracketGuesses, oracle
 
             {/* Finalistas */}
             <div className="flex flex-col gap-2">
-              <h4 className="font-extrabold text-xs text-slate-300 border-b border-white/5 pb-1.5 uppercase tracking-widest select-none">
+              <h4 className="font-extrabold text-[10px] text-slate-300 border-b border-white/5 pb-1.5 uppercase tracking-widest select-none">
                 Finalistas (2 times)
               </h4>
               {Array(2).fill('').map((_, i) => (
@@ -593,7 +620,7 @@ export default function Admin({ matches, groupQualifiers, bracketGuesses, oracle
 
             {/* Campeão */}
             <div className="flex flex-col gap-2">
-              <h4 className="font-extrabold text-xs text-football-gold border-b border-football-gold/20 pb-1.5 uppercase tracking-widest select-none">
+              <h4 className="font-extrabold text-[10px] text-football-gold border-b border-football-gold/20 pb-1.5 uppercase tracking-widest select-none">
                 🏆 Campeão Oficial
               </h4>
               <select

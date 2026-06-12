@@ -20,7 +20,7 @@ export default function App() {
   const [matches, setMatches] = useState([]);
   const [guesses, setGuesses] = useState([]);
   const [groupQualifiers, setGroupQualifiers] = useState({ guesses: [], results: {} });
-  const [bracketGuesses, setBracketGuesses] = useState({ guesses: [], results: { quartas: [], semis: [], finalists: [], champion: null } });
+  const [bracketGuesses, setBracketGuesses] = useState({ guesses: [], results: { oitavas: [], quartas: [], semis: [], finalists: [], champion: null } });
   const [oracle, setOracle] = useState({ guesses: [], results: {} });
   const [users, setUsers] = useState([]);
 
@@ -127,6 +127,7 @@ export default function App() {
           <BracketPredictions
             matches={matches}
             bracketGuesses={bracketGuesses}
+            groupQualifiers={groupQualifiers}
             currentUser={currentUser}
             onReload={loadData}
           />
