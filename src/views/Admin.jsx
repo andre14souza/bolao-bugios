@@ -74,10 +74,11 @@ export default function Admin({ matches, groupQualifiers, bracketGuesses, oracle
     // 3. Resultados dos Grupos
     const gResults = {};
     Object.keys(parsedGroupTeams).forEach(g => {
-      const act = groupQualifiers.results[g] || { first: '', second: '' };
+      const act = groupQualifiers.results[g] || { first: '', second: '', third: '' };
       gResults[g] = {
         first: act.first || '',
-        second: act.second || ''
+        second: act.second || '',
+        third: act.third || ''
       };
     });
     setGroupResults(gResults);
@@ -180,11 +181,12 @@ export default function Admin({ matches, groupQualifiers, bracketGuesses, oracle
     setSuccessId(null);
     setErrorId(null);
     try {
-      const { first, second } = groupResults[group];
+      const { first, second, third } = groupResults[group];
       await saveGroupQualifierResults(
         group,
         first === '' ? null : first,
-        second === '' ? null : second
+        second === '' ? null : second,
+        third === '' ? null : third
       );
       setSuccessId(`group-${group}`);
       onReload();
@@ -438,7 +440,7 @@ export default function Admin({ matches, groupQualifiers, bracketGuesses, oracle
       {subTab === 'groups' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fadeIn">
           {groups.map(groupName => {
-            const res = groupResults[groupName] || { first: '', second: '' };
+            const res = groupResults[groupName] || { first: '', second: '', third: '' };
             const isLoading = loadingId === `group-${groupName}`;
             const isSuccess = successId === `group-${groupName}`;
             const isError = errorId === `group-${groupName}`;
@@ -448,7 +450,7 @@ export default function Admin({ matches, groupQualifiers, bracketGuesses, oracle
                 <h3 className="text-lg font-bold text-football-brightYellow border-b border-white/5 pb-2 select-none">
                   {groupName}
                 </h3>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-3 gap-3">
                   <div className="flex flex-col gap-1.5">
                     <label className="text-[10px] text-slate-400 uppercase font-bold select-none">🥇 1º Colocado Oficial</label>
                     <select
@@ -467,6 +469,19 @@ export default function Admin({ matches, groupQualifiers, bracketGuesses, oracle
                     <select
                       value={res.second}
                       onChange={(e) => handleGroupSelect(groupName, 'second', e.target.value)}
+                      className="p-2.5 rounded-xl glass-input text-xs font-semibold w-full focus:border-football-gold"
+                    >
+                      <option value="">Selecione...</option>
+                      {groupTeams[groupName]?.map(t => (
+                        <option key={t} value={t}>{TEAM_FLAGS[t]} {t}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[10px] text-slate-400 uppercase font-bold select-none">🥉 3º Colocado Oficial</label>
+                    <select
+                      value={res.third || ''}
+                      onChange={(e) => handleGroupSelect(groupName, 'third', e.target.value)}
                       className="p-2.5 rounded-xl glass-input text-xs font-semibold w-full focus:border-football-gold"
                     >
                       <option value="">Selecione...</option>

@@ -93,10 +93,11 @@ export default function DailyMatches({ matches, guesses, currentUser, onReload }
   };
 
   // Filter for today's matches (e.g. same day)
-  // Since we seed matches around June 2026, let's show matches of "today" (if any)
-  // otherwise show the closest 4 upcoming matches as "destaques" and all of them below.
-  const today = new Date("2026-06-11"); // Use opening day as virtual today for demonstration
-  const todayStr = today.toISOString().split('T')[0];
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  const todayStr = `${year}-${month}-${day}`;
   
   const todayMatches = matches.filter(m => m.date.startsWith(todayStr));
   const otherMatches = matches.filter(m => !m.date.startsWith(todayStr));
@@ -297,7 +298,7 @@ export default function DailyMatches({ matches, guesses, currentUser, onReload }
       {todayMatches.length > 0 ? (
         <div className="mb-10">
           <h2 className="text-xl font-bold text-football-brightYellow mb-4 border-b border-white/5 pb-2">
-            🏆 Jogos de Hoje (Simulado)
+            🏆 Jogos de Hoje
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {todayMatches.map(renderMatchCard)}
@@ -306,7 +307,7 @@ export default function DailyMatches({ matches, guesses, currentUser, onReload }
       ) : (
         <div className="mb-8 p-6 glass-panel rounded-2xl border border-football-glassBorder text-center">
           <p className="text-slate-300 font-medium text-base">
-            📅 Sem jogos oficiais agendados para a data simulated de hoje.
+            📅 Sem jogos oficiais agendados para o dia de hoje.
           </p>
           <p className="text-xs text-slate-400 mt-1">
             Abaixo estão exibidos os próximos jogos da Copa do Mundo para você palpitar.

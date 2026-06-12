@@ -7,6 +7,8 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 const isSupabaseEnabled = supabaseUrl !== '' && supabaseAnonKey !== '';
 const supabase = isSupabaseEnabled ? createClient(supabaseUrl, supabaseAnonKey) : null;
 
+const API_BASE = import.meta.env.VITE_API_BASE || '';
+
 // ==========================================
 // SERVIÇOS DE PARTIDAS E PALPITES DE GOLS
 // ==========================================
@@ -26,7 +28,7 @@ export async function fetchMatches() {
       group: m.group_name
     }));
   } else {
-    const res = await fetch('/api/matches');
+    const res = await fetch(`${API_BASE}/api/matches`);
     return await res.json();
   }
 }
@@ -47,7 +49,7 @@ export async function updateMatch(matchData) {
     if (error) throw error;
     return data;
   } else {
-    const res = await fetch('/api/matches', {
+    const res = await fetch(`${API_BASE}/api/matches`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...matchData, homeScore: hScore, awayScore: aScore })
@@ -67,7 +69,7 @@ export async function fetchGuesses() {
       awayScore: g.guess_away
     }));
   } else {
-    const res = await fetch('/api/guesses');
+    const res = await fetch(`${API_BASE}/api/guesses`);
     return await res.json();
   }
 }
@@ -93,7 +95,7 @@ export async function saveGuess(user, matchId, homeScore, awayScore) {
       return { success: true, data };
     }
   } else {
-    const res = await fetch('/api/guesses', {
+    const res = await fetch(`${API_BASE}/api/guesses`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ user, matchId, homeScore: hScore, awayScore: aScore })
@@ -117,7 +119,7 @@ export async function fetchGroupQualifiers() {
 
     const resultsMap = {};
     resultsRes.data.forEach(r => {
-      resultsMap[r.group_name] = { first: r.first_place, second: r.second_place };
+      resultsMap[r.group_name] = { first: r.first_place, second: r.second_place, third: r.third_place };
     });
 
     return {
@@ -125,52 +127,55 @@ export async function fetchGroupQualifiers() {
         user: g.user_name,
         group: g.group_name,
         first: g.first_place,
-        second: g.second_place
+        second: g.second_place,
+        third: g.third_place
       })),
       results: resultsMap
     };
   } else {
-    const res = await fetch('/api/group-qualifiers');
+    const res = await fetch(`${API_BASE}/api/group-qualifiers`);
     return await res.json();
   }
 }
 
-export async function saveGroupQualifier(user, group, first, second) {
+export async function saveGroupQualifier(user, group, first, second, third) {
   if (isSupabaseEnabled) {
     const { data, error } = await supabase.from('group_qualifiers').upsert({
       user_name: user,
       group_name: group,
       first_place: first,
       second_place: second,
+      third_place: third,
       updated_at: new Date().toISOString()
     }, { onConflict: 'user_name,group_name' }).select();
     if (error) throw error;
     return { success: true, data };
   } else {
-    const res = await fetch('/api/group-qualifiers', {
+    const res = await fetch(`${API_BASE}/api/group-qualifiers`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ user, group, first, second })
+      body: JSON.stringify({ user, group, first, second, third })
     });
     return await res.json();
   }
 }
 
-export async function saveGroupQualifierResults(group, first, second) {
+export async function saveGroupQualifierResults(group, first, second, third) {
   if (isSupabaseEnabled) {
     const { data, error } = await supabase.from('group_qualifiers_results').upsert({
       group_name: group,
       first_place: first,
       second_place: second,
+      third_place: third,
       updated_at: new Date().toISOString()
     }, { onConflict: 'group_name' }).select();
     if (error) throw error;
     return { success: true, data };
   } else {
-    const res = await fetch('/api/group-qualifiers/results', {
+    const res = await fetch(`${API_BASE}/api/group-qualifiers/results`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ group, first, second })
+      body: JSON.stringify({ group, first, second, third })
     });
     return await res.json();
   }
@@ -212,7 +217,7 @@ export async function fetchBracket() {
       results: bracketResult
     };
   } else {
-    const res = await fetch('/api/bracket');
+    const res = await fetch(`${API_BASE}/api/bracket`);
     return await res.json();
   }
 }
@@ -231,7 +236,7 @@ export async function saveBracket(user, oitavas, quartas, semis, finalists, cham
     if (error) throw error;
     return { success: true, data };
   } else {
-    const res = await fetch('/api/bracket', {
+    const res = await fetch(`${API_BASE}/api/bracket`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ user, oitavas, quartas, semis, finalists, champion })
@@ -255,7 +260,7 @@ export async function saveBracketResults(oitavas, quartas, semis, finalists, cha
     if (error) throw error;
     return { success: true, data };
   } else {
-    const res = await fetch('/api/bracket/results', {
+    const res = await fetch(`${API_BASE}/api/bracket/results`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ oitavas, quartas, semis, finalists, champion })
@@ -303,7 +308,7 @@ export async function fetchOracle() {
       results: resultsData
     };
   } else {
-    const res = await fetch('/api/oracle');
+    const res = await fetch(`${API_BASE}/api/oracle`);
     return await res.json();
   }
 }
@@ -325,7 +330,7 @@ export async function saveOracle(oracleData) {
     if (error) throw error;
     return { success: true, data };
   } else {
-    const res = await fetch('/api/oracle', {
+    const res = await fetch(`${API_BASE}/api/oracle`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(oracleData)
@@ -355,7 +360,7 @@ export async function saveOracleResults(oracleResultsData) {
     if (error) throw error;
     return { success: true, data };
   } else {
-    const res = await fetch('/api/oracle/results', {
+    const res = await fetch(`${API_BASE}/api/oracle/results`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(oracleResultsData)
@@ -401,14 +406,14 @@ export function computeRanking(users, matches, guesses, groupQualifiersData = {}
     }
   });
 
-  // 2. Pontos de classificação de grupo (1º e 2º)
+  // 2. Pontos de classificação de grupo (1º, 2º e 3º)
   const gGuesses = groupQualifiersData.guesses || [];
   const gResults = groupQualifiersData.results || {};
 
   gGuesses.forEach(g => {
     const actual = gResults[g.group];
     // Se o admin inseriu resultado oficial para o grupo
-    if (actual && (actual.first !== null || actual.second !== null)) {
+    if (actual && (actual.first !== null || actual.second !== null || actual.third !== null)) {
       const userRank = ranking.find(r => r.user === g.user);
       if (userRank) {
         let pts = 0;
@@ -416,16 +421,24 @@ export function computeRanking(users, matches, guesses, groupQualifiersData = {}
         if (g.first) {
           if (g.first === actual.first) {
             pts += 5; // Posição exata
-          } else if (g.first === actual.second) {
-            pts += 3; // Passou em 2º
+          } else if (g.first === actual.second || g.first === actual.third) {
+            pts += 3; // Passou em 2º ou 3º
           }
         }
         // Valida o palpite de 2º lugar
         if (g.second) {
           if (g.second === actual.second) {
             pts += 5; // Posição exata
-          } else if (g.second === actual.first) {
-            pts += 3; // Passou em 1º
+          } else if (g.second === actual.first || g.second === actual.third) {
+            pts += 3; // Passou em 1º ou 3º
+          }
+        }
+        // Valida o palpite de 3º lugar
+        if (g.third) {
+          if (g.third === actual.third) {
+            pts += 5; // Posição exata
+          } else if (g.third === actual.first || g.third === actual.second) {
+            pts += 3; // Passou em 1º ou 2º
           }
         }
         userRank.groupPoints += pts;

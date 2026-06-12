@@ -4,8 +4,8 @@
       "id": "1",
       "homeTeam": "México",
       "awayTeam": "África do Sul",
-      "homeScore": null,
-      "awayScore": null,
+      "homeScore": 2,
+      "awayScore": 0,
       "date": "2026-06-11T17:00:00",
       "stage": "group",
       "group": "Grupo A"
@@ -14,8 +14,8 @@
       "id": "2",
       "homeTeam": "Coreia do Sul",
       "awayTeam": "Tchéquia",
-      "homeScore": null,
-      "awayScore": null,
+      "homeScore": 2,
+      "awayScore": 1,
       "date": "2026-06-11T20:00:00",
       "stage": "group",
       "group": "Grupo A"
@@ -1083,57 +1083,139 @@
       "homeScore": 2,
       "awayScore": 1,
       "updatedAt": "2026-06-11T03:08:00.973Z"
+    },
+    {
+      "user": "Victor",
+      "matchId": "1",
+      "homeScore": 2,
+      "awayScore": 0,
+      "updatedAt": "2026-06-11T22:25:25.202Z"
+    },
+    {
+      "user": "Victor",
+      "matchId": "2",
+      "homeScore": 1,
+      "awayScore": 2,
+      "updatedAt": "2026-06-11T22:25:25.208Z"
+    },
+    {
+      "user": "André",
+      "matchId": "7",
+      "homeScore": 1,
+      "awayScore": 0,
+      "updatedAt": "2026-06-12T16:54:28.615Z"
+    },
+    {
+      "user": "André",
+      "matchId": "19",
+      "homeScore": 2,
+      "awayScore": 1,
+      "updatedAt": "2026-06-12T16:54:28.780Z"
+    },
+    {
+      "user": "Brenno",
+      "matchId": "7",
+      "homeScore": 2,
+      "awayScore": 0,
+      "updatedAt": "2026-06-12T16:54:58.445Z"
+    },
+    {
+      "user": "Brenno",
+      "matchId": "19",
+      "homeScore": 0,
+      "awayScore": 1,
+      "updatedAt": "2026-06-12T16:54:58.557Z"
+    },
+    {
+      "user": "Maicon",
+      "matchId": "7",
+      "homeScore": 2,
+      "awayScore": 0,
+      "updatedAt": "2026-06-12T16:55:18.550Z"
+    },
+    {
+      "user": "Maicon",
+      "matchId": "19",
+      "homeScore": 2,
+      "awayScore": 0,
+      "updatedAt": "2026-06-12T16:55:18.665Z"
+    },
+    {
+      "user": "Victor",
+      "matchId": "7",
+      "homeScore": 1,
+      "awayScore": 1,
+      "updatedAt": "2026-06-12T16:55:30.800Z"
+    },
+    {
+      "user": "Victor",
+      "matchId": "19",
+      "homeScore": 1,
+      "awayScore": 1,
+      "updatedAt": "2026-06-12T16:55:30.957Z"
     }
   ],
   "groupQualifiers": [],
   "groupQualifiersResults": {
     "Grupo A": {
       "first": null,
-      "second": null
+      "second": null,
+      "third": null
     },
     "Grupo B": {
       "first": null,
-      "second": null
+      "second": null,
+      "third": null
     },
     "Grupo C": {
       "first": null,
-      "second": null
+      "second": null,
+      "third": null
     },
     "Grupo D": {
       "first": null,
-      "second": null
+      "second": null,
+      "third": null
     },
     "Grupo E": {
       "first": null,
-      "second": null
+      "second": null,
+      "third": null
     },
     "Grupo F": {
       "first": null,
-      "second": null
+      "second": null,
+      "third": null
     },
     "Grupo G": {
       "first": null,
-      "second": null
+      "second": null,
+      "third": null
     },
     "Grupo H": {
       "first": null,
-      "second": null
+      "second": null,
+      "third": null
     },
     "Grupo I": {
       "first": null,
-      "second": null
+      "second": null,
+      "third": null
     },
     "Grupo J": {
       "first": null,
-      "second": null
+      "second": null,
+      "third": null
     },
     "Grupo K": {
       "first": null,
-      "second": null
+      "second": null,
+      "third": null
     },
     "Grupo L": {
       "first": null,
-      "second": null
+      "second": null,
+      "third": null
     }
   },
   "bracketGuesses": [],

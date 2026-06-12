@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const dbPath = path.join(__dirname, 'db.json');
+const dbPath = process.env.DB_PATH || path.join(__dirname, 'db.json');
 
 const app = express();
 app.use(cors());
@@ -151,14 +151,14 @@ app.get('/api/group-qualifiers', (req, res) => {
 });
 
 app.post('/api/group-qualifiers', (req, res) => {
-  const { user, group, first, second } = req.body;
+  const { user, group, first, second, third } = req.body;
   const db = readDB();
   
   if (!db.groupQualifiers) db.groupQualifiers = [];
   
   const idx = db.groupQualifiers.findIndex(g => g.user === user && g.group === group);
   
-  const data = { user, group, first, second, updatedAt: new Date().toISOString() };
+  const data = { user, group, first, second, third, updatedAt: new Date().toISOString() };
   
   if (idx !== -1) {
     db.groupQualifiers[idx] = data;
@@ -171,12 +171,12 @@ app.post('/api/group-qualifiers', (req, res) => {
 });
 
 app.post('/api/group-qualifiers/results', (req, res) => {
-  const { group, first, second } = req.body;
+  const { group, first, second, third } = req.body;
   const db = readDB();
   
   if (!db.groupQualifiersResults) db.groupQualifiersResults = {};
   
-  db.groupQualifiersResults[group] = { first, second };
+  db.groupQualifiersResults[group] = { first, second, third };
   
   writeDB(db);
   res.json({ success: true, results: db.groupQualifiersResults });
@@ -245,8 +245,8 @@ app.post('/api/oracle', (req, res) => {
   const { user, champion, topScorer, bestAttack, zebra, firstRedCard, deception, mostGoalsMatch } = req.body;
   const db = readDB();
   
-  // Regra de Trava Temporal: Bloqueia após início da Copa (11/06/2026 às 17:00:00)
-  const COPA_START = new Date("2026-06-11T17:00:00");
+  // Regra de Trava Temporal: Bloqueia após o final do último jogo da primeira rodada (17/06/2026 às 22:00:00)
+  const COPA_START = new Date("2026-06-17T22:00:00");
   if (new Date() >= COPA_START) {
     return res.status(403).json({ error: "O prazo para o Oráculo já expirou! Edição bloqueada." });
   }
@@ -295,7 +295,19 @@ app.post('/api/oracle/results', (req, res) => {
   res.json({ success: true, results: db.oracleResults });
 });
 
+// Servir arquivos estáticos do frontend em produção
+const distPath = path.join(__dirname, '../dist');
+app.use(express.static(distPath));
+
+// Fallback para SPA (React Router / rotas do frontend)
+app.get(/.*/, (req, res, next) => {
+  if (req.path.startsWith('/api')) {
+    return next();
+  }
+  res.sendFile(path.join(distPath, 'index.html'));
+});
+
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
-  console.log(`Backend server running on http://localhost:${PORT}`);
+  console.log(`Backend server running on port ${PORT}`);
 });

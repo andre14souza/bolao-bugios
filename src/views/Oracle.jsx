@@ -28,8 +28,8 @@ export default function Oracle({ oracle, currentUser, onReload }) {
 
   // Verifica se a Copa já começou e carrega palpites
   useEffect(() => {
-    // Data limite de envio (data oficial do primeiro jogo)
-    const COPA_START = new Date("2026-06-11T17:00:00");
+    // Data limite de envio (final do último jogo da primeira rodada)
+    const COPA_START = new Date("2026-06-17T22:00:00");
     if (new Date() >= COPA_START) {
       setIsLocked(true);
     }
@@ -113,7 +113,7 @@ export default function Oracle({ oracle, currentUser, onReload }) {
           <Lock size={20} className="stroke-[2.5]" />
           <div>
             <p className="font-bold">🔒 Oráculo Trancado!</p>
-            <p className="text-xs text-rose-300 font-medium">As previsões bônus fecharam no dia 11/06/2026 às 17h00 (início da Copa).</p>
+            <p className="text-xs text-rose-300 font-medium">As previsões bônus fecharam no dia 17/06/2026 às 22h00 (fim da primeira rodada).</p>
           </div>
         </div>
       )}

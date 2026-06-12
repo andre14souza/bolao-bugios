@@ -16,8 +16,8 @@ export default function Login({ onLogin }) {
     <div className="flex flex-col items-center justify-center min-h-[85vh] px-4 py-8 relative bg-field-pattern">
       <div className="w-full max-w-2xl glass-panel p-8 rounded-3xl text-center border-t-4 border-football-gold relative overflow-hidden">
         {/* Decorative corner elements */}
-        <div className="absolute top-0 right-0 w-32 h-32 bg-football-vibrantGreen/10 rounded-full blur-2xl -mr-16 -mt-16"></div>
-        <div className="absolute bottom-0 left-0 w-32 h-32 bg-football-royalBlue/10 rounded-full blur-2xl -ml-16 -mb-16"></div>
+        <div className="absolute top-0 right-0 w-32 h-32 bg-football-vibrantGreen/10 rounded-full blur-2xl -mr-16 -mt-16 pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 w-32 h-32 bg-football-royalBlue/10 rounded-full blur-2xl -ml-16 -mb-16 pointer-events-none"></div>
         
         <div className="flex justify-center mb-4">
           <div className="bg-football-gold p-4 rounded-full shadow-lg shadow-amber-500/20 text-football-darkGreen transform transition hover:scale-110">
@@ -41,7 +41,7 @@ export default function Login({ onLogin }) {
             <button
               key={name}
               onClick={() => onLogin(name)}
-              className="flex items-center justify-between p-4 rounded-2xl glass-panel-hover glass-input text-left group transition-all duration-300 font-semibold text-lg hover:text-football-gold"
+              className="flex items-center justify-between p-4 rounded-2xl glass-panel-hover glass-input text-left group transition-all duration-300 font-semibold text-lg hover:text-football-gold cursor-pointer"
             >
               <div className="flex items-center gap-3">
                 <div className="bg-football-grassGreen/20 group-hover:bg-football-gold/20 p-2.5 rounded-xl transition-colors">
