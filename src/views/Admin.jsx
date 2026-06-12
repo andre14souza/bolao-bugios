@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Save, RefreshCw, Check, AlertCircle, Calendar, Layers, Trophy, HelpCircle } from 'lucide-react';
 import { updateMatch, saveGroupQualifierResults, saveBracketResults, saveOracleResults } from '../services/api';
 import { TEAM_FLAGS } from './DailyMatches';
+import { checkIsPlaceholder } from './Knockout';
 
 export default function Admin({ matches, groupQualifiers, bracketGuesses, oracle, onReload }) {
   const [subTab, setSubTab] = useState('matches'); // matches, groups, bracket, oracle
@@ -56,10 +57,10 @@ export default function Admin({ matches, groupQualifiers, bracketGuesses, oracle
         teamsByGroup[m.group].add(m.homeTeam);
         teamsByGroup[m.group].add(m.awayTeam);
       }
-      if (m.homeTeam && !m.homeTeam.includes('1º') && !m.homeTeam.includes('2º') && !m.homeTeam.includes('Vencedor')) {
+      if (m.homeTeam && !checkIsPlaceholder(m.homeTeam)) {
         tSet.add(m.homeTeam);
       }
-      if (m.awayTeam && !m.awayTeam.includes('1º') && !m.awayTeam.includes('2º') && !m.awayTeam.includes('Vencedor')) {
+      if (m.awayTeam && !checkIsPlaceholder(m.awayTeam)) {
         tSet.add(m.awayTeam);
       }
     });

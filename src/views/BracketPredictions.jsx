@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Save, Check, Award, AlertCircle } from 'lucide-react';
 import { saveBracket } from '../services/api';
 import { TEAM_FLAGS } from './DailyMatches';
+import { checkIsPlaceholder } from './Knockout';
 
 export default function BracketPredictions({ matches, bracketGuesses, currentUser, onReload }) {
   // Lista de todas as seleções extraídas dinamicamente
@@ -19,10 +20,10 @@ export default function BracketPredictions({ matches, bracketGuesses, currentUse
     // Extrai seleções que jogaram a fase de grupos
     const teams = new Set();
     matches.forEach(m => {
-      if (m.homeTeam && !m.homeTeam.includes('1º') && !m.homeTeam.includes('2º') && !m.homeTeam.includes('Vencedor')) {
+      if (m.homeTeam && !checkIsPlaceholder(m.homeTeam)) {
         teams.add(m.homeTeam);
       }
-      if (m.awayTeam && !m.awayTeam.includes('1º') && !m.awayTeam.includes('2º') && !m.awayTeam.includes('Vencedor')) {
+      if (m.awayTeam && !checkIsPlaceholder(m.awayTeam)) {
         teams.add(m.awayTeam);
       }
     });
