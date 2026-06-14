@@ -1,16 +1,122 @@
 import React, { useState, useEffect } from 'react';
-import { Save, RefreshCw, Check, AlertCircle, Calendar, Layers, Trophy, HelpCircle } from 'lucide-react';
-import { updateMatch, saveGroupQualifierResults, saveBracketResults, saveOracleResults } from '../services/api';
+import { Save, RefreshCw, Check, AlertCircle, Calendar, Layers, Trophy, HelpCircle, Users, Trash2, Eye, EyeOff } from 'lucide-react';
+import { updateMatch, saveGroupQualifierResults, saveBracketResults, saveOracleResults, fetchUsersList, updateUser, deleteUser } from '../services/api';
 import { TEAM_FLAGS } from './DailyMatches';
 import { checkIsPlaceholder } from './Knockout';
 
 export default function Admin({ matches, groupQualifiers, bracketGuesses, oracle, onReload }) {
-  const [subTab, setSubTab] = useState('matches'); // matches, groups, bracket, oracle
+  const [subTab, setSubTab] = useState('matches'); // matches, groups, bracket, oracle, users
   
   // Status de carregamento e sucesso locais
   const [loadingId, setLoadingId] = useState(null);
   const [successId, setSuccessId] = useState(null);
   const [errorId, setErrorId] = useState(null);
+
+  // Estados para gerenciamento de usuários (Admin)
+  const [usersList, setUsersList] = useState([]);
+  const [loadingUsers, setLoadingUsers] = useState(false);
+  const [editFields, setEditFields] = useState({}); // { [username]: { username, password } }
+  const [visiblePasswords, setVisiblePasswords] = useState({}); // { [username]: boolean }
+
+  const loadUsersList = async () => {
+    setLoadingUsers(true);
+    try {
+      const data = await fetchUsersList();
+      setUsersList(data);
+      const fields = {};
+      data.forEach(u => {
+        fields[u.username] = { username: u.username, password: u.password };
+      });
+      setEditFields(fields);
+    } catch (err) {
+      console.error("Erro ao carregar usuários:", err);
+    } finally {
+      setLoadingUsers(false);
+    }
+  };
+
+  useEffect(() => {
+    if (subTab === 'users') {
+      loadUsersList();
+    }
+  }, [subTab]);
+
+  const handleUserChange = (originalUsername, field, val) => {
+    setEditFields(prev => ({
+      ...prev,
+      [originalUsername]: {
+        ...prev[originalUsername],
+        [field]: val
+      }
+    }));
+  };
+
+  const handleSaveUser = async (originalUsername) => {
+    setLoadingId(`user-${originalUsername}`);
+    setSuccessId(null);
+    setErrorId(null);
+    const { username: newUsername, password: newPassword } = editFields[originalUsername];
+
+    if (!newUsername.trim() || !newPassword.trim()) {
+      setErrorId(`user-${originalUsername}`);
+      setLoadingId(null);
+      return;
+    }
+
+    try {
+      await updateUser(originalUsername, newUsername, newPassword);
+      setSuccessId(`user-${originalUsername}`);
+      onReload(); // Recarrega os dados do app geral
+      loadUsersList(); // Recarrega a lista local de usuários
+      setTimeout(() => setSuccessId(null), 3000);
+    } catch (err) {
+      console.error(err);
+      setErrorId(`user-${originalUsername}`);
+    } finally {
+      setLoadingId(null);
+    }
+  };
+
+  const handleResetUserPassword = async (username) => {
+    setLoadingId(`reset-${username}`);
+    setSuccessId(null);
+    setErrorId(null);
+    try {
+      await updateUser(username, username, "123");
+      setSuccessId(`reset-${username}`);
+      loadUsersList();
+      setTimeout(() => setSuccessId(null), 3000);
+    } catch (err) {
+      console.error(err);
+      setErrorId(`reset-${username}`);
+    } finally {
+      setLoadingId(null);
+    }
+  };
+
+  const handleDeleteUser = async (username) => {
+    if (!window.confirm(`Tem certeza que deseja excluir permanentemente a conta de ${username} e todos os seus palpites?`)) {
+      return;
+    }
+    setLoadingId(`delete-${username}`);
+    try {
+      await deleteUser(username);
+      onReload();
+      loadUsersList();
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao excluir usuário.");
+    } finally {
+      setLoadingId(null);
+    }
+  };
+
+  const togglePasswordVisibility = (username) => {
+    setVisiblePasswords(prev => ({
+      ...prev,
+      [username]: !prev[username]
+    }));
+  };
 
   // Estados locais para inputs
   const [matchScores, setMatchScores] = useState({});
@@ -314,6 +420,15 @@ export default function Admin({ matches, groupQualifiers, bracketGuesses, oracle
         >
           <HelpCircle size={14} />
           <span>Oráculo (Bônus)</span>
+        </button>
+        <button
+          onClick={() => setSubTab('users')}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold uppercase transition-all duration-300 cursor-pointer ${
+            subTab === 'users' ? 'bg-football-gold text-football-darkGreen font-extrabold scale-105 shadow-md shadow-amber-500/10' : 'glass-panel text-slate-300 hover:text-white border-football-glassBorder'
+          }`}
+        >
+          <Users size={14} />
+          <span>Contas</span>
         </button>
       </div>
 
@@ -765,6 +880,116 @@ export default function Admin({ matches, groupQualifiers, bracketGuesses, oracle
             )}
             <span>{successId === 'oracle' ? 'Respostas salvas!' : 'Salvar Respostas do Oráculo'}</span>
           </button>
+        </div>
+      )}
+
+      {/* ==========================================
+          SUBTAB: USERS (CONTAS)
+         ========================================== */}
+      {subTab === 'users' && (
+        <div className="flex flex-col gap-6 animate-fadeIn">
+          {loadingUsers ? (
+            <div className="text-center py-8 text-slate-400">Carregando contas...</div>
+          ) : usersList.length === 0 ? (
+            <div className="text-center py-8 text-slate-400">Nenhum usuário encontrado.</div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {usersList.map((user) => {
+                const originalUsername = user.username;
+                const fields = editFields[originalUsername] || { username: originalUsername, password: user.password };
+                const isLoading = loadingId === `user-${originalUsername}`;
+                const isResetLoading = loadingId === `reset-${originalUsername}`;
+                const isDeleteLoading = loadingId === `delete-${originalUsername}`;
+                const isSuccess = successId === `user-${originalUsername}` || successId === `reset-${originalUsername}`;
+                const isError = errorId === `user-${originalUsername}`;
+                const isPassVisible = !!visiblePasswords[originalUsername];
+
+                return (
+                  <div key={originalUsername} className="glass-panel p-5 rounded-2xl border border-football-glassBorder flex flex-col gap-4 hover:border-football-gold/20 transition-all">
+                    <div className="flex justify-between items-center border-b border-white/5 pb-2">
+                      <span className="font-extrabold text-white text-base flex items-center gap-1.5">
+                        👤 {originalUsername}
+                      </span>
+                      {originalUsername !== 'André' && (
+                        <button
+                          onClick={() => handleDeleteUser(originalUsername)}
+                          disabled={isDeleteLoading || isLoading}
+                          className="p-1.5 rounded-lg text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition-colors cursor-pointer"
+                          title="Excluir Conta"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      )}
+                    </div>
+
+                    <div className="flex flex-col gap-3">
+                      <div>
+                        <label className="text-[10px] text-slate-400 uppercase font-bold select-none">Nome de Usuário</label>
+                        <input
+                          type="text"
+                          value={fields.username}
+                          onChange={(e) => handleUserChange(originalUsername, 'username', e.target.value)}
+                          className="w-full mt-1 px-3 py-2 rounded-xl glass-input text-sm focus:border-football-gold transition-all"
+                          disabled={isLoading}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-[10px] text-slate-400 uppercase font-bold select-none">Senha</label>
+                        <div className="relative mt-1">
+                          <input
+                            type={isPassVisible ? "text" : "password"}
+                            value={fields.password}
+                            onChange={(e) => handleUserChange(originalUsername, 'password', e.target.value)}
+                            className="w-full pl-3 pr-10 py-2 rounded-xl glass-input text-sm focus:border-football-gold transition-all"
+                            disabled={isLoading}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => togglePasswordVisibility(originalUsername)}
+                            className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-white cursor-pointer"
+                          >
+                            {isPassVisible ? <EyeOff size={16} /> : <Eye size={16} />}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-2 mt-2">
+                      <button
+                        onClick={() => handleSaveUser(originalUsername)}
+                        disabled={isLoading || isResetLoading || isDeleteLoading}
+                        className={`flex-1 flex items-center justify-center gap-1.5 font-bold py-2 rounded-xl text-xs uppercase transition-all cursor-pointer ${
+                          isSuccess && successId === `user-${originalUsername}`
+                            ? 'bg-emerald-600 text-white shadow shadow-emerald-500/20'
+                            : isError
+                            ? 'bg-rose-600 text-white'
+                            : 'bg-football-gold text-football-darkGreen hover:bg-amber-400 active:scale-95 shadow shadow-amber-500/10'
+                        }`}
+                      >
+                        {isLoading ? (
+                          <RefreshCw size={12} className="animate-spin" />
+                        ) : (
+                          <Save size={12} />
+                        )}
+                        <span>{isSuccess && successId === `user-${originalUsername}` ? 'Salvo!' : 'Salvar'}</span>
+                      </button>
+
+                      <button
+                        onClick={() => handleResetUserPassword(originalUsername)}
+                        disabled={isLoading || isResetLoading || isDeleteLoading}
+                        className={`flex-1 text-xs py-2 rounded-xl border border-football-gold/30 text-football-gold hover:bg-football-gold/10 hover:text-football-brightYellow transition-colors uppercase font-bold cursor-pointer ${
+                          isSuccess && successId === `reset-${originalUsername}` ? 'border-emerald-500 text-emerald-400 bg-emerald-500/10' : ''
+                        }`}
+                      >
+                        {isResetLoading ? "Resetando..." : isSuccess && successId === `reset-${originalUsername}` ? "Resetado!" : "Resetar p/ 123"}
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       )}
     </div>

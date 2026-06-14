@@ -9,7 +9,7 @@ import BracketPredictions from './views/BracketPredictions';
 import Oracle from './views/Oracle';
 import Ranking from './views/Ranking';
 import Admin from './views/Admin';
-import { fetchMatches, fetchGuesses, fetchGroupQualifiers, fetchBracket, fetchOracle, fetchUsers } from './services/api';
+import { fetchMatches, fetchGuesses, fetchGroupQualifiers, fetchBracket, fetchOracle, fetchUsers, updateUser } from './services/api';
 import { Trophy } from 'lucide-react';
 
 export default function App() {
@@ -26,6 +26,14 @@ export default function App() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Estados para as Configurações da Conta
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [settingsUsername, setSettingsUsername] = useState('');
+  const [settingsPassword, setSettingsPassword] = useState('');
+  const [settingsError, setSettingsError] = useState(null);
+  const [settingsSuccess, setSettingsSuccess] = useState(false);
+  const [settingsLoading, setSettingsLoading] = useState(false);
 
   // Carrega sessão de login local
   useEffect(() => {
@@ -82,6 +90,48 @@ export default function App() {
   const handleLogout = () => {
     localStorage.removeItem('bugios_user');
     setCurrentUser(null);
+  };
+
+  const handleOpenSettings = () => {
+    setSettingsUsername(currentUser);
+    setSettingsPassword('');
+    setSettingsError(null);
+    setSettingsSuccess(false);
+    setShowSettingsModal(true);
+  };
+
+  const handleSaveSettings = async (e) => {
+    e.preventDefault();
+    setSettingsError(null);
+    setSettingsSuccess(false);
+    setSettingsLoading(true);
+
+    if (!settingsUsername.trim()) {
+      setSettingsError("O nome de usuário não pode ser vazio.");
+      setSettingsLoading(false);
+      return;
+    }
+
+    try {
+      const result = await updateUser(currentUser, settingsUsername, settingsPassword || null);
+      if (result.success) {
+        if (settingsUsername.trim() !== currentUser) {
+          localStorage.setItem('bugios_user', settingsUsername.trim());
+          setCurrentUser(settingsUsername.trim());
+        }
+        setSettingsSuccess(true);
+        setSettingsPassword('');
+        loadData();
+        setTimeout(() => {
+          setShowSettingsModal(false);
+          setSettingsSuccess(false);
+        }, 1500);
+      }
+    } catch (err) {
+      setSettingsError(err.message || "Erro ao atualizar conta.");
+    } finally {
+      setSettingsLoading(false);
+    }
   };
 
   const renderTabContent = () => {
@@ -181,6 +231,7 @@ export default function App() {
         setActiveTab={setActiveTab}
         currentUser={currentUser}
         onLogout={handleLogout}
+        onOpenSettings={handleOpenSettings}
       />
 
       <main className="flex-grow pb-12">
@@ -212,6 +263,84 @@ export default function App() {
         </div>
         <p>Desenvolvido com orgulho 💚, 💛, 💙 e 🤍 para o melhor grupo de amigos.</p>
       </footer>
+
+      {/* Modal de Configurações da Conta */}
+      {showSettingsModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/65 backdrop-blur-sm animate-fadeIn">
+          <div className="w-full max-w-md glass-panel p-6 rounded-3xl border border-football-glassBorder relative shadow-2xl">
+            <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+              ⚙️ Configurações da Conta
+            </h2>
+
+            {settingsError && (
+              <div className="mb-4 p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs font-semibold text-left">
+                ⚠️ {settingsError}
+              </div>
+            )}
+
+            {settingsSuccess && (
+              <div className="mb-4 p-3 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-semibold text-left">
+                ✅ Alterações salvas com sucesso!
+              </div>
+            )}
+
+            <form onSubmit={handleSaveSettings} className="space-y-4 text-left">
+              <div>
+                <label className="block text-slate-400 text-xs font-bold uppercase tracking-wider mb-1.5 ml-1">
+                  Nome de Usuário
+                </label>
+                <input
+                  type="text"
+                  value={settingsUsername}
+                  onChange={(e) => setSettingsUsername(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl glass-input text-white text-sm focus:border-football-gold transition-all"
+                  placeholder="Nome de usuário"
+                  disabled={settingsLoading || settingsSuccess}
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-400 text-xs font-bold uppercase tracking-wider mb-1.5 ml-1">
+                  Nova Senha (deixe em branco para manter a atual)
+                </label>
+                <input
+                  type="password"
+                  value={settingsPassword}
+                  onChange={(e) => setSettingsPassword(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl glass-input text-white text-sm focus:border-football-gold transition-all"
+                  placeholder="Nova senha"
+                  disabled={settingsLoading || settingsSuccess}
+                />
+              </div>
+
+              <div className="flex gap-2 pt-2">
+                <button
+                  type="submit"
+                  disabled={settingsLoading || settingsSuccess}
+                  className="flex-1 py-3 rounded-xl bg-football-gold text-football-darkGreen font-bold text-sm shadow-lg hover:bg-amber-400 active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-1.5"
+                >
+                  {settingsLoading ? (
+                    <div className="w-4 h-4 border-2 border-football-darkGreen border-t-transparent rounded-full animate-spin"></div>
+                  ) : "Salvar"}
+                </button>
+                
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowSettingsModal(false);
+                    setSettingsError(null);
+                    setSettingsSuccess(false);
+                  }}
+                  disabled={settingsLoading || settingsSuccess}
+                  className="flex-1 py-3 rounded-xl border border-white/10 hover:bg-white/5 text-white font-bold text-sm transition-all cursor-pointer"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

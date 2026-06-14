@@ -446,6 +446,121 @@ export async function registerUser(username, password) {
   }
 }
 
+export async function resetPassword(username, newPassword) {
+  if (isSupabaseEnabled) {
+    const { data, error } = await supabase
+      .from('users')
+      .update({ password: newPassword })
+      .eq('username', username.trim());
+    if (error) throw error;
+    return { success: true, username };
+  } else {
+    const res = await fetch(`${API_BASE}/api/users/reset-password`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, newPassword })
+    });
+    const result = await res.json();
+    if (!res.ok) {
+      throw new Error(result.error || "Erro ao resetar senha.");
+    }
+    return result;
+  }
+}
+
+export async function updateUser(oldUsername, newUsername, newPassword) {
+  const oldTrimmed = oldUsername.trim();
+  const newTrimmed = newUsername ? newUsername.trim() : null;
+
+  if (isSupabaseEnabled) {
+    // Se o nome está mudando, verifica se o novo nome já existe
+    if (newTrimmed && newTrimmed.toLowerCase() !== oldTrimmed.toLowerCase()) {
+      const { data: existing } = await supabase
+        .from('users')
+        .select('username')
+        .eq('username', newTrimmed)
+        .maybeSingle();
+      if (existing) {
+        throw new Error("Este nome de usuário já está em uso.");
+      }
+    }
+
+    const updateData = {};
+    if (newPassword) updateData.password = newPassword;
+    if (newTrimmed) updateData.username = newTrimmed;
+
+    const { error: userError } = await supabase
+      .from('users')
+      .update(updateData)
+      .eq('username', oldTrimmed);
+    if (userError) throw userError;
+
+    // Se o nome mudou, faz o cascade para todas as outras tabelas
+    if (newTrimmed && newTrimmed !== oldTrimmed) {
+      await Promise.all([
+        supabase.from('guesses').update({ user_name: newTrimmed }).eq('user_name', oldTrimmed),
+        supabase.from('group_qualifiers').update({ user_name: newTrimmed }).eq('user_name', oldTrimmed),
+        supabase.from('bracket_guesses').update({ user_name: newTrimmed }).eq('user_name', oldTrimmed),
+        supabase.from('oracle_guesses').update({ user_name: newTrimmed }).eq('user_name', oldTrimmed)
+      ]);
+    }
+
+    return { success: true, username: newTrimmed || oldTrimmed };
+  } else {
+    const res = await fetch(`${API_BASE}/api/users/update`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ oldUsername, newUsername, newPassword })
+    });
+    const result = await res.json();
+    if (!res.ok) {
+      throw new Error(result.error || "Erro ao atualizar conta.");
+    }
+    return result;
+  }
+}
+
+export async function fetchUsersList() {
+  if (isSupabaseEnabled) {
+    const { data, error } = await supabase.from('users').select('username, password');
+    if (error) throw error;
+    return data.map(u => ({ username: u.username, password: u.password }));
+  } else {
+    const res = await fetch(`${API_BASE}/api/admin/users`);
+    if (!res.ok) {
+      throw new Error("Erro ao carregar lista de usuários.");
+    }
+    return await res.json();
+  }
+}
+
+export async function deleteUser(username) {
+  const trimmed = username.trim();
+  if (isSupabaseEnabled) {
+    // Exclui cascateando
+    await Promise.all([
+      supabase.from('guesses').delete().eq('user_name', trimmed),
+      supabase.from('group_qualifiers').delete().eq('user_name', trimmed),
+      supabase.from('bracket_guesses').delete().eq('user_name', trimmed),
+      supabase.from('oracle_guesses').delete().eq('user_name', trimmed)
+    ]);
+    const { error } = await supabase.from('users').delete().eq('username', trimmed);
+    if (error) throw error;
+    return { success: true };
+  } else {
+    const res = await fetch(`${API_BASE}/api/users/delete`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: trimmed })
+    });
+    const result = await res.json();
+    if (!res.ok) {
+      throw new Error(result.error || "Erro ao excluir usuário.");
+    }
+    return result;
+  }
+}
+
 // ==========================================
 // CÁLCULO GERAL DE RANKING DINÂMICO
 // ==========================================

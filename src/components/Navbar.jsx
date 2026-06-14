@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Calendar, Layers, ShieldAlert, Award, LogOut, Menu, X, Trophy, HelpCircle, GitCommit, CheckSquare } from 'lucide-react';
 
-export default function Navbar({ activeTab, setActiveTab, currentUser, onLogout }) {
+export default function Navbar({ activeTab, setActiveTab, currentUser, onLogout, onOpenSettings }) {
   const [isOpen, setIsOpen] = useState(false);
 
   const navItems = [
@@ -63,11 +63,16 @@ export default function Navbar({ activeTab, setActiveTab, currentUser, onLogout 
 
         {/* User Profile & Logout */}
         <div className="hidden lg:flex items-center gap-4">
-          <div className="flex items-center gap-2 select-none">
-            <span className="text-[10px] text-slate-400">Palpitando como</span>
-            <span className="bg-football-gold/10 text-football-gold px-2.5 py-1 rounded-full text-xs font-bold border border-football-gold/30">
-              ⚽ {currentUser}
-            </span>
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] text-slate-400 select-none">Palpitando como</span>
+            <button
+              onClick={onOpenSettings}
+              title="Configurações da Conta"
+              className="bg-football-gold/10 hover:bg-football-gold/20 text-football-gold px-2.5 py-1 rounded-full text-xs font-bold border border-football-gold/30 cursor-pointer flex items-center gap-1.5 transition-all hover:scale-105 active:scale-95"
+            >
+              <span>⚽ {currentUser}</span>
+              <span className="text-[10px] opacity-75">⚙️</span>
+            </button>
           </div>
           <button
             onClick={onLogout}
@@ -80,9 +85,14 @@ export default function Navbar({ activeTab, setActiveTab, currentUser, onLogout 
 
         {/* Mobile menu button */}
         <div className="lg:hidden flex items-center gap-3">
-          <span className="bg-football-gold/10 text-football-gold px-2.5 py-1 rounded-full text-xs font-bold border border-football-gold/25 select-none">
-            ⚽ {currentUser}
-          </span>
+          <button
+            onClick={onOpenSettings}
+            title="Configurações da Conta"
+            className="bg-football-gold/10 hover:bg-football-gold/20 text-football-gold px-2.5 py-1 rounded-full text-xs font-bold border border-football-gold/25 cursor-pointer flex items-center gap-1.5 transition-all active:scale-95"
+          >
+            <span>⚽ {currentUser}</span>
+            <span className="text-[10px] opacity-75">⚙️</span>
+          </button>
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
@@ -113,7 +123,18 @@ export default function Navbar({ activeTab, setActiveTab, currentUser, onLogout 
               </button>
             );
           })}
-          <hr className="border-white/10 my-2" />
+          <hr className="border-white/10 my-1" />
+          <button
+            onClick={() => {
+              onOpenSettings();
+              setIsOpen(false);
+            }}
+            className="flex items-center gap-3 p-3 rounded-xl text-sm font-bold text-football-gold hover:bg-football-gold/10 transition-colors cursor-pointer"
+          >
+            <span className="text-base">⚙️</span>
+            Configurações da Conta
+          </button>
+          <hr className="border-white/10 my-1" />
           <button
             onClick={onLogout}
             className="flex items-center gap-3 p-3 rounded-xl text-sm font-bold text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition-colors cursor-pointer"
