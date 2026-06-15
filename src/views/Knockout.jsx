@@ -91,12 +91,19 @@ export default function Knockout({ matches, guesses, currentUser, onReload }) {
   };
 
   const formatDate = (dateString) => {
-    const date = new Date(dateString);
+    if (!dateString) return '';
+    let formattedString = dateString;
+    const hasTimezone = dateString.endsWith('Z') || /[+-]\d{2}:\d{2}$/.test(dateString);
+    if (!hasTimezone) {
+      formattedString = dateString.includes('T') ? `${dateString}-03:00` : `${dateString}T00:00:00-03:00`;
+    }
+    const date = new Date(formattedString);
     return date.toLocaleDateString('pt-BR', {
       day: '2-digit',
       month: '2-digit',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
+      timeZone: 'America/Sao_Paulo'
     });
   };
 

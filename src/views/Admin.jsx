@@ -6,6 +6,19 @@ import { checkIsPlaceholder } from './Knockout';
 
 export default function Admin({ matches, groupQualifiers, bracketGuesses, oracle, onReload }) {
   const [subTab, setSubTab] = useState('matches'); // matches, groups, bracket, oracle, users
+
+  const formatAdminDate = (dateString) => {
+    if (!dateString) return '';
+    let formattedString = dateString;
+    const hasTimezone = dateString.endsWith('Z') || /[+-]\d{2}:\d{2}$/.test(dateString);
+    if (!hasTimezone) {
+      formattedString = dateString.includes('T') ? `${dateString}-03:00` : `${dateString}T00:00:00-03:00`;
+    }
+    const date = new Date(formattedString);
+    return date.toLocaleString('pt-BR', {
+      timeZone: 'America/Sao_Paulo'
+    });
+  };
   
   // Status de carregamento e sucesso locais
   const [loadingId, setLoadingId] = useState(null);
@@ -456,7 +469,7 @@ export default function Admin({ matches, groupQualifiers, bracketGuesses, oracle
                     </span>
                   </div>
                   <span className="text-xs text-slate-400 mt-1">
-                    📅 {new Date(match.date).toLocaleString('pt-BR')}
+                    📅 {formatAdminDate(match.date)}
                   </span>
                 </div>
 
