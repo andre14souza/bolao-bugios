@@ -10,7 +10,8 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "node src/services/points.test.js"
+    "test": "node src/services/points.test.js",
+    "db:supabase-sync": "node server/update_supabase_matches.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.108.1",
