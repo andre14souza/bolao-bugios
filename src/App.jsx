@@ -39,12 +39,19 @@ export default function App() {
   // Carrega sessão de login local
   useEffect(() => {
     const savedUser = localStorage.getItem('bugios_user');
-    const savedUserId = localStorage.getItem('bugios_user_id');
+    let savedUserId = localStorage.getItem('bugios_user_id');
+    
+    // Limpar string 'null' ou 'undefined' vinda de sessões anteriores
+    if (savedUserId === 'null' || savedUserId === 'undefined') {
+      savedUserId = null;
+      localStorage.removeItem('bugios_user_id');
+    }
+
     if (savedUser) {
       setCurrentUser(savedUser);
       // Fallback para sessões ativas existentes sem ID salvo localmente
-      if (!savedUserId && (savedUser.toLowerCase() === 'andre' || savedUser === 'André')) {
-        setCurrentUserId(1);
+      if (!savedUserId && (savedUser.toLowerCase().trim() === 'andre' || savedUser === 'André')) {
+        savedUserId = '1';
         localStorage.setItem('bugios_user_id', '1');
       }
     }
@@ -52,6 +59,9 @@ export default function App() {
       setCurrentUserId(Number(savedUserId));
     }
   }, []);
+
+  // Definição de Admin com fallback de username caso o ID ainda não tenha carregado do local storage
+  const isAdmin = currentUserId === 1 || (!currentUserId && currentUser && (currentUser.toLowerCase().trim() === 'andre' || currentUser === 'André'));
 
   // Orquestração de carregamento assíncrono paralelo
   const loadData = async () => {
@@ -217,7 +227,7 @@ export default function App() {
           />
         );
       case 'admin':
-        if (currentUserId !== 1) {
+        if (!isAdmin) {
           setActiveTab('daily');
           return null;
         }
@@ -245,7 +255,7 @@ export default function App() {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         currentUser={currentUser}
-        currentUserId={currentUserId}
+        isAdmin={isAdmin}
         onLogout={handleLogout}
         onOpenSettings={handleOpenSettings}
       />
