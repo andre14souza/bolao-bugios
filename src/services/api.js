@@ -576,7 +576,8 @@ export function computeRanking(users, matches, guesses, groupQualifiersData = {}
     oraclePoints: 0,
     exactMatches: 0, // Mosca
     winnerMatches: 0, // Vencedor/Saldo/Empate
-    totalGuesses: 0
+    totalGuesses: 0,
+    penaltyPoints: 0
   }));
 
   // 1. Pontos das partidas individuais (placar por aproximação)
@@ -707,6 +708,14 @@ export function computeRanking(users, matches, guesses, groupQualifiersData = {}
       
       userRank.oraclePoints += pts;
       userRank.points += pts;
+    }
+  });
+
+  // Aplica as penalidades se houverem
+  ranking.forEach(r => {
+    if (r.user === "Victor") {
+      r.penaltyPoints = 5;
+      r.points -= 5;
     }
   });
 

@@ -130,6 +130,14 @@ export default function Ranking({ users, matches, guesses, groupQualifiers, brac
                         </span>
                         {isFirst && <span className="text-lg animate-pulse" title="Líder do Bolão">👑</span>}
                         {isLast && <span className="text-lg" title="Lanterna - Tartaruga">🐢</span>}
+                        {row.penaltyPoints > 0 && (
+                          <span 
+                            className="bg-rose-500/20 text-rose-300 border border-rose-500/30 px-2 py-0.5 rounded text-[10px] font-bold"
+                            title="Penalidade aplicada"
+                          >
+                            -{row.penaltyPoints} pts ⚠️
+                          </span>
+                        )}
                       </div>
                     </td>
 
@@ -174,6 +182,22 @@ export default function Ranking({ users, matches, guesses, groupQualifiers, brac
           </table>
         </div>
       </div>
+
+      {/* Penalidades / Advertências */}
+      {ranking.some(r => r.penaltyPoints > 0) && (
+        <div className="mt-6 p-5 rounded-3xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs select-none">
+          <h4 className="font-extrabold text-sm text-rose-400 mb-2 flex items-center gap-1.5">
+            <span>⚠️</span> Penalidades Aplicadas
+          </h4>
+          <ul className="list-disc pl-4 space-y-1">
+            {ranking.filter(r => r.penaltyPoints > 0).map(r => (
+              <li key={r.user}>
+                O usuário <strong>{r.user}</strong> sofreu uma redução de <strong>{r.penaltyPoints} pontos</strong> por irregularidade em palpite de empate.
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {/* Regras e Pontuações */}
       <div className="mt-8 glass-panel p-6 rounded-3xl border border-football-glassBorder select-none">
