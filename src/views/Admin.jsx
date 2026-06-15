@@ -9,11 +9,12 @@ export default function Admin({ matches, groupQualifiers, bracketGuesses, oracle
 
   const formatAdminDate = (dateString) => {
     if (!dateString) return '';
-    let formattedString = dateString;
-    const hasTimezone = dateString.endsWith('Z') || /[+-]\d{2}:\d{2}$/.test(dateString);
-    if (!hasTimezone) {
-      formattedString = dateString.includes('T') ? `${dateString}-03:00` : `${dateString}T00:00:00-03:00`;
+    let cleanDate = dateString;
+    const tIndex = dateString.indexOf('T');
+    if (tIndex !== -1) {
+      cleanDate = dateString.substring(0, tIndex + 9);
     }
+    const formattedString = cleanDate.includes('T') ? `${cleanDate}-03:00` : `${cleanDate}T00:00:00-03:00`;
     const date = new Date(formattedString);
     return date.toLocaleString('pt-BR', {
       timeZone: 'America/Sao_Paulo'
