@@ -714,8 +714,8 @@ export function computeRanking(users, matches, guesses, groupQualifiersData = {}
   // Aplica as penalidades se houverem
   ranking.forEach(r => {
     if (r.user === "Victor") {
-      r.penaltyPoints = 5;
-      r.points -= 5;
+      r.penaltyPoints = 10;
+      r.points -= 10;
     }
   });
 
