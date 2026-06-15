@@ -1057,14 +1057,14 @@
       "updatedAt": "2026-06-11T03:04:47.224Z"
     },
     {
-      "user": "André",
+      "user": "andre",
       "matchId": "1",
       "homeScore": 2,
       "awayScore": 0,
       "updatedAt": "2026-06-11T03:05:00.837Z"
     },
     {
-      "user": "André",
+      "user": "andre",
       "matchId": "2",
       "homeScore": 1,
       "awayScore": 1,
@@ -1099,14 +1099,14 @@
       "updatedAt": "2026-06-11T22:25:25.208Z"
     },
     {
-      "user": "André",
+      "user": "andre",
       "matchId": "7",
       "homeScore": 1,
       "awayScore": 0,
       "updatedAt": "2026-06-12T16:54:28.615Z"
     },
     {
-      "user": "André",
+      "user": "andre",
       "matchId": "19",
       "homeScore": 2,
       "awayScore": 1,
@@ -1238,18 +1238,22 @@
   },
   "users": [
     {
-      "username": "André",
+      "id": 1,
+      "username": "andre",
       "password": "123"
     },
     {
+      "id": 2,
       "username": "Maicon",
       "password": "123"
     },
     {
+      "id": 3,
       "username": "Brenno",
       "password": "123"
     },
     {
+      "id": 4,
       "username": "Victor",
       "password": "123"
     }

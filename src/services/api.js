@@ -396,7 +396,7 @@ export async function loginUser(username, password) {
     if (!data || data.password !== password) {
       throw new Error("Usuário ou senha incorretos.");
     }
-    return data.username;
+    return { username: data.username, id: data.id };
   } else {
     const res = await fetch(`${API_BASE}/api/login`, {
       method: 'POST',
@@ -407,7 +407,7 @@ export async function loginUser(username, password) {
     if (!res.ok) {
       throw new Error(result.error || "Erro ao fazer login.");
     }
-    return result.username;
+    return { username: result.username, id: result.id };
   }
 }
 
@@ -522,9 +522,9 @@ export async function updateUser(oldUsername, newUsername, newPassword) {
 
 export async function fetchUsersList() {
   if (isSupabaseEnabled) {
-    const { data, error } = await supabase.from('users').select('username, password');
+    const { data, error } = await supabase.from('users').select('id, username, password');
     if (error) throw error;
-    return data.map(u => ({ username: u.username, password: u.password }));
+    return data.map(u => ({ id: u.id, username: u.username, password: u.password }));
   } else {
     const res = await fetch(`${API_BASE}/api/admin/users`);
     if (!res.ok) {

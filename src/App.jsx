@@ -14,6 +14,7 @@ import { Trophy } from 'lucide-react';
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState(null);
+  const [currentUserId, setCurrentUserId] = useState(null);
   const [activeTab, setActiveTab] = useState('daily');
   
   // Estados para dados integrados
@@ -38,8 +39,12 @@ export default function App() {
   // Carrega sessão de login local
   useEffect(() => {
     const savedUser = localStorage.getItem('bugios_user');
+    const savedUserId = localStorage.getItem('bugios_user_id');
     if (savedUser) {
       setCurrentUser(savedUser);
+    }
+    if (savedUserId) {
+      setCurrentUserId(Number(savedUserId));
     }
   }, []);
 
@@ -81,15 +86,20 @@ export default function App() {
     loadData();
   }, []);
 
-  const handleLogin = (username) => {
+  const handleLogin = (userObj) => {
+    const { username, id } = userObj;
     localStorage.setItem('bugios_user', username);
+    localStorage.setItem('bugios_user_id', id);
     setCurrentUser(username);
+    setCurrentUserId(id);
     setActiveTab('daily');
   };
 
   const handleLogout = () => {
     localStorage.removeItem('bugios_user');
+    localStorage.removeItem('bugios_user_id');
     setCurrentUser(null);
+    setCurrentUserId(null);
   };
 
   const handleOpenSettings = () => {
@@ -202,7 +212,7 @@ export default function App() {
           />
         );
       case 'admin':
-        if (currentUser !== 'André') {
+        if (currentUserId !== 1) {
           setActiveTab('daily');
           return null;
         }
@@ -230,6 +240,7 @@ export default function App() {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         currentUser={currentUser}
+        currentUserId={currentUserId}
         onLogout={handleLogout}
         onOpenSettings={handleOpenSettings}
       />

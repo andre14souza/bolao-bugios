@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Calendar, Layers, ShieldAlert, Award, LogOut, Menu, X, Trophy, HelpCircle, GitCommit, CheckSquare } from 'lucide-react';
 
-export default function Navbar({ activeTab, setActiveTab, currentUser, onLogout, onOpenSettings }) {
+export default function Navbar({ activeTab, setActiveTab, currentUser, currentUserId, onLogout, onOpenSettings }) {
   const [isOpen, setIsOpen] = useState(false);
 
   const navItems = [
@@ -14,8 +14,8 @@ export default function Navbar({ activeTab, setActiveTab, currentUser, onLogout,
     { id: 'ranking', label: 'Ranking', icon: Award },
   ];
 
-  // André é o organizador/administrador
-  const isAdmin = currentUser === 'André';
+  // André é o organizador/administrador (ID 1)
+  const isAdmin = currentUserId === 1;
 
   if (isAdmin) {
     navItems.push({ id: 'admin', label: 'Admin ⚙️', icon: ShieldAlert });

@@ -910,7 +910,7 @@ export default function Admin({ matches, groupQualifiers, bracketGuesses, oracle
                       <span className="font-extrabold text-white text-base flex items-center gap-1.5">
                         👤 {originalUsername}
                       </span>
-                      {originalUsername !== 'André' && (
+                      {user.id !== 1 && originalUsername !== 'André' && originalUsername !== 'andre' && (
                         <button
                           onClick={() => handleDeleteUser(originalUsername)}
                           disabled={isDeleteLoading || isLoading}

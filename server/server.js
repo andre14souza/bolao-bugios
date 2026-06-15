@@ -59,10 +59,10 @@ const initDB = () => {
 
   if (!db.users || db.users.length === 0) {
     db.users = [
-      { username: "André", password: "123" },
-      { username: "Maicon", password: "123" },
-      { username: "Brenno", password: "123" },
-      { username: "Victor", password: "123" }
+      { id: 1, username: "andre", password: "123" },
+      { id: 2, username: "Maicon", password: "123" },
+      { id: 3, username: "Brenno", password: "123" },
+      { id: 4, username: "Victor", password: "123" }
     ];
     modified = true;
   } else {
@@ -73,6 +73,65 @@ const initDB = () => {
       modified = true;
     }
   }
+
+  // Renomear "André" para "andre" em cascata se existir no DB
+  db.users.forEach(u => {
+    if (u.username === "André") {
+      u.username = "andre";
+      modified = true;
+    }
+  });
+
+  if (db.guesses) {
+    db.guesses.forEach(g => {
+      if (g.user === "André") {
+        g.user = "andre";
+        modified = true;
+      }
+    });
+  }
+
+  if (db.groupQualifiers) {
+    db.groupQualifiers.forEach(g => {
+      if (g.user === "André") {
+        g.user = "andre";
+        modified = true;
+      }
+    });
+  }
+
+  if (db.bracketGuesses) {
+    db.bracketGuesses.forEach(b => {
+      if (b.user === "André") {
+        b.user = "andre";
+        modified = true;
+      }
+    });
+  }
+
+  if (db.oracle) {
+    db.oracle.forEach(o => {
+      if (o.user === "André") {
+        o.user = "andre";
+        modified = true;
+      }
+    });
+  }
+
+  // Garantir que todos os usuários tenham um ID
+  let maxId = 0;
+  db.users.forEach(u => {
+    if (u.id && u.id > maxId) {
+      maxId = u.id;
+    }
+  });
+  db.users.forEach(u => {
+    if (!u.id) {
+      maxId += 1;
+      u.id = maxId;
+      modified = true;
+    }
+  });
 
   // Limpar outros dados associados a estes usuários se existirem
   const excluded = ['charles', 'eduardo', 'paulo'];
@@ -118,7 +177,8 @@ app.post('/api/register', (req, res) => {
     return res.status(400).json({ error: "Este usuário já existe." });
   }
 
-  db.users.push({ username: trimmedUser, password });
+  const nextId = db.users.length > 0 ? Math.max(...db.users.map(u => u.id || 0)) + 1 : 1;
+  db.users.push({ id: nextId, username: trimmedUser, password });
   writeDB(db);
   res.json({ success: true });
 });
@@ -135,7 +195,7 @@ app.post('/api/login', (req, res) => {
   if (!user) {
     return res.status(401).json({ error: "Usuário ou senha incorretos." });
   }
-  res.json({ success: true, username: user.username });
+  res.json({ success: true, username: user.username, id: user.id });
 });
 
 app.get('/api/users', (req, res) => {
@@ -227,7 +287,7 @@ app.post('/api/users/update', (req, res) => {
   }
 
   writeDB(db);
-  res.json({ success: true, username: user.username });
+  res.json({ success: true, username: user.username, id: user.id });
 });
 
 // Rota para o Admin listar todas as contas com suas senhas
@@ -235,6 +295,7 @@ app.get('/api/admin/users', (req, res) => {
   const db = readDB();
   if (!db.users) db.users = [];
   res.json(db.users.map(u => ({
+    id: u.id,
     username: u.username,
     password: u.password
   })));

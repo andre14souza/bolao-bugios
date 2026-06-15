@@ -6,6 +6,7 @@
 -- 1. Criação das Tabelas
 
 CREATE TABLE IF NOT EXISTS users (
+    id SERIAL UNIQUE,
     username TEXT PRIMARY KEY,
     password TEXT NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
@@ -117,7 +118,7 @@ TRUNCATE TABLE users CASCADE;
 
 -- 2. Inserir Usuários Iniciais
 INSERT INTO users (username, password) VALUES
-('André', '123'),
+('andre', '123'),
 ('Maicon', '123'),
 ('Brenno', '123'),
 ('Victor', '123');
@@ -234,14 +235,14 @@ INSERT INTO matches (id, home_team, away_team, home_score, away_score, date, sta
 INSERT INTO guesses (user_name, match_id, guess_home, guess_away) VALUES
 ('Brenno', 1, 2, 0),
 ('Brenno', 2, 2, 0),
-('André', 1, 2, 0),
-('André', 2, 1, 1),
+('andre', 1, 2, 0),
+('andre', 2, 1, 1),
 ('Maicon', 1, 1, 0),
 ('Maicon', 2, 2, 1),
 ('Victor', 1, 2, 0),
 ('Victor', 2, 1, 2),
-('André', 7, 1, 0),
-('André', 19, 2, 1),
+('andre', 7, 1, 0),
+('andre', 19, 2, 1),
 ('Brenno', 7, 2, 0),
 ('Brenno', 19, 0, 1),
 ('Maicon', 7, 2, 0),
