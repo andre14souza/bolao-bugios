@@ -42,6 +42,11 @@ export default function App() {
     const savedUserId = localStorage.getItem('bugios_user_id');
     if (savedUser) {
       setCurrentUser(savedUser);
+      // Fallback para sessões ativas existentes sem ID salvo localmente
+      if (!savedUserId && (savedUser.toLowerCase() === 'andre' || savedUser === 'André')) {
+        setCurrentUserId(1);
+        localStorage.setItem('bugios_user_id', '1');
+      }
     }
     if (savedUserId) {
       setCurrentUserId(Number(savedUserId));
