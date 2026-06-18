@@ -26,7 +26,7 @@
       "awayTeam": "África do Sul",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-06-18T17:00:00",
+      "date": "2026-06-18T20:00:00",
       "stage": "group",
       "group": "Grupo A"
     },
@@ -36,7 +36,7 @@
       "awayTeam": "Coreia do Sul",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-06-18T20:00:00",
+      "date": "2026-06-18T23:00:00",
       "stage": "group",
       "group": "Grupo A"
     },
@@ -46,7 +46,7 @@
       "awayTeam": "México",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-06-24T17:00:00",
+      "date": "2026-06-24T21:00:00",
       "stage": "group",
       "group": "Grupo A"
     },
@@ -86,7 +86,7 @@
       "awayTeam": "Bósnia e Herzegovina",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-06-18T17:00:00",
+      "date": "2026-06-18T20:00:00",
       "stage": "group",
       "group": "Grupo B"
     },
@@ -96,7 +96,7 @@
       "awayTeam": "Catar",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-06-18T20:00:00",
+      "date": "2026-06-18T23:00:00",
       "stage": "group",
       "group": "Grupo B"
     },
@@ -106,7 +106,7 @@
       "awayTeam": "Canadá",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-06-24T17:00:00",
+      "date": "2026-06-24T21:00:00",
       "stage": "group",
       "group": "Grupo B"
     },
@@ -146,7 +146,7 @@
       "awayTeam": "Marrocos",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-06-19T14:00:00",
+      "date": "2026-06-19T17:00:00",
       "stage": "group",
       "group": "Grupo C"
     },
@@ -156,7 +156,7 @@
       "awayTeam": "Haiti",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-06-19T17:00:00",
+      "date": "2026-06-19T20:00:00",
       "stage": "group",
       "group": "Grupo C"
     },
@@ -166,7 +166,7 @@
       "awayTeam": "Brasil",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-06-24T17:00:00",
+      "date": "2026-06-24T21:00:00",
       "stage": "group",
       "group": "Grupo C"
     },
@@ -206,7 +206,7 @@
       "awayTeam": "Austrália",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-06-19T20:00:00",
+      "date": "2026-06-19T23:00:00",
       "stage": "group",
       "group": "Grupo D"
     },
@@ -216,7 +216,7 @@
       "awayTeam": "Paraguai",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-06-20T14:00:00",
+      "date": "2026-06-20T17:00:00",
       "stage": "group",
       "group": "Grupo D"
     },
@@ -226,7 +226,7 @@
       "awayTeam": "Estados Unidos",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-06-25T17:00:00",
+      "date": "2026-06-25T21:00:00",
       "stage": "group",
       "group": "Grupo D"
     },
@@ -266,7 +266,7 @@
       "awayTeam": "Costa do Marfim",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-06-20T17:00:00",
+      "date": "2026-06-20T20:00:00",
       "stage": "group",
       "group": "Grupo E"
     },
@@ -276,7 +276,7 @@
       "awayTeam": "Curaçao",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-06-20T20:00:00",
+      "date": "2026-06-20T23:00:00",
       "stage": "group",
       "group": "Grupo E"
     },
@@ -286,7 +286,7 @@
       "awayTeam": "Alemanha",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-06-25T17:00:00",
+      "date": "2026-06-25T21:00:00",
       "stage": "group",
       "group": "Grupo E"
     },
@@ -326,7 +326,7 @@
       "awayTeam": "Suécia",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-06-20T23:00:00",
+      "date": "2026-06-21T01:00:00",
       "stage": "group",
       "group": "Grupo F"
     },
@@ -336,7 +336,7 @@
       "awayTeam": "Japão",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-06-21T14:00:00",
+      "date": "2026-06-21T17:00:00",
       "stage": "group",
       "group": "Grupo F"
     },
@@ -346,7 +346,7 @@
       "awayTeam": "Suécia",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-06-25T17:00:00",
+      "date": "2026-06-25T21:00:00",
       "stage": "group",
       "group": "Grupo F"
     },
@@ -386,7 +386,7 @@
       "awayTeam": "Irã",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-06-21T17:00:00",
+      "date": "2026-06-21T20:00:00",
       "stage": "group",
       "group": "Grupo G"
     },
@@ -396,7 +396,7 @@
       "awayTeam": "Egito",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-06-21T20:00:00",
+      "date": "2026-06-21T23:00:00",
       "stage": "group",
       "group": "Grupo G"
     },
@@ -406,7 +406,7 @@
       "awayTeam": "Irã",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-06-27T17:00:00",
+      "date": "2026-06-27T21:00:00",
       "stage": "group",
       "group": "Grupo G"
     },
@@ -446,7 +446,7 @@
       "awayTeam": "Arábia Saudita",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-06-21T23:00:00",
+      "date": "2026-06-22T01:00:00",
       "stage": "group",
       "group": "Grupo H"
     },
@@ -466,7 +466,7 @@
       "awayTeam": "Arábia Saudita",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-06-26T17:00:00",
+      "date": "2026-06-26T21:00:00",
       "stage": "group",
       "group": "Grupo H"
     },
@@ -506,7 +506,7 @@
       "awayTeam": "Iraque",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-06-22T17:00:00",
+      "date": "2026-06-22T20:00:00",
       "stage": "group",
       "group": "Grupo I"
     },
@@ -516,7 +516,7 @@
       "awayTeam": "Senegal",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-06-22T20:00:00",
+      "date": "2026-06-22T23:00:00",
       "stage": "group",
       "group": "Grupo I"
     },
@@ -526,7 +526,7 @@
       "awayTeam": "França",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-06-26T17:00:00",
+      "date": "2026-06-26T21:00:00",
       "stage": "group",
       "group": "Grupo I"
     },
@@ -566,7 +566,7 @@
       "awayTeam": "Áustria",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-06-22T23:00:00",
+      "date": "2026-06-23T01:00:00",
       "stage": "group",
       "group": "Grupo J"
     },
@@ -576,7 +576,7 @@
       "awayTeam": "Argélia",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-06-23T14:00:00",
+      "date": "2026-06-23T17:00:00",
       "stage": "group",
       "group": "Grupo J"
     },
@@ -586,7 +586,7 @@
       "awayTeam": "Áustria",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-06-27T17:00:00",
+      "date": "2026-06-27T21:00:00",
       "stage": "group",
       "group": "Grupo J"
     },
@@ -626,7 +626,7 @@
       "awayTeam": "Uzbequistão",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-06-23T17:00:00",
+      "date": "2026-06-23T20:00:00",
       "stage": "group",
       "group": "Grupo K"
     },
@@ -636,7 +636,7 @@
       "awayTeam": "RD Congo",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-06-23T20:00:00",
+      "date": "2026-06-23T23:00:00",
       "stage": "group",
       "group": "Grupo K"
     },
@@ -646,7 +646,7 @@
       "awayTeam": "Portugal",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-06-27T17:00:00",
+      "date": "2026-06-27T21:00:00",
       "stage": "group",
       "group": "Grupo K"
     },
@@ -686,7 +686,7 @@
       "awayTeam": "Gana",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-06-23T23:00:00",
+      "date": "2026-06-24T01:00:00",
       "stage": "group",
       "group": "Grupo L"
     },
@@ -706,7 +706,7 @@
       "awayTeam": "Inglaterra",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-06-27T17:00:00",
+      "date": "2026-06-27T21:00:00",
       "stage": "group",
       "group": "Grupo L"
     },
@@ -806,7 +806,7 @@
       "awayTeam": "16-avos (Fora #9)",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-07-02T14:00:00",
+      "date": "2026-07-02T17:00:00",
       "stage": "knockout",
       "group": "16-avos de Final"
     },
@@ -836,7 +836,7 @@
       "awayTeam": "16-avos (Fora #12)",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-07-03T14:00:00",
+      "date": "2026-07-03T17:00:00",
       "stage": "knockout",
       "group": "16-avos de Final"
     },
