@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Save, Lock, Check, Clock, AlertCircle } from 'lucide-react';
 import { saveGuess } from '../services/api';
-import { calculateMatchScore } from '../services/points';
+import { calculateMatchScore, isMatchTimeOver } from '../services/points';
 import { checkIsPlaceholder } from './Knockout';
 
 import { TEAM_FLAGS } from '../services/flags';
@@ -51,8 +51,8 @@ export default function DailyMatches({ matches, guesses, currentUser, onReload }
       // Save all non-empty modified guesses
       const promises = Object.entries(localGuesses).map(async ([matchId, scores]) => {
         const match = matches.find(m => String(m.id) === String(matchId));
-        // Don't save if match already has score (locked) or is locked by admin
-        if (match && (match.locked || (match.homeScore !== null && match.awayScore !== null))) {
+        // Don't save if match already has score (locked), is locked by admin, or has started
+        if (match && (match.locked || isMatchTimeOver(match.date) || (match.homeScore !== null && match.awayScore !== null))) {
           return;
         }
         // Don't save if match is an undefined placeholder matchup
@@ -112,7 +112,7 @@ export default function DailyMatches({ matches, guesses, currentUser, onReload }
 
   const renderMatchCard = (match) => {
     const guess = localGuesses[match.id] || { homeScore: '', awayScore: '' };
-    const isLocked = match.locked || (match.homeScore !== null && match.awayScore !== null);
+    const isLocked = match.locked || isMatchTimeOver(match.date) || (match.homeScore !== null && match.awayScore !== null);
     const hasResult = match.homeScore !== null && match.awayScore !== null;
     
     const isPlaceholder = checkIsPlaceholder(match.homeTeam) || checkIsPlaceholder(match.awayTeam);

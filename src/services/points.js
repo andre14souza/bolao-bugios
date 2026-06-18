@@ -61,3 +61,20 @@ export function calculateMatchScore(guessHome, guessAway, realHome, realAway) {
 
   return { points: 0, isExact: false, isWinner: false, isDiff: false };
 }
+
+/**
+ * Verifica se o horário de início da partida já passou (considerando o fuso de Brasília).
+ * @param {string} dateString Horário da partida no formato YYYY-MM-DDTHH:mm:ss
+ * @returns {boolean}
+ */
+export function isMatchTimeOver(dateString) {
+  if (!dateString) return false;
+  let cleanDate = dateString;
+  const tIndex = dateString.indexOf('T');
+  if (tIndex !== -1) {
+    cleanDate = dateString.substring(0, tIndex + 9);
+  }
+  const formattedString = cleanDate.includes('T') ? `${cleanDate}-03:00` : `${cleanDate}T00:00:00-03:00`;
+  const matchTime = new Date(formattedString);
+  return new Date() >= matchTime;
+}

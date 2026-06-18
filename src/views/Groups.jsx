@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Save, Check, AlertCircle, Clock, Lock } from 'lucide-react';
 import { saveGuess } from '../services/api';
 import { TEAM_FLAGS } from './DailyMatches';
-import { calculateMatchScore } from '../services/points';
+import { calculateMatchScore, isMatchTimeOver } from '../services/points';
 
 export default function Groups({ matches, guesses, currentUser, onReload }) {
   const groupMatches = matches.filter(m => m.stage === 'group');
@@ -49,7 +49,7 @@ export default function Groups({ matches, guesses, currentUser, onReload }) {
     try {
       const promises = Object.entries(localGuesses).map(async ([matchId, scores]) => {
         const match = matches.find(m => String(m.id) === String(matchId));
-        if (match && (match.locked || (match.homeScore !== null && match.awayScore !== null))) {
+        if (match && (match.locked || isMatchTimeOver(match.date) || (match.homeScore !== null && match.awayScore !== null))) {
           return;
         }
         const home = scores.homeScore;
@@ -155,7 +155,7 @@ export default function Groups({ matches, guesses, currentUser, onReload }) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {filteredMatches.map(match => {
             const guess = localGuesses[match.id] || { homeScore: '', awayScore: '' };
-            const isLocked = match.locked || (match.homeScore !== null && match.awayScore !== null);
+            const isLocked = match.locked || isMatchTimeOver(match.date) || (match.homeScore !== null && match.awayScore !== null);
             const hasResult = match.homeScore !== null && match.awayScore !== null;
             
             let pointsEarned = null;

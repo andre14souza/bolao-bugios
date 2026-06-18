@@ -401,10 +401,25 @@ app.post('/api/guesses', (req, res) => {
   const { user, matchId, homeScore, awayScore } = req.body;
   const db = readDB();
 
-  // Verificar se a partida está bloqueada
+  // Verificar se a partida está bloqueada ou já começou
   const match = db.matches.find(m => String(m.id) === String(matchId));
-  if (match && match.locked) {
-    return res.status(403).json({ error: "Esta partida já começou! Palpites bloqueados." });
+  if (match) {
+    let isLocked = !!match.locked;
+    if (match.date) {
+      let cleanDate = match.date;
+      const tIndex = match.date.indexOf('T');
+      if (tIndex !== -1) {
+        cleanDate = match.date.substring(0, tIndex + 9);
+      }
+      const formattedString = cleanDate.includes('T') ? `${cleanDate}-03:00` : `${cleanDate}T00:00:00-03:00`;
+      const matchTime = new Date(formattedString);
+      if (new Date() >= matchTime) {
+        isLocked = true;
+      }
+    }
+    if (isLocked) {
+      return res.status(403).json({ error: "Esta partida já começou! Palpites bloqueados." });
+    }
   }
 
   const guessIndex = db.guesses.findIndex(g => g.user === user && g.matchId === matchId);

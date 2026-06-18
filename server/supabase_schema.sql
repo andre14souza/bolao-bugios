@@ -277,3 +277,31 @@ INSERT INTO bracket_results (id, oitavas, quartas, semis, finalists, champion) V
 INSERT INTO oracle_results (id, champion, top_scorer, best_attack, zebra, first_red_card, deception, most_goals_match) VALUES
 (1, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
+
+-- 11. Triggers de Trava de Palpites (Segurança do Banco de Dados)
+CREATE OR REPLACE FUNCTION check_guess_lock()
+RETURNS TRIGGER AS $$
+DECLARE
+    match_date TIMESTAMP WITH TIME ZONE;
+    match_locked BOOLEAN;
+BEGIN
+    -- Obter a data e o status de bloqueio da partida
+    SELECT date, locked INTO match_date, match_locked
+    FROM matches
+    WHERE id = NEW.match_id;
+
+    -- Verificar se a partida já começou ou se foi travada pelo admin
+    IF match_locked = TRUE OR (match_date IS NOT NULL AND NOW() >= match_date) THEN
+        RAISE EXCEPTION 'Esta partida já começou! Palpites bloqueados.';
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER trg_check_guess_lock
+BEFORE INSERT OR UPDATE ON guesses
+FOR EACH ROW
+EXECUTE FUNCTION check_guess_lock();
+
+
