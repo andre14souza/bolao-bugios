@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Save, Check, AlertCircle, Clock } from 'lucide-react';
+import { Save, Check, AlertCircle, Clock, Lock } from 'lucide-react';
 import { saveGuess } from '../services/api';
 import { TEAM_FLAGS } from './DailyMatches';
 import { calculateMatchScore } from '../services/points';
@@ -49,7 +49,7 @@ export default function Groups({ matches, guesses, currentUser, onReload }) {
     try {
       const promises = Object.entries(localGuesses).map(async ([matchId, scores]) => {
         const match = matches.find(m => String(m.id) === String(matchId));
-        if (match && match.homeScore !== null && match.awayScore !== null) {
+        if (match && (match.locked || (match.homeScore !== null && match.awayScore !== null))) {
           return;
         }
         const home = scores.homeScore;
@@ -155,13 +155,14 @@ export default function Groups({ matches, guesses, currentUser, onReload }) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {filteredMatches.map(match => {
             const guess = localGuesses[match.id] || { homeScore: '', awayScore: '' };
-            const isLocked = match.homeScore !== null && match.awayScore !== null;
+            const isLocked = match.locked || (match.homeScore !== null && match.awayScore !== null);
+            const hasResult = match.homeScore !== null && match.awayScore !== null;
             
             let pointsEarned = null;
             let pointsBadgeColor = '';
             let pointsText = '';
 
-            if (isLocked) {
+            if (hasResult) {
               const dbGuess = guesses.find(g => g.user === currentUser && String(g.matchId) === String(match.id));
               if (dbGuess) {
                 const scoreResult = calculateMatchScore(dbGuess.homeScore, dbGuess.awayScore, match.homeScore, match.awayScore);
@@ -257,7 +258,7 @@ export default function Groups({ matches, guesses, currentUser, onReload }) {
                 </div>
 
                 {/* Resultado ou palpites salvos */}
-                {isLocked ? (
+                {hasResult ? (
                   <div className="mt-4 pt-3 border-t border-white/5 flex flex-col gap-2">
                     <div className="flex justify-between items-center text-xs">
                       <span className="text-slate-400">Resultado Real:</span>
@@ -268,6 +269,11 @@ export default function Groups({ matches, guesses, currentUser, onReload }) {
                     <div className={`text-center py-1.5 px-3 rounded-lg text-xs font-bold ${pointsBadgeColor}`}>
                       {pointsText}
                     </div>
+                  </div>
+                ) : isLocked ? (
+                  <div className="mt-4 pt-3 border-t border-rose-500/20 flex items-center justify-center gap-2 text-xs text-rose-400 font-bold">
+                    <Lock size={12} />
+                    <span>Palpites encerrados — partida em andamento</span>
                   </div>
                 ) : (
                   <div className="mt-4 pt-3 border-t border-football-glassBorder flex items-center justify-between text-xs text-slate-400">

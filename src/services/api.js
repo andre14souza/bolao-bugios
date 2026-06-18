@@ -25,7 +25,8 @@ export async function fetchMatches() {
       awayScore: m.away_score,
       date: m.date,
       stage: m.stage,
-      group: m.group_name
+      group: m.group_name,
+      locked: m.locked || false
     }));
   } else {
     const res = await fetch(`${API_BASE}/api/matches`);
