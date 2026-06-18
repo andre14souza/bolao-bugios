@@ -51,8 +51,8 @@ export default function DailyMatches({ matches, guesses, currentUser, onReload }
       // Save all non-empty modified guesses
       const promises = Object.entries(localGuesses).map(async ([matchId, scores]) => {
         const match = matches.find(m => String(m.id) === String(matchId));
-        // Don't save if match already has score (locked)
-        if (match && match.homeScore !== null && match.awayScore !== null) {
+        // Don't save if match already has score (locked) or is locked by admin
+        if (match && (match.locked || (match.homeScore !== null && match.awayScore !== null))) {
           return;
         }
         // Don't save if match is an undefined placeholder matchup
@@ -112,15 +112,17 @@ export default function DailyMatches({ matches, guesses, currentUser, onReload }
 
   const renderMatchCard = (match) => {
     const guess = localGuesses[match.id] || { homeScore: '', awayScore: '' };
-    const isLocked = match.homeScore !== null && match.awayScore !== null;
-    const isPlaceholder = checkIsPlaceholder(match.homeTeam) || checkIsPlaceholder(match.awayTeam);
+    const isLocked = match.locked || (match.homeScore !== null && match.awayScore !== null);
+    const hasResult = match.homeScore !== null && match.awayScore !== null;
     
-    // Calculate points earned if locked
+    const isPlaceholder = checkIsPlaceholder(match.homeTeam) || checkIsPlaceholder(match.awayTeam);
+
+    // Calculate points earned if match has a real result
     let pointsEarned = null;
     let pointsBadgeColor = '';
     let pointsText = '';
 
-    if (isLocked) {
+    if (hasResult) {
       const dbGuess = guesses.find(g => g.user === currentUser && String(g.matchId) === String(match.id));
       if (dbGuess) {
         const scoreResult = calculateMatchScore(dbGuess.homeScore, dbGuess.awayScore, match.homeScore, match.awayScore);
@@ -224,7 +226,7 @@ export default function DailyMatches({ matches, guesses, currentUser, onReload }
         </div>
 
         {/* Results / Points Earned footer */}
-        {isLocked ? (
+        {hasResult ? (
           <div className="mt-4 pt-3 border-t border-white/5 flex flex-col gap-2">
             <div className="flex justify-between items-center text-xs">
               <span className="text-slate-400">Resultado Real:</span>
@@ -235,6 +237,11 @@ export default function DailyMatches({ matches, guesses, currentUser, onReload }
             <div className={`text-center py-1.5 px-3 rounded-lg text-xs font-bold ${pointsBadgeColor}`}>
               {pointsText}
             </div>
+          </div>
+        ) : isLocked ? (
+          <div className="mt-4 pt-3 border-t border-rose-500/20 flex items-center justify-center gap-2 text-xs text-rose-400 font-bold">
+            <Lock size={12} />
+            <span>Palpites encerrados — partida em andamento</span>
           </div>
         ) : (
           <div className="mt-4 pt-3 border-t border-football-glassBorder flex items-center justify-between text-xs text-slate-400">

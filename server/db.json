@@ -1103,14 +1103,14 @@
       "matchId": "7",
       "homeScore": 1,
       "awayScore": 0,
-      "updatedAt": "2026-06-12T16:54:28.615Z"
+      "updatedAt": "2026-06-15T22:20:44.762Z"
     },
     {
       "user": "andre",
       "matchId": "19",
       "homeScore": 2,
       "awayScore": 1,
-      "updatedAt": "2026-06-12T16:54:28.780Z"
+      "updatedAt": "2026-06-15T22:20:45.085Z"
     },
     {
       "user": "Brenno",
@@ -1153,6 +1153,20 @@
       "homeScore": 1,
       "awayScore": 1,
       "updatedAt": "2026-06-12T16:55:30.957Z"
+    },
+    {
+      "user": "andre",
+      "matchId": "37",
+      "homeScore": 2,
+      "awayScore": 1,
+      "updatedAt": "2026-06-15T22:20:45.430Z"
+    },
+    {
+      "user": "andre",
+      "matchId": "43",
+      "homeScore": 33,
+      "awayScore": 1,
+      "updatedAt": "2026-06-15T22:20:45.545Z"
     }
   ],
   "groupQualifiers": [],

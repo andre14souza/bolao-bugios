@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Save, RefreshCw, Check, AlertCircle, Calendar, Layers, Trophy, HelpCircle, Users, Trash2, Eye, EyeOff } from 'lucide-react';
-import { updateMatch, saveGroupQualifierResults, saveBracketResults, saveOracleResults, fetchUsersList, updateUser, deleteUser } from '../services/api';
+import { Save, RefreshCw, Check, AlertCircle, Calendar, Layers, Trophy, HelpCircle, Users, Trash2, Eye, EyeOff, Lock, Unlock } from 'lucide-react';
+import { updateMatch, saveGroupQualifierResults, saveBracketResults, saveOracleResults, fetchUsersList, updateUser, deleteUser, toggleMatchLock } from '../services/api';
 import { TEAM_FLAGS } from './DailyMatches';
 import { checkIsPlaceholder } from './Knockout';
 
@@ -291,6 +291,21 @@ export default function Admin({ matches, groupQualifiers, bracketGuesses, oracle
     }
   };
 
+  const handleToggleLock = async (matchId, currentlyLocked) => {
+    const action = currentlyLocked ? 'desbloquear' : 'bloquear';
+    if (!window.confirm(`Tem certeza que deseja ${action} os palpites desta partida?`)) return;
+    setLoadingId(`lock-${matchId}`);
+    try {
+      await toggleMatchLock(matchId, !currentlyLocked);
+      onReload();
+    } catch (err) {
+      console.error(err);
+      alert('Erro ao alterar o bloqueio da partida.');
+    } finally {
+      setLoadingId(null);
+    }
+  };
+
   // Ações de Grupos
   const handleGroupSelect = (group, spot, value) => {
     setGroupResults(prev => ({
@@ -457,17 +472,26 @@ export default function Admin({ matches, groupQualifiers, bracketGuesses, oracle
             const isSuccess = successId === match.id;
             const isError = errorId === match.id;
             const isKnockout = match.stage === 'knockout';
+            const isLocked = !!match.locked;
+            const isLockLoading = loadingId === `lock-${match.id}`;
 
             return (
-              <div key={match.id} className="glass-panel p-5 rounded-2xl border border-football-glassBorder flex flex-col md:flex-row md:items-center justify-between gap-6 hover:border-football-gold/20 transition-all">
+              <div key={match.id} className={`glass-panel p-5 rounded-2xl border flex flex-col md:flex-row md:items-center justify-between gap-6 hover:border-football-gold/20 transition-all ${
+                isLocked ? 'border-rose-500/30 bg-rose-950/10' : 'border-football-glassBorder'
+              }`}>
                 <div className="flex flex-col gap-1 md:w-1/4 select-none">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-xs font-bold uppercase px-2 py-0.5 rounded bg-football-grassGreen/30 text-football-vibrantGreen">
                       Partida #{match.id}
                     </span>
                     <span className="text-xs text-slate-400 bg-slate-800 px-2 py-0.5 rounded">
                       {match.group}
                     </span>
+                    {isLocked && (
+                      <span className="text-xs font-bold px-2 py-0.5 rounded bg-rose-500/20 text-rose-400 border border-rose-500/30 flex items-center gap-1">
+                        <Lock size={10} /> Bloqueada
+                      </span>
+                    )}
                   </div>
                   <span className="text-xs text-slate-400 mt-1">
                     📅 {formatAdminDate(match.date)}
@@ -529,6 +553,24 @@ export default function Admin({ matches, groupQualifiers, bracketGuesses, oracle
                 </div>
 
                 <div className="flex flex-row md:flex-col justify-end gap-2 md:w-1/5">
+                  <button
+                    onClick={() => handleToggleLock(match.id, isLocked)}
+                    disabled={isLockLoading}
+                    title={isLocked ? 'Desbloquear Palpites' : 'Bloquear Palpites (Partida Começou!)'}
+                    className={`flex items-center justify-center gap-1.5 font-bold py-2.5 px-4 rounded-xl text-xs tracking-wider transition-all uppercase w-full cursor-pointer ${
+                      isLocked
+                        ? 'bg-rose-600/80 text-white hover:bg-rose-500 border border-rose-500/30'
+                        : 'bg-emerald-700/70 text-white hover:bg-emerald-600 border border-emerald-500/30'
+                    }`}
+                  >
+                    {isLockLoading ? (
+                      <RefreshCw size={14} className="animate-spin" />
+                    ) : isLocked ? (
+                      <><Unlock size={14} /><span>Desbloquear</span></>
+                    ) : (
+                      <><Lock size={14} /><span>Iniciar Partida</span></>
+                    )}
+                  </button>
                   <button
                     onClick={() => handleSaveMatch(match.id)}
                     disabled={isLoading}

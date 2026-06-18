@@ -376,6 +376,22 @@ app.post('/api/matches', (req, res) => {
   res.json({ success: true, matches: db.matches });
 });
 
+// Rota para bloquear/desbloquear palpites de uma partida (Admin)
+app.post('/api/matches/:id/lock', (req, res) => {
+  const { id } = req.params;
+  const { locked } = req.body; // boolean
+  const db = readDB();
+
+  const matchIndex = db.matches.findIndex(m => String(m.id) === String(id));
+  if (matchIndex === -1) {
+    return res.status(404).json({ error: "Partida não encontrada." });
+  }
+
+  db.matches[matchIndex].locked = !!locked;
+  writeDB(db);
+  res.json({ success: true, match: db.matches[matchIndex] });
+});
+
 app.get('/api/guesses', (req, res) => {
   const db = readDB();
   res.json(db.guesses || []);
@@ -384,6 +400,12 @@ app.get('/api/guesses', (req, res) => {
 app.post('/api/guesses', (req, res) => {
   const { user, matchId, homeScore, awayScore } = req.body;
   const db = readDB();
+
+  // Verificar se a partida está bloqueada
+  const match = db.matches.find(m => String(m.id) === String(matchId));
+  if (match && match.locked) {
+    return res.status(403).json({ error: "Esta partida já começou! Palpites bloqueados." });
+  }
 
   const guessIndex = db.guesses.findIndex(g => g.user === user && g.matchId === matchId);
 

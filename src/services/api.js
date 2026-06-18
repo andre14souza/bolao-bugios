@@ -58,6 +58,29 @@ export async function updateMatch(matchData) {
   }
 }
 
+export async function toggleMatchLock(matchId, locked) {
+  if (isSupabaseEnabled) {
+    const { data, error } = await supabase
+      .from('matches')
+      .update({ locked })
+      .eq('id', parseInt(matchId, 10))
+      .select();
+    if (error) throw error;
+    return { success: true, data };
+  } else {
+    const res = await fetch(`${API_BASE}/api/matches/${matchId}/lock`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ locked })
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Erro ao bloquear partida');
+    }
+    return await res.json();
+  }
+}
+
 export async function fetchGuesses() {
   if (isSupabaseEnabled) {
     const { data, error } = await supabase.from('guesses').select('*');
