@@ -20,7 +20,8 @@ CREATE TABLE IF NOT EXISTS matches (
     away_score INTEGER,
     date TIMESTAMP WITH TIME ZONE,
     stage TEXT,
-    group_name TEXT
+    group_name TEXT,
+    locked BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS guesses (
