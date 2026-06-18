@@ -1,8 +1,11 @@
-import React from 'react';
-import { Target, Check, Trophy, Calendar, Award, Star, Compass } from 'lucide-react';
+import React, { useState } from 'react';
+import { Target, Check, Trophy, Calendar, Award, Star, Compass, X } from 'lucide-react';
 import { computeRanking } from '../services/api';
+import { TEAM_FLAGS } from './DailyMatches';
+import { isMatchTimeOver, calculateMatchScore } from '../services/points';
 
 export default function Ranking({ users, matches, guesses, groupQualifiers, bracketGuesses, oracle }) {
+  const [selectedUser, setSelectedUser] = useState(null);
   const ranking = computeRanking(users || [], matches, guesses, groupQualifiers, bracketGuesses, oracle);
 
   const first = ranking[0];
@@ -31,7 +34,10 @@ export default function Ranking({ users, matches, guesses, groupQualifiers, brac
               2º
             </div>
             <div className="w-full glass-panel p-4 rounded-t-2xl border-t-2 border-slate-400 flex flex-col items-center justify-center text-center h-28 md:h-36">
-              <span className="font-extrabold text-sm md:text-base text-white truncate max-w-[80px] md:max-w-none">
+              <span 
+                onClick={() => setSelectedUser(second.user)}
+                className="font-extrabold text-sm md:text-base text-white truncate max-w-[80px] md:max-w-none hover:text-football-gold cursor-pointer underline decoration-dotted underline-offset-4 decoration-slate-500"
+              >
                 {second.user}
               </span>
               <span className="text-slate-400 text-[10px] md:text-xs mt-1 font-semibold">🥈 Prata</span>
@@ -48,7 +54,10 @@ export default function Ranking({ users, matches, guesses, groupQualifiers, brac
             </div>
             <div className="w-full glass-panel p-4 rounded-t-3xl border-t-4 border-football-gold flex flex-col items-center justify-center text-center h-36 md:h-44 relative overflow-hidden pulse-gold-glow">
               <div className="absolute top-0 right-0 w-12 h-12 bg-football-gold/5 rounded-full blur-lg"></div>
-              <span className="font-extrabold text-base md:text-lg text-football-gold truncate max-w-[85px] md:max-w-none">
+              <span 
+                onClick={() => setSelectedUser(first.user)}
+                className="font-extrabold text-base md:text-lg text-football-gold truncate max-w-[85px] md:max-w-none hover:text-amber-400 cursor-pointer underline decoration-dotted underline-offset-4 decoration-football-gold/50"
+              >
                 {first.user}
               </span>
               <span className="text-football-brightYellow text-[10px] md:text-xs mt-1 font-bold">🥇 Ouro</span>
@@ -64,7 +73,10 @@ export default function Ranking({ users, matches, guesses, groupQualifiers, brac
               3º
             </div>
             <div className="w-full glass-panel p-4 rounded-t-2xl border-t-2 border-amber-600 flex flex-col items-center justify-center text-center h-24 md:h-32">
-              <span className="font-extrabold text-sm md:text-base text-white truncate max-w-[80px] md:max-w-none">
+              <span 
+                onClick={() => setSelectedUser(third.user)}
+                className="font-extrabold text-sm md:text-base text-white truncate max-w-[80px] md:max-w-none hover:text-football-gold cursor-pointer underline decoration-dotted underline-offset-4 decoration-slate-500"
+              >
                 {third.user}
               </span>
               <span className="text-amber-500 text-[10px] md:text-xs mt-1 font-semibold">🥉 Bronze</span>
@@ -125,7 +137,10 @@ export default function Ranking({ users, matches, guesses, groupQualifiers, brac
                     {/* Amigo + ícone */}
                     <td className="py-4 px-4">
                       <div className="flex items-center gap-2">
-                        <span className={nameClass}>
+                        <span 
+                          onClick={() => setSelectedUser(row.user)}
+                          className={`${nameClass} hover:text-football-gold cursor-pointer underline decoration-dotted underline-offset-4 decoration-slate-500`}
+                        >
                           {row.user}
                         </span>
                         {isFirst && <span className="text-lg animate-pulse" title="Líder do Bolão">👑</span>}
@@ -247,6 +262,121 @@ export default function Ranking({ users, matches, guesses, groupQualifiers, brac
           </div>
         </div>
       </div>
+
+      {/* Modal de Palpites do Usuário */}
+      {selectedUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fadeIn">
+          <div className="w-full max-w-2xl glass-panel p-6 rounded-3xl border border-football-glassBorder relative shadow-2xl flex flex-col max-h-[85vh]">
+            <button 
+              onClick={() => setSelectedUser(null)}
+              className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors cursor-pointer"
+            >
+              <X size={20} />
+            </button>
+
+            <h2 className="text-xl font-bold text-white mb-2 flex items-center gap-2 border-b border-white/5 pb-3 pr-8 select-none">
+              <span>📊</span> Palpites de {selectedUser} (Histórico)
+            </h2>
+
+            <div className="overflow-y-auto pr-1 flex-1 space-y-4 py-2 no-scrollbar">
+              {(() => {
+                const finishedMatches = matches.filter(match => 
+                  match.locked || isMatchTimeOver(match.date) || (match.homeScore !== null && match.awayScore !== null)
+                ).sort((a, b) => new Date(a.date) - new Date(b.date));
+
+                if (finishedMatches.length === 0) {
+                  return (
+                    <div className="text-center py-8 text-slate-400 select-none">
+                      Nenhuma partida finalizada ou em andamento ainda para exibir palpites.
+                    </div>
+                  );
+                }
+
+                return finishedMatches.map(match => {
+                  const guess = guesses.find(g => g.user === selectedUser && String(g.matchId) === String(match.id));
+                  const hasResult = match.homeScore !== null && match.awayScore !== null;
+                  
+                  let pointsBadgeColor = 'bg-slate-500/10 text-slate-400 border border-slate-500/20';
+                  let pointsText = 'Sem palpite (0 pts)';
+
+                  if (hasResult) {
+                    if (guess) {
+                      const scoreResult = calculateMatchScore(guess.homeScore, guess.awayScore, match.homeScore, match.awayScore);
+                      if (scoreResult.points === 10) {
+                        pointsBadgeColor = 'bg-football-gold/20 text-football-gold border border-football-gold/30 text-glow-gold';
+                        pointsText = 'Placar Exato (+10 pts) 🎯';
+                      } else if (scoreResult.points === 7) {
+                        pointsBadgeColor = 'bg-football-royalBlue/20 text-football-lightBlue border border-football-royalBlue/30';
+                        pointsText = 'Vencedor & Saldo (+7 pts) ⚖️';
+                      } else if (scoreResult.points === 5) {
+                        pointsBadgeColor = 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/25';
+                        const isDraw = parseInt(match.homeScore, 10) === parseInt(match.awayScore, 10);
+                        pointsText = isDraw ? 'Empate (+5 pts) 🤝' : 'Vencedor (+5 pts) 👍';
+                      } else {
+                        pointsBadgeColor = 'bg-rose-500/10 text-rose-400 border border-rose-500/20';
+                        pointsText = 'Não pontuou (0 pts) ❌';
+                      }
+                    }
+                  } else {
+                    pointsBadgeColor = 'bg-football-brightYellow/10 text-football-brightYellow border border-football-brightYellow/20';
+                    pointsText = 'Partida em andamento ⏳';
+                  }
+
+                  return (
+                    <div key={match.id} className="p-4 rounded-2xl border border-football-glassBorder bg-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                      {/* Times e Palpite */}
+                      <div className="flex-1 flex items-center justify-between sm:justify-start gap-4">
+                        <div className="flex items-center gap-2 min-w-[120px] sm:min-w-[150px]">
+                          <span className="text-2xl filter drop-shadow select-none">{TEAM_FLAGS[match.homeTeam] || "🏳️"}</span>
+                          <span className="text-xs font-bold text-white truncate max-w-[80px] sm:max-w-none">{match.homeTeam}</span>
+                        </div>
+
+                        <div className="flex flex-col items-center justify-center min-w-[70px]">
+                          <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider mb-1 select-none">Palpite</span>
+                          <span className="text-sm font-black text-white px-2 py-0.5 bg-black/30 rounded border border-white/5">
+                            {guess ? `${guess.homeScore} x ${guess.awayScore}` : '- x -'}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-2 min-w-[120px] sm:min-w-[150px] justify-end">
+                          <span className="text-xs font-bold text-white truncate max-w-[80px] sm:max-w-none">{match.awayTeam}</span>
+                          <span className="text-2xl filter drop-shadow select-none">{TEAM_FLAGS[match.awayTeam] || "🏳️"}</span>
+                        </div>
+                      </div>
+
+                      {/* Resultado Real e Pontuação */}
+                      <div className="flex flex-col items-end sm:min-w-[160px] justify-center text-right border-t sm:border-t-0 sm:border-l border-white/5 pt-3 sm:pt-0 sm:pl-4">
+                        {hasResult ? (
+                          <div className="flex items-center justify-end gap-1.5 mb-1.5">
+                            <span className="text-[10px] text-slate-400 font-bold uppercase select-none">Resultado:</span>
+                            <span className="bg-football-gold text-football-darkGreen font-extrabold px-1.5 py-0.5 rounded text-xs shadow">
+                              {match.homeScore} x {match.awayScore}
+                            </span>
+                          </div>
+                        ) : (
+                          <span className="text-[10px] text-slate-400 font-bold uppercase mb-1.5 select-none">Em Andamento</span>
+                        )}
+                        <span className={`text-[10px] font-bold py-0.5 px-2 rounded-full border ${pointsBadgeColor} select-none`}>
+                          {pointsText}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                });
+              })()}
+            </div>
+
+            <div className="border-t border-white/5 pt-4 mt-3 flex justify-end">
+              <button 
+                onClick={() => setSelectedUser(null)}
+                className="px-5 py-2.5 rounded-xl border border-white/10 hover:bg-white/5 text-white font-bold text-xs transition-all cursor-pointer"
+              >
+                Fechar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
