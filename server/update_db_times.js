@@ -18,32 +18,80 @@ const formatDate = (d) => {
   return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
 };
 
-// Map for 1st round
-const firstRoundMap = {
-  1: { day: 11, hour: 16 },
-  2: { day: 11, hour: 23 },
-  7: { day: 12, hour: 16 },
-  19: { day: 12, hour: 22 },
-  8: { day: 13, hour: 16 },
-  13: { day: 13, hour: 19 },
-  14: { day: 13, hour: 22 },
-  20: { day: 14, hour: 1 },
-  25: { day: 14, hour: 14 },
-  31: { day: 14, hour: 17 },
-  26: { day: 14, hour: 20 },
-  32: { day: 14, hour: 23 },
-  43: { day: 15, hour: 13 },
-  37: { day: 15, hour: 16 },
-  44: { day: 15, hour: 19 },
-  38: { day: 15, hour: 22 },
-  49: { day: 16, hour: 16 },
-  50: { day: 16, hour: 19 },
-  55: { day: 16, hour: 22 },
-  56: { day: 17, hour: 1 },
-  61: { day: 17, hour: 14 },
-  67: { day: 17, hour: 17 },
-  68: { day: 17, hour: 20 },
-  62: { day: 17, hour: 23 }
+// Map of exact BRT times for all group stage matches (IDs 1-72)
+const groupStageDates = {
+  1: '2026-06-11T16:00:00',
+  2: '2026-06-11T23:00:00',
+  3: '2026-06-18T13:00:00',
+  4: '2026-06-18T22:00:00',
+  5: '2026-06-24T22:00:00',
+  6: '2026-06-24T22:00:00',
+  7: '2026-06-12T16:00:00',
+  8: '2026-06-13T16:00:00',
+  9: '2026-06-18T16:00:00',
+  10: '2026-06-18T19:00:00',
+  11: '2026-06-24T16:00:00',
+  12: '2026-06-24T16:00:00',
+  13: '2026-06-13T19:00:00',
+  14: '2026-06-13T22:00:00',
+  15: '2026-06-19T19:00:00',
+  16: '2026-06-19T21:30:00',
+  17: '2026-06-24T19:00:00',
+  18: '2026-06-24T19:00:00',
+  19: '2026-06-12T22:00:00',
+  20: '2026-06-14T01:00:00',
+  21: '2026-06-19T16:00:00',
+  22: '2026-06-19T01:00:00',
+  23: '2026-06-25T23:00:00',
+  24: '2026-06-25T23:00:00',
+  25: '2026-06-14T14:00:00',
+  26: '2026-06-14T20:00:00',
+  27: '2026-06-20T17:00:00',
+  28: '2026-06-20T21:00:00',
+  29: '2026-06-25T17:00:00',
+  30: '2026-06-25T17:00:00',
+  31: '2026-06-14T17:00:00',
+  32: '2026-06-14T23:00:00',
+  33: '2026-06-20T14:00:00',
+  34: '2026-06-21T01:00:00',
+  35: '2026-06-25T20:00:00',
+  36: '2026-06-25T20:00:00',
+  37: '2026-06-15T16:00:00',
+  38: '2026-06-15T22:00:00',
+  39: '2026-06-21T16:00:00',
+  40: '2026-06-21T22:00:00',
+  41: '2026-06-26T00:00:00',
+  42: '2026-06-26T00:00:00',
+  43: '2026-06-15T13:00:00',
+  44: '2026-06-15T19:00:00',
+  45: '2026-06-21T13:00:00',
+  46: '2026-06-21T19:00:00',
+  47: '2026-06-26T21:00:00',
+  48: '2026-06-26T21:00:00',
+  49: '2026-06-16T16:00:00',
+  50: '2026-06-16T19:00:00',
+  51: '2026-06-22T18:00:00',
+  52: '2026-06-22T21:00:00',
+  53: '2026-06-26T16:00:00',
+  54: '2026-06-26T16:00:00',
+  55: '2026-06-16T22:00:00',
+  56: '2026-06-17T01:00:00',
+  57: '2026-06-22T14:00:00',
+  58: '2026-06-23T00:00:00',
+  59: '2026-06-27T23:00:00',
+  60: '2026-06-27T23:00:00',
+  61: '2026-06-17T14:00:00',
+  62: '2026-06-17T23:00:00',
+  63: '2026-06-23T14:00:00',
+  64: '2026-06-23T23:00:00',
+  65: '2026-06-27T19:30:00',
+  66: '2026-06-27T19:30:00',
+  67: '2026-06-17T17:00:00',
+  68: '2026-06-17T20:00:00',
+  69: '2026-06-23T17:00:00',
+  70: '2026-06-23T20:00:00',
+  71: '2026-06-27T17:00:00',
+  72: '2026-06-27T17:00:00'
 };
 
 const updateMatchDate = (id, dateStr) => {
@@ -52,46 +100,11 @@ const updateMatchDate = (id, dateStr) => {
   const timeStr = dateStr.split('T')[1];
   const [hours, minutes, seconds] = timeStr.split(':').map(Number);
   
-  // 1. Check if in 1st round map
-  if (firstRoundMap[idNum]) {
-    const rule = firstRoundMap[idNum];
-    d.setDate(rule.day);
-    d.setHours(rule.hour, 0, 0);
-    return formatDate(d);
-  }
-  
-  // 2. Check if decisive/simultaneous phase (June 24-27)
-  const day = d.getDate();
-  const isDecisiveGroupPhase = d.getMonth() === 5 && day >= 24 && day <= 27; // June 24-27
-  
-  if (isDecisiveGroupPhase) {
-    if (hours === 14) {
-      d.setHours(17, 0, 0);
-    } else if (hours === 16) {
-      d.setHours(17, 0, 0);
-    } else if (hours === 17) {
-      d.setHours(21, 0, 0);
-    } else if (hours === 20) {
-      d.setHours(21, 0, 0);
+  // 1. Check if in group stage map
+  if (idNum >= 1 && idNum <= 72) {
+    if (groupStageDates[idNum]) {
+      return groupStageDates[idNum];
     }
-    return formatDate(d);
-  }
-  
-  // 3. Regular group stage matches (June 18-23)
-  if (d.getMonth() === 5 && day >= 18 && day <= 23) {
-    if (hours === 11) {
-      d.setHours(14, 0, 0);
-    } else if (hours === 14) {
-      d.setHours(17, 0, 0);
-    } else if (hours === 17) {
-      d.setHours(20, 0, 0);
-    } else if (hours === 20) {
-      d.setHours(23, 0, 0);
-    } else if (hours === 23) {
-      d.setDate(day + 1);
-      d.setHours(1, 0, 0);
-    }
-    return formatDate(d);
   }
   
   // 4. Knockout stages (June 28 onwards)
