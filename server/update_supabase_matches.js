@@ -16,19 +16,19 @@ const getEnvVar = (content, name) => {
 };
 
 async function run() {
-  if (!fs.existsSync(envPath)) {
-    console.error("❌ Erro: Arquivo .env não encontrado na raiz do projeto!");
-    console.log("Se você estiver testando localmente sem Supabase (usando apenas o db.json), ignore este script.");
-    console.log("Se estiver usando Supabase, certifique-se de configurar as chaves VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY no arquivo .env.");
-    process.exit(1);
+  let supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
+  let supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
+
+  if (fs.existsSync(envPath)) {
+    const envContent = fs.readFileSync(envPath, 'utf8');
+    supabaseUrl = getEnvVar(envContent, 'VITE_SUPABASE_URL') || supabaseUrl;
+    supabaseAnonKey = getEnvVar(envContent, 'VITE_SUPABASE_ANON_KEY') || supabaseAnonKey;
   }
 
-  const envContent = fs.readFileSync(envPath, 'utf8');
-  const supabaseUrl = getEnvVar(envContent, 'VITE_SUPABASE_URL');
-  const supabaseAnonKey = getEnvVar(envContent, 'VITE_SUPABASE_ANON_KEY');
-
   if (!supabaseUrl || !supabaseAnonKey) {
-    console.error("❌ Erro: VITE_SUPABASE_URL ou VITE_SUPABASE_ANON_KEY não estão definidos no arquivo .env!");
+    console.error("❌ Erro: VITE_SUPABASE_URL ou VITE_SUPABASE_ANON_KEY não estão definidos no arquivo .env nem no ambiente do processo!");
+    console.log("Se você estiver testando localmente sem Supabase (usando apenas o db.json), ignore este script.");
+    console.log("Se estiver usando Supabase, certifique-se de configurar as chaves no arquivo .env ou nas variáveis de ambiente.");
     process.exit(1);
   }
 
