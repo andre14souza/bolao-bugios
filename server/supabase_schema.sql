@@ -147,7 +147,7 @@ INSERT INTO matches (id, home_team, away_team, home_score, away_score, date, sta
 (19, 'Estados Unidos', 'Paraguai', NULL, NULL, '2026-06-12T22:00:00', 'group', 'Grupo D'),
 (20, 'Austrália', 'Turquia', NULL, NULL, '2026-06-14T01:00:00', 'group', 'Grupo D'),
 (21, 'Estados Unidos', 'Austrália', NULL, NULL, '2026-06-19T16:00:00', 'group', 'Grupo D'),
-(22, 'Turquia', 'Paraguai', NULL, NULL, '2026-06-19T01:00:00', 'group', 'Grupo D'),
+(22, 'Turquia', 'Paraguai', NULL, NULL, '2026-06-20T00:00:00', 'group', 'Grupo D'),
 (23, 'Turquia', 'Estados Unidos', NULL, NULL, '2026-06-25T23:00:00', 'group', 'Grupo D'),
 (24, 'Paraguai', 'Austrália', NULL, NULL, '2026-06-25T23:00:00', 'group', 'Grupo D'),
 (25, 'Alemanha', 'Curaçao', NULL, NULL, '2026-06-14T14:00:00', 'group', 'Grupo E'),

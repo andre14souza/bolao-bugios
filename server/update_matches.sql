@@ -19,7 +19,7 @@ UPDATE matches SET date = '2026-06-24T19:00:00' WHERE id = 18;
 UPDATE matches SET date = '2026-06-12T22:00:00' WHERE id = 19;
 UPDATE matches SET date = '2026-06-14T01:00:00' WHERE id = 20;
 UPDATE matches SET date = '2026-06-19T16:00:00' WHERE id = 21;
-UPDATE matches SET date = '2026-06-19T01:00:00' WHERE id = 22;
+UPDATE matches SET date = '2026-06-20T00:00:00' WHERE id = 22;
 UPDATE matches SET date = '2026-06-25T23:00:00' WHERE id = 23;
 UPDATE matches SET date = '2026-06-25T23:00:00' WHERE id = 24;
 UPDATE matches SET date = '2026-06-14T14:00:00' WHERE id = 25;
