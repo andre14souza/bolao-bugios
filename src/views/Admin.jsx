@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Save, RefreshCw, Check, AlertCircle, Calendar, Layers, Trophy, HelpCircle, Users, Trash2, Eye, EyeOff, Lock, Unlock } from 'lucide-react';
 import { updateMatch, saveGroupQualifierResults, saveBracketResults, saveOracleResults, fetchUsersList, updateUser, deleteUser, toggleMatchLock } from '../services/api';
+import { Save, RefreshCw, Check, AlertCircle, Calendar, Layers, Trophy, HelpCircle, Users, Trash2, Eye, EyeOff, Lock, Unlock, ArrowRight } from 'lucide-react';
 import { TEAM_FLAGS } from './DailyMatches';
 import { checkIsPlaceholder } from './Knockout';
 
@@ -228,6 +228,92 @@ export default function Admin({ matches, groupQualifiers, bracketGuesses, oracle
     });
   }, [matches, groupQualifiers, bracketGuesses, oracle]);
 
+  const winnersOrder = ['Grupo E', 'Grupo I', 'Grupo A', 'Grupo L', 'Grupo G', 'Grupo D', 'Grupo B', 'Grupo K'];
+
+  const pairThirds = (thirds) => {
+    const paired = Array(8).fill(null);
+    const used = Array(8).fill(false);
+
+    const backtrack = (idx) => {
+      if (idx === 8) return true;
+      const currentWinnerGroup = winnersOrder[idx];
+      for (let i = 0; i < thirds.length; i++) {
+        if (!used[i]) {
+          const t = thirds[i];
+          if (t.groupName !== currentWinnerGroup) {
+            paired[idx] = t.teamName;
+            used[i] = true;
+            if (backtrack(idx + 1)) return true;
+            used[i] = false;
+            paired[idx] = null;
+          }
+        }
+      }
+      return false;
+    };
+
+    if (backtrack(0)) return paired;
+    return thirds.map(t => t.teamName);
+  };
+
+  const AdminMatchCard = ({ matchId, teamA, teamB, winner, onSelect, stageName }) => {
+    const isA_Placeholder = checkIsPlaceholder(teamA);
+    const isB_Placeholder = checkIsPlaceholder(teamB);
+
+    return (
+      <div className="glass-panel p-2.5 rounded-2xl border border-football-glassBorder hover:border-football-vibrantGreen/30 transition-all duration-300 w-[170px] md:w-[190px] relative flex flex-col gap-1.5">
+        <div className="flex justify-between items-center text-[8px] font-bold text-slate-400 border-b border-white/5 pb-1 select-none">
+          <span className="uppercase tracking-wider">{stageName}</span>
+          <span>Jogo {matchId}</span>
+        </div>
+
+        <div className="flex flex-col gap-1">
+          {/* Time A */}
+          <button
+            disabled={isA_Placeholder}
+            onClick={() => onSelect(teamA)}
+            className={`flex items-center justify-between p-1.5 rounded-xl text-[10px] w-full text-left transition-all ${
+              winner === teamA && teamA
+                ? 'bg-football-vibrantGreen/20 border border-football-vibrantGreen/50 text-white font-extrabold shadow shadow-emerald-500/25 scale-[1.02]'
+                : winner && teamA
+                ? 'opacity-45 text-slate-400 hover:opacity-75 cursor-pointer border border-transparent'
+                : isA_Placeholder
+                ? 'opacity-35 text-slate-500 italic cursor-not-allowed border border-transparent'
+                : 'hover:bg-white/5 text-slate-350 cursor-pointer border border-transparent'
+            }`}
+          >
+            <span className="truncate flex items-center gap-1.5">
+              <span className="text-sm filter drop-shadow select-none">{TEAM_FLAGS[teamA] || '🏳️'}</span>
+              <span className="truncate">{teamA || 'A definir'}</span>
+            </span>
+            {winner === teamA && teamA && <span className="text-football-vibrantGreen font-black text-[10px]">✓</span>}
+          </button>
+
+          {/* Time B */}
+          <button
+            disabled={isB_Placeholder}
+            onClick={() => onSelect(teamB)}
+            className={`flex items-center justify-between p-1.5 rounded-xl text-[10px] w-full text-left transition-all ${
+              winner === teamB && teamB
+                ? 'bg-football-vibrantGreen/20 border border-football-vibrantGreen/50 text-white font-extrabold shadow shadow-emerald-500/25 scale-[1.02]'
+                : winner && teamB
+                ? 'opacity-45 text-slate-400 hover:opacity-75 cursor-pointer border border-transparent'
+                : isB_Placeholder
+                ? 'opacity-35 text-slate-500 italic cursor-not-allowed border border-transparent'
+                : 'hover:bg-white/5 text-slate-350 cursor-pointer border border-transparent'
+            }`}
+          >
+            <span className="truncate flex items-center gap-1.5">
+              <span className="text-sm filter drop-shadow select-none">{TEAM_FLAGS[teamB] || '🏳️'}</span>
+              <span className="truncate">{teamB || 'A definir'}</span>
+            </span>
+            {winner === teamB && teamB && <span className="text-football-vibrantGreen font-black text-[10px]">✓</span>}
+          </button>
+        </div>
+      </div>
+    );
+  };
+
   // Ações de Partida
   const handleScoreChange = (matchId, team, value) => {
     if (value !== '' && !/^\d+$/.test(value)) return;
@@ -338,15 +424,57 @@ export default function Admin({ matches, groupQualifiers, bracketGuesses, oracle
   };
 
   // Ações de Chaveamento
-  const handleBracketSelect = (stage, index, value) => {
+  const removeTeamFromFutureStages = (updated, oldTeam) => {
+    if (!oldTeam) return;
+    updated.oitavas = updated.oitavas.map(t => t === oldTeam ? '' : t);
+    updated.quartas = updated.quartas.map(t => t === oldTeam ? '' : t);
+    updated.semis = updated.semis.map(t => t === oldTeam ? '' : t);
+    updated.finalists = updated.finalists.map(t => t === oldTeam ? '' : t);
+    if (updated.champion === oldTeam) updated.champion = '';
+  };
+
+  const handleBracketSelect = (stage, index, selectedTeam) => {
+    if (checkIsPlaceholder(selectedTeam)) return;
+
     setBracketResults(prev => {
       const updated = { ...prev };
-      if (stage === 'champion') {
-        updated.champion = value;
-      } else {
-        updated[stage] = [...prev[stage]];
-        updated[stage][index] = value;
+      
+      if (stage === 'r32') {
+        const oldTeam = prev.oitavas[index];
+        updated.oitavas = [...prev.oitavas];
+        updated.oitavas[index] = selectedTeam;
+        if (oldTeam && oldTeam !== selectedTeam) {
+          removeTeamFromFutureStages(updated, oldTeam);
+        }
+      } else if (stage === 'oitavas') {
+        const oldTeam = prev.quartas[index];
+        updated.quartas = [...prev.quartas];
+        updated.quartas[index] = selectedTeam;
+        if (oldTeam && oldTeam !== selectedTeam) {
+          removeTeamFromFutureStages(updated, oldTeam);
+        }
+      } else if (stage === 'quartas') {
+        const oldTeam = prev.semis[index];
+        updated.semis = [...prev.semis];
+        updated.semis[index] = selectedTeam;
+        if (oldTeam && oldTeam !== selectedTeam) {
+          removeTeamFromFutureStages(updated, oldTeam);
+        }
+      } else if (stage === 'semis') {
+        const oldTeam = prev.finalists[index];
+        updated.finalists = [...prev.finalists];
+        updated.finalists[index] = selectedTeam;
+        if (oldTeam && oldTeam !== selectedTeam) {
+          removeTeamFromFutureStages(updated, oldTeam);
+        }
+      } else if (stage === 'final') {
+        const oldTeam = prev.champion;
+        updated.champion = selectedTeam;
+        if (oldTeam && oldTeam !== selectedTeam) {
+          removeTeamFromFutureStages(updated, oldTeam);
+        }
       }
+
       return updated;
     });
   };
@@ -698,139 +826,180 @@ export default function Admin({ matches, groupQualifiers, bracketGuesses, oracle
       {/* ==========================================
           SUBTAB: BRACKET
          ========================================== */}
-      {subTab === 'bracket' && (
-        <div className="glass-panel p-6 rounded-3xl border border-football-glassBorder flex flex-col gap-6 animate-fadeIn">
-          <h3 className="text-xl font-bold text-football-gold border-b border-white/5 pb-2 select-none">
-            Chaveamento Oficial da Copa
-          </h3>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-            {/* Oitavas */}
-            <div className="flex flex-col gap-2">
-              <h4 className="font-extrabold text-[10px] text-slate-300 border-b border-white/5 pb-1.5 uppercase tracking-widest select-none">
-                Oitavas (16 times)
-              </h4>
-              <div className="flex flex-col gap-1.5 max-h-[300px] overflow-y-auto pr-1 no-scrollbar">
-                {Array(16).fill('').map((_, i) => (
-                  <select
-                    key={i}
-                    value={bracketResults.oitavas[i] || ''}
-                    onChange={(e) => handleBracketSelect('oitavas', i, e.target.value)}
-                    className="p-2.5 rounded-xl glass-input text-xs font-semibold w-full focus:border-football-gold"
-                  >
-                    <option value="">Time #{i+1}...</option>
-                    {allTeams.map(t => (
-                      <option key={t} value={t}>{TEAM_FLAGS[t]} {t}</option>
-                    ))}
-                  </select>
-                ))}
+      {subTab === 'bracket' && (() => {
+        const getOfficialTeamByRank = (groupName, rank) => {
+          const group = groupResults[groupName];
+          if (!group) return `${rank}º do ${groupName}`;
+          if (rank === 1) return group.first || `1º do ${groupName}`;
+          if (rank === 2) return group.second || `2º do ${groupName}`;
+          return group.third || `3º do ${groupName}`;
+        };
+
+        const thirds = [];
+        Object.entries(groupResults).forEach(([groupName, picks]) => {
+          if (picks.third) {
+            thirds.push({
+              teamName: picks.third,
+              groupName: groupName
+            });
+          }
+        });
+        
+        const padded = [...thirds];
+        while (padded.length < 8) {
+          padded.push({
+            teamName: `3º Oficial #${padded.length + 1}`,
+            groupName: `Placeholder ${padded.length + 1}`
+          });
+        }
+        const pairedOfficialThirds = pairThirds(padded);
+
+        const r32Matches = [
+          { id: 73, home: getOfficialTeamByRank('Grupo A', 2), away: getOfficialTeamByRank('Grupo B', 2), label: '16-avos' },
+          { id: 74, home: getOfficialTeamByRank('Grupo C', 1), away: getOfficialTeamByRank('Grupo F', 2), label: '16-avos' },
+          { id: 75, home: getOfficialTeamByRank('Grupo E', 1), away: pairedOfficialThirds[0], label: '16-avos' },
+          { id: 76, home: getOfficialTeamByRank('Grupo F', 1), away: getOfficialTeamByRank('Grupo C', 2), label: '16-avos' },
+          { id: 77, home: getOfficialTeamByRank('Grupo E', 2), away: getOfficialTeamByRank('Grupo I', 2), label: '16-avos' },
+          { id: 78, home: getOfficialTeamByRank('Grupo I', 1), away: pairedOfficialThirds[1], label: '16-avos' },
+          { id: 79, home: getOfficialTeamByRank('Grupo A', 1), away: pairedOfficialThirds[2], label: '16-avos' },
+          { id: 80, home: getOfficialTeamByRank('Grupo L', 1), away: pairedOfficialThirds[3], label: '16-avos' },
+          { id: 81, home: getOfficialTeamByRank('Grupo G', 1), away: pairedOfficialThirds[4], label: '16-avos' },
+          { id: 82, home: getOfficialTeamByRank('Grupo D', 1), away: pairedOfficialThirds[5], label: '16-avos' },
+          { id: 83, home: getOfficialTeamByRank('Grupo H', 1), away: getOfficialTeamByRank('Grupo J', 2), label: '16-avos' },
+          { id: 84, home: getOfficialTeamByRank('Grupo K', 2), away: getOfficialTeamByRank('Grupo L', 2), label: '16-avos' },
+          { id: 85, home: getOfficialTeamByRank('Grupo B', 1), away: pairedOfficialThirds[6], label: '16-avos' },
+          { id: 86, home: getOfficialTeamByRank('Grupo D', 2), away: getOfficialTeamByRank('Grupo G', 2), label: '16-avos' },
+          { id: 87, home: getOfficialTeamByRank('Grupo J', 1), away: getOfficialTeamByRank('Grupo H', 2), label: '16-avos' },
+          { id: 88, home: getOfficialTeamByRank('Grupo K', 1), away: pairedOfficialThirds[7], label: '16-avos' }
+        ];
+
+        return (
+          <div className="glass-panel p-6 rounded-3xl border border-football-glassBorder flex flex-col gap-6 animate-fadeIn max-w-full overflow-hidden text-left">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/5 pb-4 select-none">
+              <div>
+                <h3 className="text-xl font-bold text-football-gold">
+                  Chaveamento Oficial da Copa (Resultados Reais)
+                </h3>
+                <p className="text-xs text-slate-350 mt-1">
+                  Defina os vencedores oficiais de cada confronto do mata-mata clicando nas seleções correspondentes.
+                </p>
               </div>
-            </div>
 
-            {/* Quartas */}
-            <div className="flex flex-col gap-2">
-              <h4 className="font-extrabold text-[10px] text-slate-300 border-b border-white/5 pb-1.5 uppercase tracking-widest select-none">
-                Quartas de Final (8 times)
-              </h4>
-              <div className="flex flex-col gap-1.5 max-h-[300px] overflow-y-auto pr-1 no-scrollbar">
-                {Array(8).fill('').map((_, i) => (
-                  <select
-                    key={i}
-                    value={bracketResults.quartas[i] || ''}
-                    onChange={(e) => handleBracketSelect('quartas', i, e.target.value)}
-                    className="p-2.5 rounded-xl glass-input text-xs font-semibold w-full focus:border-football-gold"
-                  >
-                    <option value="">Time #{i+1}...</option>
-                    {allTeams.map(t => (
-                      <option key={t} value={t}>{TEAM_FLAGS[t]} {t}</option>
-                    ))}
-                  </select>
-                ))}
-              </div>
-            </div>
-
-            {/* Semis */}
-            <div className="flex flex-col gap-2">
-              <h4 className="font-extrabold text-[10px] text-slate-300 border-b border-white/5 pb-1.5 uppercase tracking-widest select-none">
-                Semifinais (4 times)
-              </h4>
-              {Array(4).fill('').map((_, i) => (
-                <select
-                  key={i}
-                  value={bracketResults.semis[i] || ''}
-                  onChange={(e) => handleBracketSelect('semis', i, e.target.value)}
-                  className="p-2.5 rounded-xl glass-input text-xs font-semibold w-full focus:border-football-gold"
-                >
-                  <option value="">Time #{i+1}...</option>
-                  {allTeams.map(t => (
-                    <option key={t} value={t}>{TEAM_FLAGS[t]} {t}</option>
-                  ))}
-                </select>
-              ))}
-            </div>
-
-            {/* Finalistas */}
-            <div className="flex flex-col gap-2">
-              <h4 className="font-extrabold text-[10px] text-slate-300 border-b border-white/5 pb-1.5 uppercase tracking-widest select-none">
-                Finalistas (2 times)
-              </h4>
-              {Array(2).fill('').map((_, i) => (
-                <select
-                  key={i}
-                  value={bracketResults.finalists[i] || ''}
-                  onChange={(e) => handleBracketSelect('finalists', i, e.target.value)}
-                  className="p-2.5 rounded-xl glass-input text-xs font-semibold w-full focus:border-football-gold"
-                >
-                  <option value="">Time #{i+1}...</option>
-                  {allTeams.map(t => (
-                    <option key={t} value={t}>{TEAM_FLAGS[t]} {t}</option>
-                  ))}
-                </select>
-              ))}
-            </div>
-
-            {/* Campeão */}
-            <div className="flex flex-col gap-2">
-              <h4 className="font-extrabold text-[10px] text-football-gold border-b border-football-gold/20 pb-1.5 uppercase tracking-widest select-none">
-                🏆 Campeão Oficial
-              </h4>
-              <select
-                value={bracketResults.champion || ''}
-                onChange={(e) => handleBracketSelect('champion', null, e.target.value)}
-                className="p-3 rounded-xl glass-input text-sm font-extrabold w-full border-football-gold/40 focus:border-football-gold"
+              <button
+                onClick={handleSaveBracket}
+                disabled={loadingId === 'bracket'}
+                className="flex items-center justify-center gap-2 bg-football-gold text-football-darkGreen hover:bg-amber-400 active:scale-95 font-bold px-6 py-3 rounded-xl transition-all cursor-pointer text-xs uppercase"
               >
-                <option value="">Campeão da Copa...</option>
-                {allTeams.map(t => (
-                  <option key={t} value={t}>{TEAM_FLAGS[t]} {t}</option>
-                ))}
-              </select>
+                {loadingId === 'bracket' ? (
+                  <RefreshCw size={14} className="animate-spin" />
+                ) : successId === 'bracket' ? (
+                  <Check size={14} />
+                ) : (
+                  <Save size={14} />
+                )}
+                <span>{successId === 'bracket' ? 'Salvo com sucesso!' : 'Salvar Chaveamento Oficial'}</span>
+              </button>
+            </div>
+
+            {/* Scroll Banner */}
+            <div className="flex items-center gap-2 text-[10px] font-bold text-football-gold uppercase tracking-wider select-none animate-pulse">
+              <span>Role para o lado para ver o chaveamento completo</span>
+              <ArrowRight size={12} className="animate-bounce-horizontal" />
+            </div>
+
+            <div className="w-full overflow-auto max-h-[70vh] border border-white/5 rounded-3xl bg-black/20 p-4 select-none scroll-smooth">
+              <div className="flex gap-8 items-center min-w-[1400px] h-[1250px] px-4">
+                
+                {/* COLUNA 1: 16-avos de Final */}
+                <div className="flex flex-col justify-between h-full py-2">
+                  <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-widest text-center border-b border-white/5 pb-2">16-avos</h3>
+                  <AdminMatchCard matchId={73} teamA={r32Matches[0].home} teamB={r32Matches[0].away} winner={bracketResults.oitavas[0]} onSelect={(team) => handleBracketSelect('r32', 0, team)} stageName="16-avos" />
+                  <AdminMatchCard matchId={75} teamA={r32Matches[2].home} teamB={r32Matches[2].away} winner={bracketResults.oitavas[2]} onSelect={(team) => handleBracketSelect('r32', 2, team)} stageName="16-avos" />
+                  <AdminMatchCard matchId={74} teamA={r32Matches[1].home} teamB={r32Matches[1].away} winner={bracketResults.oitavas[1]} onSelect={(team) => handleBracketSelect('r32', 1, team)} stageName="16-avos" />
+                  <AdminMatchCard matchId={77} teamA={r32Matches[4].home} teamB={r32Matches[4].away} winner={bracketResults.oitavas[4]} onSelect={(team) => handleBracketSelect('r32', 4, team)} stageName="16-avos" />
+                  <AdminMatchCard matchId={76} teamA={r32Matches[3].home} teamB={r32Matches[3].away} winner={bracketResults.oitavas[3]} onSelect={(team) => handleBracketSelect('r32', 3, team)} stageName="16-avos" />
+                  <AdminMatchCard matchId={78} teamA={r32Matches[5].home} teamB={r32Matches[5].away} winner={bracketResults.oitavas[5]} onSelect={(team) => handleBracketSelect('r32', 5, team)} stageName="16-avos" />
+                  <AdminMatchCard matchId={79} teamA={r32Matches[6].home} teamB={r32Matches[6].away} winner={bracketResults.oitavas[6]} onSelect={(team) => handleBracketSelect('r32', 6, team)} stageName="16-avos" />
+                  <AdminMatchCard matchId={80} teamA={r32Matches[7].home} teamB={r32Matches[7].away} winner={bracketResults.oitavas[7]} onSelect={(team) => handleBracketSelect('r32', 7, team)} stageName="16-avos" />
+                  <AdminMatchCard matchId={83} teamA={r32Matches[10].home} teamB={r32Matches[10].away} winner={bracketResults.oitavas[10]} onSelect={(team) => handleBracketSelect('r32', 10, team)} stageName="16-avos" />
+                  <AdminMatchCard matchId={84} teamA={r32Matches[11].home} teamB={r32Matches[11].away} winner={bracketResults.oitavas[11]} onSelect={(team) => handleBracketSelect('r32', 11, team)} stageName="16-avos" />
+                  <AdminMatchCard matchId={81} teamA={r32Matches[8].home} teamB={r32Matches[8].away} winner={bracketResults.oitavas[8]} onSelect={(team) => handleBracketSelect('r32', 8, team)} stageName="16-avos" />
+                  <AdminMatchCard matchId={82} teamA={r32Matches[9].home} teamB={r32Matches[9].away} winner={bracketResults.oitavas[9]} onSelect={(team) => handleBracketSelect('r32', 9, team)} stageName="16-avos" />
+                  <AdminMatchCard matchId={86} teamA={r32Matches[13].home} teamB={r32Matches[13].away} winner={bracketResults.oitavas[13]} onSelect={(team) => handleBracketSelect('r32', 13, team)} stageName="16-avos" />
+                  <AdminMatchCard matchId={88} teamA={r32Matches[15].home} teamB={r32Matches[15].away} winner={bracketResults.oitavas[15]} onSelect={(team) => handleBracketSelect('r32', 15, team)} stageName="16-avos" />
+                  <AdminMatchCard matchId={85} teamA={r32Matches[12].home} teamB={r32Matches[12].away} winner={bracketResults.oitavas[12]} onSelect={(team) => handleBracketSelect('r32', 12, team)} stageName="16-avos" />
+                  <AdminMatchCard matchId={87} teamA={r32Matches[14].home} teamB={r32Matches[14].away} winner={bracketResults.oitavas[14]} onSelect={(team) => handleBracketSelect('r32', 14, team)} stageName="16-avos" />
+                </div>
+
+                {/* COLUNA 2: Oitavas de Final */}
+                <div className="flex flex-col justify-between h-full py-10">
+                  <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-widest text-center border-b border-white/5 pb-2">Oitavas</h3>
+                  <AdminMatchCard matchId={89} teamA={bracketResults.oitavas[0]} teamB={bracketResults.oitavas[2]} winner={bracketResults.quartas[0]} onSelect={(team) => handleBracketSelect('oitavas', 0, team)} stageName="Oitavas" />
+                  <AdminMatchCard matchId={90} teamA={bracketResults.oitavas[1]} teamB={bracketResults.oitavas[4]} winner={bracketResults.quartas[1]} onSelect={(team) => handleBracketSelect('oitavas', 1, team)} stageName="Oitavas" />
+                  <AdminMatchCard matchId={91} teamA={bracketResults.oitavas[3]} teamB={bracketResults.oitavas[5]} winner={bracketResults.quartas[2]} onSelect={(team) => handleBracketSelect('oitavas', 2, team)} stageName="Oitavas" />
+                  <AdminMatchCard matchId={92} teamA={bracketResults.oitavas[6]} teamB={bracketResults.oitavas[7]} winner={bracketResults.quartas[3]} onSelect={(team) => handleBracketSelect('oitavas', 3, team)} stageName="Oitavas" />
+                  <AdminMatchCard matchId={93} teamA={bracketResults.oitavas[10]} teamB={bracketResults.oitavas[11]} winner={bracketResults.quartas[4]} onSelect={(team) => handleBracketSelect('oitavas', 4, team)} stageName="Oitavas" />
+                  <AdminMatchCard matchId={94} teamA={bracketResults.oitavas[8]} teamB={bracketResults.oitavas[9]} winner={bracketResults.quartas[5]} onSelect={(team) => handleBracketSelect('oitavas', 5, team)} stageName="Oitavas" />
+                  <AdminMatchCard matchId={95} teamA={bracketResults.oitavas[13]} teamB={bracketResults.oitavas[15]} winner={bracketResults.quartas[6]} onSelect={(team) => handleBracketSelect('oitavas', 6, team)} stageName="Oitavas" />
+                  <AdminMatchCard matchId={96} teamA={bracketResults.oitavas[12]} teamB={bracketResults.oitavas[14]} winner={bracketResults.quartas[7]} onSelect={(team) => handleBracketSelect('oitavas', 7, team)} stageName="Oitavas" />
+                </div>
+
+                {/* COLUNA 3: Quartas de Final */}
+                <div className="flex flex-col justify-between h-full py-24">
+                  <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-widest text-center border-b border-white/5 pb-2">Quartas</h3>
+                  <AdminMatchCard matchId={97} teamA={bracketResults.quartas[0]} teamB={bracketResults.quartas[1]} winner={bracketResults.semis[0]} onSelect={(team) => handleBracketSelect('quartas', 0, team)} stageName="Quartas" />
+                  <AdminMatchCard matchId={98} teamA={bracketResults.quartas[2]} teamB={bracketResults.quartas[3]} winner={bracketResults.semis[1]} onSelect={(team) => handleBracketSelect('quartas', 1, team)} stageName="Quartas" />
+                  <AdminMatchCard matchId={99} teamA={bracketResults.quartas[4]} teamB={bracketResults.quartas[5]} winner={bracketResults.semis[2]} onSelect={(team) => handleBracketSelect('quartas', 2, team)} stageName="Quartas" />
+                  <AdminMatchCard matchId={100} teamA={bracketResults.quartas[6]} teamB={bracketResults.quartas[7]} winner={bracketResults.semis[3]} onSelect={(team) => handleBracketSelect('quartas', 3, team)} stageName="Quartas" />
+                </div>
+
+                {/* COLUNA 4: Semifinais */}
+                <div className="flex flex-col justify-between h-full py-[240px]">
+                  <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-widest text-center border-b border-white/5 pb-2">Semis</h3>
+                  <AdminMatchCard matchId={101} teamA={bracketResults.semis[0]} teamB={bracketResults.semis[1]} winner={bracketResults.finalists[0]} onSelect={(team) => handleBracketSelect('semis', 0, team)} stageName="Semi" />
+                  <AdminMatchCard matchId={102} teamA={bracketResults.semis[2]} teamB={bracketResults.semis[3]} winner={bracketResults.finalists[1]} onSelect={(team) => handleBracketSelect('semis', 1, team)} stageName="Semi" />
+                </div>
+
+                {/* COLUNA 5: Grande Final */}
+                <div className="flex flex-col justify-center h-full gap-24">
+                  <h3 className="text-[9px] font-black text-football-gold uppercase tracking-widest text-center border-b border-football-gold/20 pb-2">Final</h3>
+                  <AdminMatchCard matchId={104} teamA={bracketResults.finalists[0]} teamB={bracketResults.finalists[1]} winner={bracketResults.champion} onSelect={(team) => handleBracketSelect('final', null, team)} stageName="Final" />
+                </div>
+
+                {/* COLUNA 6: Grande Campeão */}
+                <div className="flex flex-col justify-center h-full">
+                  <div className="glass-panel p-5 rounded-3xl border-2 border-football-gold relative overflow-hidden flex flex-col items-center text-center w-[185px] md:w-[205px] shadow-gold">
+                    <div className="absolute top-0 right-0 w-16 h-16 bg-football-gold/10 rounded-full blur-xl animate-pulse"></div>
+                    <Trophy className="text-football-gold animate-bounce-slow mb-2" size={36} />
+                    <h3 className="font-extrabold text-[9px] text-football-gold uppercase tracking-widest border-b border-football-gold/20 pb-1.5 w-full">
+                      Campeão Oficial
+                    </h3>
+                    
+                    <div className="mt-4 flex flex-col items-center w-full">
+                      {bracketResults.champion ? (
+                        <div className="flex flex-col items-center gap-2">
+                          <span className="text-4xl filter drop-shadow select-none">
+                            {TEAM_FLAGS[bracketResults.champion] || '🏳️'}
+                          </span>
+                          <span className="font-black text-xs text-white truncate max-w-[160px]">
+                            {bracketResults.champion}
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center gap-2 p-2">
+                          <span className="text-4xl filter drop-shadow opacity-25 select-none">🏳️</span>
+                          <span className="text-xs text-slate-500 italic">A definir</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+              </div>
             </div>
           </div>
-
-          <button
-            onClick={handleSaveBracket}
-            disabled={loadingId === 'bracket'}
-            className={`flex items-center justify-center gap-1.5 font-bold py-3.5 px-6 rounded-xl text-sm tracking-wider transition-all uppercase w-full cursor-pointer ${
-              successId === 'bracket'
-                ? 'bg-emerald-600 text-white shadow shadow-emerald-500/20'
-                : errorId === 'bracket'
-                ? 'bg-rose-600 text-white'
-                : 'bg-football-gold text-football-darkGreen hover:bg-amber-400 active:scale-95 shadow shadow-amber-500/10'
-            }`}
-          >
-            {loadingId === 'bracket' ? (
-              <RefreshCw size={16} className="animate-spin" />
-            ) : successId === 'bracket' ? (
-              <Check size={16} />
-            ) : errorId === 'bracket' ? (
-              <AlertCircle size={16} />
-            ) : (
-              <Save size={16} />
-            )}
-            <span>{successId === 'bracket' ? 'Salvo com sucesso!' : 'Salvar Chaveamento Oficial'}</span>
-          </button>
-        </div>
-      )}
+        );
+      })()}
 
       {/* ==========================================
           SUBTAB: ORACLE
