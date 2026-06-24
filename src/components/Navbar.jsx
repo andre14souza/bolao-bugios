@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Calendar, Layers, ShieldAlert, Award, LogOut, Menu, X, Trophy, HelpCircle, GitCommit, CheckSquare } from 'lucide-react';
+import { Calendar, Layers, ShieldAlert, Award, LogOut, Menu, X, Trophy, HelpCircle, GitCommit, CheckSquare, Lock } from 'lucide-react';
 
-export default function Navbar({ activeTab, setActiveTab, currentUser, isAdmin, onLogout, onOpenSettings }) {
+export default function Navbar({ activeTab, setActiveTab, currentUser, isAdmin, knockoutEnabled, onLogout, onOpenSettings }) {
   const [isOpen, setIsOpen] = useState(false);
 
   const navItems = [
@@ -39,7 +39,8 @@ export default function Navbar({ activeTab, setActiveTab, currentUser, isAdmin, 
         {/* Desktop Navigation */}
         <div className="hidden lg:flex items-center gap-1 overflow-x-auto no-scrollbar max-w-[70%]">
           {navItems.map((item) => {
-            const Icon = item.icon;
+            const isLocked = !knockoutEnabled && !isAdmin && (item.id === 'knockout' || item.id === 'bracket-predictions');
+            const Icon = isLocked ? Lock : item.icon;
             const isActive = activeTab === item.id;
             return (
               <button
@@ -48,10 +49,12 @@ export default function Navbar({ activeTab, setActiveTab, currentUser, isAdmin, 
                 className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-200 cursor-pointer ${
                   isActive
                     ? 'bg-football-vibrantGreen text-white shadow-md shadow-emerald-500/20'
+                    : isLocked
+                    ? 'text-slate-500 hover:text-slate-400 hover:bg-white/5 opacity-80'
                     : 'text-slate-300 hover:text-white hover:bg-white/5'
                 }`}
               >
-                <Icon size={14} />
+                <Icon size={14} className={isLocked ? 'text-amber-500' : ''} />
                 {item.label}
               </button>
             );
@@ -103,7 +106,8 @@ export default function Navbar({ activeTab, setActiveTab, currentUser, isAdmin, 
       {isOpen && (
         <div className="lg:hidden glass-panel mt-3 p-4 rounded-2xl border border-football-glassBorder flex flex-col gap-2 animate-fadeIn max-h-[80vh] overflow-y-auto">
           {navItems.map((item) => {
-            const Icon = item.icon;
+            const isLocked = !knockoutEnabled && !isAdmin && (item.id === 'knockout' || item.id === 'bracket-predictions');
+            const Icon = isLocked ? Lock : item.icon;
             const isActive = activeTab === item.id;
             return (
               <button
@@ -112,10 +116,12 @@ export default function Navbar({ activeTab, setActiveTab, currentUser, isAdmin, 
                 className={`flex items-center gap-3 p-3 rounded-xl text-sm font-bold transition-all cursor-pointer ${
                   isActive
                     ? 'bg-football-vibrantGreen text-white'
+                    : isLocked
+                    ? 'text-slate-500 hover:text-slate-400 hover:bg-white/5 opacity-85'
                     : 'text-slate-300 hover:text-white hover:bg-white/5'
                 }`}
               >
-                <Icon size={16} />
+                <Icon size={16} className={isLocked ? 'text-amber-500' : ''} />
                 {item.label}
               </button>
             );

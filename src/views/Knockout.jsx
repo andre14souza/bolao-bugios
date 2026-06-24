@@ -19,7 +19,26 @@ export const checkIsPlaceholder = (teamName) => {
          name.includes('Vencedor');
 };
 
-export default function Knockout({ matches, guesses, currentUser, onReload, onSelectMatchForStats }) {
+export default function Knockout({ matches, guesses, currentUser, onReload, onSelectMatchForStats, isKnockoutDisabled }) {
+  if (isKnockoutDisabled) {
+    return (
+      <div className="max-w-2xl mx-auto px-4 py-16 text-center select-none animate-fadeIn">
+        <div className="glass-panel p-8 rounded-3xl border border-white/5 relative shadow-2xl flex flex-col items-center">
+          <div className="w-16 h-16 bg-amber-500/10 text-amber-500 rounded-full flex items-center justify-center mb-6 border border-amber-500/20">
+            <Lock size={32} />
+          </div>
+          <h2 className="text-2xl font-extrabold text-white mb-2">Palpites do Mata-mata Bloqueados</h2>
+          <p className="text-slate-300 text-sm max-w-md mb-6 leading-relaxed">
+            Os palpites para a fase eliminatória ainda não estão disponíveis. A liberação ocorrerá assim que todos os confrontos do mata-mata forem definidos.
+          </p>
+          <div className="text-[10px] text-slate-500 font-semibold uppercase tracking-widest bg-white/5 px-3 py-1 rounded-full border border-white/5">
+            Liberação em breve
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const knockoutMatches = matches.filter(m => m.stage === 'knockout');
   
   // Ordenação fixa para as fases do mata-mata

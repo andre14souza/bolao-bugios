@@ -1,10 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import { updateMatch, saveGroupQualifierResults, saveBracketResults, saveOracleResults, fetchUsersList, updateUser, deleteUser, toggleMatchLock } from '../services/api';
+import { updateMatch, saveGroupQualifierResults, saveBracketResults, saveOracleResults, fetchUsersList, updateUser, deleteUser, toggleMatchLock, saveSettings } from '../services/api';
 import { Save, RefreshCw, Check, AlertCircle, Calendar, Layers, Trophy, HelpCircle, Users, Trash2, Eye, EyeOff, Lock, Unlock, ArrowRight } from 'lucide-react';
 import { TEAM_FLAGS } from './DailyMatches';
 import { checkIsPlaceholder } from './Knockout';
 
-export default function Admin({ matches, groupQualifiers, bracketGuesses, oracle, onReload }) {
+export default function Admin({ matches, groupQualifiers, bracketGuesses, oracle, globalSettings, onReload }) {
+  const [isKnockoutReleased, setIsKnockoutReleased] = useState(globalSettings?.knockoutEnabled || false);
+  const [isUpdatingSettings, setIsUpdatingSettings] = useState(false);
+
+  useEffect(() => {
+    if (globalSettings) {
+      setIsKnockoutReleased(globalSettings.knockoutEnabled);
+    }
+  }, [globalSettings]);
+
+  const handleToggleKnockoutRelease = async () => {
+    setIsUpdatingSettings(true);
+    try {
+      const nextState = !isKnockoutReleased;
+      const res = await saveSettings(nextState);
+      if (res.success) {
+        setIsKnockoutReleased(nextState);
+        onReload();
+      }
+    } catch (err) {
+      console.error("Erro ao salvar configurações:", err);
+      alert("Erro ao alterar liberação do mata-mata.");
+    } finally {
+      setIsUpdatingSettings(false);
+    }
+  };
   const [subTab, setSubTab] = useState('matches'); // matches, groups, bracket, oracle, users
 
   const formatAdminDate = (dateString) => {
@@ -538,6 +563,40 @@ export default function Admin({ matches, groupQualifiers, bracketGuesses, oracle
         <p className="text-sm text-slate-300 mt-1">
           Espaço para inserção dos dados reais oficiais. Ao salvar qualquer item, os pontos e o ranking geral serão atualizados automaticamente!
         </p>
+      </div>
+
+      {/* Configurações Globais / Liberações */}
+      <div className="mb-6 p-5 glass-panel rounded-3xl border border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-fadeIn">
+        <div className="flex items-center gap-3">
+          <div className={`p-3 rounded-2xl ${isKnockoutReleased ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'}`}>
+            <Trophy size={20} />
+          </div>
+          <div>
+            <h3 className="text-sm font-bold text-white uppercase tracking-wider">Liberação do Mata-mata</h3>
+            <p className="text-xs text-slate-400 mt-0.5 max-w-md">
+              Controla se os palpites de "Jogos Mata-mata" e "Chaveamento" estão abertos e visíveis para os participantes.
+            </p>
+          </div>
+        </div>
+
+        <button
+          onClick={handleToggleKnockoutRelease}
+          disabled={isUpdatingSettings}
+          className={`flex items-center justify-center gap-2 font-bold px-5 py-3 rounded-xl text-xs uppercase tracking-wider transition-all duration-300 cursor-pointer active:scale-95 border ${
+            isKnockoutReleased
+              ? 'bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/25 border-emerald-500/30'
+              : 'bg-rose-500/15 text-rose-400 hover:bg-rose-500/25 border-rose-500/30'
+          }`}
+        >
+          {isUpdatingSettings ? (
+            <RefreshCw size={14} className="animate-spin" />
+          ) : isKnockoutReleased ? (
+            <Unlock size={14} />
+          ) : (
+            <Lock size={14} />
+          )}
+          <span>{isKnockoutReleased ? 'Palpites Liberados' : 'Palpites Bloqueados'}</span>
+        </button>
       </div>
 
       {/* Menu de Sub-abas */}
