@@ -467,6 +467,12 @@ app.post('/api/group-qualifiers', (req, res) => {
   const { user, group, first, second, third } = req.body;
   const db = readDB();
 
+  // Regra de Trava Temporal: Bloqueia no início da Copa (11/06/2026 às 16:00:00)
+  const COPA_START = new Date("2026-06-11T16:00:00");
+  if (new Date() >= COPA_START) {
+    return res.status(403).json({ error: "O prazo para classificação de grupos já expirou! Edição bloqueada." });
+  }
+
   if (!db.groupQualifiers) db.groupQualifiers = [];
 
   const idx = db.groupQualifiers.findIndex(g => g.user === user && g.group === group);

@@ -9,9 +9,15 @@ export default function GroupStagePredictions({ matches, groupQualifiers, curren
   const [isSaving, setIsSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState(null);
   const [warning, setWarning] = useState(null);
+  const [isLocked, setIsLocked] = useState(false);
 
   // Carrega times por grupo e as seleções anteriores do usuário
   useEffect(() => {
+    // A classificação de grupos deve travar no início da Copa (11/06/2026 às 16:00:00)
+    const COPA_START = new Date("2026-06-11T16:00:00");
+    if (new Date() >= COPA_START) {
+      setIsLocked(true);
+    }
     const teamsByGroup = {};
     matches.forEach(m => {
       if (m.stage === 'group') {
@@ -45,6 +51,7 @@ export default function GroupStagePredictions({ matches, groupQualifiers, curren
 
   // Handler para cliques nas células de classificação (1º, 2º, 3º)
   const handleCellClick = (group, spot, team) => {
+    if (isLocked) return;
     setLocalPicks(prev => {
       const current = prev[group] || { first: '', second: '', third: '' };
       const updated = { ...current };
@@ -87,6 +94,7 @@ export default function GroupStagePredictions({ matches, groupQualifiers, curren
 
   // Sorteia 1º, 2º e 3º para todos os grupos (respeitando o limite de 8 terceiros)
   const handleRandomizeAll = () => {
+    if (isLocked) return;
     const randomPicks = {};
     const groups = Object.keys(groupTeams);
     const shuffledGroups = [...groups].sort(() => 0.5 - Math.random());
@@ -107,6 +115,7 @@ export default function GroupStagePredictions({ matches, groupQualifiers, curren
 
   // Reseta todos os palpites
   const handleReset = () => {
+    if (isLocked) return;
     const cleared = {};
     Object.keys(groupTeams).forEach(g => {
       cleared[g] = { first: '', second: '', third: '' };
@@ -117,6 +126,7 @@ export default function GroupStagePredictions({ matches, groupQualifiers, curren
 
   // Sorteia apenas um grupo específico
   const handleRandomizeGroup = (group) => {
+    if (isLocked) return;
     const teams = [...groupTeams[group]];
     const shuffledTeams = [...teams].sort(() => 0.5 - Math.random());
     
@@ -137,6 +147,7 @@ export default function GroupStagePredictions({ matches, groupQualifiers, curren
 
   // Salva no banco de dados local ou remoto
   const handleSave = async () => {
+    if (isLocked) return;
     setIsSaving(true);
     setSaveStatus(null);
     try {
@@ -172,37 +183,50 @@ export default function GroupStagePredictions({ matches, groupQualifiers, curren
         </div>
 
         {/* Ações Globais */}
-        <div className="flex flex-wrap gap-2.5">
-          <button
-            onClick={handleRandomizeAll}
-            className="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-white font-bold px-4 py-2.5 rounded-xl text-xs transition-all cursor-pointer border border-white/5"
-            title="Sorteia palpites aleatórios para todos os grupos"
-          >
-            <Shuffle size={14} />
-            Sortear Tudo
-          </button>
-          <button
-            onClick={handleReset}
-            className="flex items-center gap-1.5 bg-slate-850 hover:bg-rose-950 hover:text-rose-300 text-slate-300 font-bold px-4 py-2.5 rounded-xl text-xs transition-all cursor-pointer border border-white/5"
-            title="Limpa todas as suas seleções"
-          >
-            <RotateCcw size={14} />
-            Resetar
-          </button>
-          <button
-            onClick={handleSave}
-            disabled={isSaving}
-            className="flex items-center justify-center gap-2 bg-gradient-to-r from-football-vibrantGreen to-emerald-600 hover:from-emerald-500 hover:to-teal-600 text-white font-bold px-6 py-2.5 rounded-xl text-xs shadow-lg shadow-emerald-500/20 active:scale-95 transition-all disabled:opacity-50 cursor-pointer"
-          >
-            {isSaving ? (
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-            ) : (
-              <Save size={14} />
-            )}
-            <span>Salvar Classificados</span>
-          </button>
-        </div>
+        {!isLocked && (
+          <div className="flex flex-wrap gap-2.5">
+            <button
+              onClick={handleRandomizeAll}
+              className="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-white font-bold px-4 py-2.5 rounded-xl text-xs transition-all cursor-pointer border border-white/5"
+              title="Sorteia palpites aleatórios para todos os grupos"
+            >
+              <Shuffle size={14} />
+              Sortear Tudo
+            </button>
+            <button
+              onClick={handleReset}
+              className="flex items-center gap-1.5 bg-slate-850 hover:bg-rose-950 hover:text-rose-300 text-slate-300 font-bold px-4 py-2.5 rounded-xl text-xs transition-all cursor-pointer border border-white/5"
+              title="Limpa todas as suas seleções"
+            >
+              <RotateCcw size={14} />
+              Resetar
+            </button>
+            <button
+              onClick={handleSave}
+              disabled={isSaving}
+              className="flex items-center justify-center gap-2 bg-gradient-to-r from-football-vibrantGreen to-emerald-600 hover:from-emerald-500 hover:to-teal-600 text-white font-bold px-6 py-2.5 rounded-xl text-xs shadow-lg shadow-emerald-500/20 active:scale-95 transition-all disabled:opacity-50 cursor-pointer"
+            >
+              {isSaving ? (
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              ) : (
+                <Save size={14} />
+              )}
+              <span>Salvar Classificados</span>
+            </button>
+          </div>
+        )}
       </div>
+
+      {/* Banner de bloqueio temporal */}
+      {isLocked && (
+        <div className="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 flex items-center gap-3 text-sm font-semibold select-none">
+          <Lock size={20} className="stroke-[2.5]" />
+          <div>
+            <p className="font-bold">🔒 Classificação de Grupos Trancada!</p>
+            <p className="text-xs text-rose-300 font-medium">As previsões de classificação dos grupos fecharam no início da Copa (11/06/2026 às 16h00).</p>
+          </div>
+        </div>
+      )}
 
       {/* Regra de Validação dos 3º colocados */}
       <div className="mb-8 p-4 rounded-2xl glass-panel border border-football-glassBorder flex flex-col sm:flex-row sm:items-center justify-between gap-4 select-none">
@@ -287,7 +311,7 @@ export default function GroupStagePredictions({ matches, groupQualifiers, curren
                       +{scoreTotal} pts
                     </span>
                   )}
-                  {!hasActualResults && (
+                  {!hasActualResults && !isLocked && (
                     <button
                       onClick={() => handleRandomizeGroup(gName)}
                       className="flex items-center gap-1 text-[10px] bg-white/5 hover:bg-white/10 text-slate-300 font-semibold px-2 py-1 rounded-lg border border-white/5 transition-all cursor-pointer"
@@ -326,9 +350,9 @@ export default function GroupStagePredictions({ matches, groupQualifiers, curren
 
                         {/* Botão 1º */}
                         <td className="py-2.5 px-2 text-center">
-                          {hasActualResults ? (
+                          {hasActualResults || isLocked ? (
                             <div className={`w-7 h-7 rounded-lg mx-auto flex items-center justify-center text-xs font-bold ${
-                              actual.first === team ? 'bg-football-gold text-football-darkGreen' : is1st ? 'bg-slate-750 text-slate-400 border border-white/5' : ''
+                              actual.first === team ? 'bg-football-gold text-football-darkGreen' : is1st ? 'bg-slate-750 text-slate-300 border border-white/5 font-extrabold' : ''
                             }`}>
                               {actual.first === team ? '🥇' : is1st ? '1º' : ''}
                             </div>
@@ -348,9 +372,9 @@ export default function GroupStagePredictions({ matches, groupQualifiers, curren
 
                         {/* Botão 2º */}
                         <td className="py-2.5 px-2 text-center">
-                          {hasActualResults ? (
+                          {hasActualResults || isLocked ? (
                             <div className={`w-7 h-7 rounded-lg mx-auto flex items-center justify-center text-xs font-bold ${
-                              actual.second === team ? 'bg-slate-300 text-football-darkGreen' : is2nd ? 'bg-slate-750 text-slate-400 border border-white/5' : ''
+                              actual.second === team ? 'bg-slate-300 text-football-darkGreen' : is2nd ? 'bg-slate-750 text-slate-300 border border-white/5 font-extrabold' : ''
                             }`}>
                               {actual.second === team ? '🥈' : is2nd ? '2º' : ''}
                             </div>
@@ -370,9 +394,9 @@ export default function GroupStagePredictions({ matches, groupQualifiers, curren
 
                         {/* Botão 3º */}
                         <td className="py-2.5 px-2 text-center">
-                          {hasActualResults ? (
+                          {hasActualResults || isLocked ? (
                             <div className={`w-7 h-7 rounded-lg mx-auto flex items-center justify-center text-xs font-bold ${
-                              actual.third === team ? 'bg-amber-600 text-white' : is3rd ? 'bg-slate-750 text-slate-400 border border-white/5' : ''
+                              actual.third === team ? 'bg-amber-600 text-white' : is3rd ? 'bg-slate-750 text-slate-300 border border-white/5 font-extrabold' : ''
                             }`}>
                               {actual.third === team ? '🥉' : is3rd ? '3º' : ''}
                             </div>
