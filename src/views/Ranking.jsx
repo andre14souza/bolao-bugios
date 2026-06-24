@@ -4,7 +4,7 @@ import { computeRanking } from '../services/api';
 import { TEAM_FLAGS } from './DailyMatches';
 import { isMatchTimeOver, calculateMatchScore } from '../services/points';
 
-export default function Ranking({ users, matches, guesses, groupQualifiers, bracketGuesses, oracle }) {
+export default function Ranking({ users, matches, guesses, groupQualifiers, bracketGuesses, oracle, onSelectMatchForStats }) {
   const [selectedUser, setSelectedUser] = useState(null);
   const ranking = computeRanking(users || [], matches, guesses, groupQualifiers, bracketGuesses, oracle);
 
@@ -345,20 +345,32 @@ export default function Ranking({ users, matches, guesses, groupQualifiers, brac
                       </div>
 
                       {/* Resultado Real e Pontuação */}
-                      <div className="flex flex-col items-end sm:min-w-[160px] justify-center text-right border-t sm:border-t-0 sm:border-l border-white/5 pt-3 sm:pt-0 sm:pl-4">
+                      <div className="flex flex-col items-end sm:min-w-[160px] justify-center text-right border-t sm:border-t-0 sm:border-l border-white/5 pt-3 sm:pt-0 sm:pl-4 gap-1.5">
                         {hasResult ? (
-                          <div className="flex items-center justify-end gap-1.5 mb-1.5">
+                          <div className="flex items-center justify-end gap-1.5">
                             <span className="text-[10px] text-slate-400 font-bold uppercase select-none">Resultado:</span>
                             <span className="bg-football-gold text-football-darkGreen font-extrabold px-1.5 py-0.5 rounded text-xs shadow">
                               {match.homeScore} x {match.awayScore}
                             </span>
                           </div>
                         ) : (
-                          <span className="text-[10px] text-slate-400 font-bold uppercase mb-1.5 select-none">Em Andamento</span>
+                          <span className="text-[10px] text-slate-400 font-bold uppercase select-none font-mono">Em Andamento</span>
                         )}
-                        <span className={`text-[10px] font-bold py-0.5 px-2 rounded-full border ${pointsBadgeColor} select-none`}>
-                          {pointsText}
-                        </span>
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            onClick={() => {
+                              setSelectedUser(null);
+                              onSelectMatchForStats(match);
+                            }}
+                            className="text-[10px] font-bold bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-slate-300 px-2 py-0.5 rounded transition-all cursor-pointer flex items-center gap-1"
+                            title="Ver palpites de todos os participantes"
+                          >
+                            <span>📊 Stats</span>
+                          </button>
+                          <span className={`text-[10px] font-bold py-0.5 px-2 rounded-full border ${pointsBadgeColor} select-none`}>
+                            {pointsText}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   );

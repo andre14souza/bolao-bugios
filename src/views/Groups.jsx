@@ -4,7 +4,7 @@ import { saveGuess } from '../services/api';
 import { TEAM_FLAGS } from './DailyMatches';
 import { calculateMatchScore, isMatchTimeOver } from '../services/points';
 
-export default function Groups({ matches, guesses, currentUser, onReload }) {
+export default function Groups({ matches, guesses, currentUser, onReload, onSelectMatchForStats }) {
   const groupMatches = matches.filter(m => m.stage === 'group');
   
   // Encontra todos os grupos únicos
@@ -196,10 +196,19 @@ export default function Groups({ matches, guesses, currentUser, onReload }) {
                   <span className="font-semibold text-football-vibrantGreen">
                     Partida #{match.id}
                   </span>
-                  <span className="flex items-center gap-1">
-                    <Clock size={12} />
-                    {formatDate(match.date)}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => onSelectMatchForStats(match)}
+                      className="text-[10px] font-bold bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-slate-300 px-2 py-0.5 rounded transition-all cursor-pointer flex items-center gap-1"
+                      title="Ver palpites e estatísticas"
+                    >
+                      <span>📊 Estatísticas</span>
+                    </button>
+                    <span className="flex items-center gap-1">
+                      <Clock size={12} />
+                      {formatDate(match.date)}
+                    </span>
+                  </div>
                 </div>
 
                 {/* Times Layout */}

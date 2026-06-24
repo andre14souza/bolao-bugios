@@ -7,7 +7,7 @@ import { checkIsPlaceholder } from './Knockout';
 import { TEAM_FLAGS } from '../services/flags';
 export { TEAM_FLAGS };
 
-export default function DailyMatches({ matches, guesses, currentUser, onReload }) {
+export default function DailyMatches({ matches, guesses, currentUser, onReload, onSelectMatchForStats }) {
   // Local state for scores inputs
   const [localGuesses, setLocalGuesses] = useState({});
   const [isSaving, setIsSaving] = useState(false);
@@ -157,10 +157,21 @@ export default function DailyMatches({ matches, guesses, currentUser, onReload }
           <span className="bg-football-grassGreen/30 text-football-vibrantGreen px-2.5 py-0.5 rounded-full font-bold uppercase">
             {match.group}
           </span>
-          <span className="flex items-center gap-1">
-            <Clock size={12} />
-            {formatDate(match.date)}
-          </span>
+          <div className="flex items-center gap-2">
+            {!isPlaceholder && (
+              <button
+                onClick={() => onSelectMatchForStats(match)}
+                className="text-[10px] font-bold bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-slate-300 px-2 py-0.5 rounded transition-all cursor-pointer flex items-center gap-1"
+                title="Ver palpites e estatísticas"
+              >
+                <span>📊 Estatísticas</span>
+              </button>
+            )}
+            <span className="flex items-center gap-1">
+              <Clock size={12} />
+              {formatDate(match.date)}
+            </span>
+          </div>
         </div>
 
         {/* Teams and Inputs Layout */}

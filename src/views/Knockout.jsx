@@ -19,7 +19,7 @@ export const checkIsPlaceholder = (teamName) => {
          name.includes('Vencedor');
 };
 
-export default function Knockout({ matches, guesses, currentUser, onReload }) {
+export default function Knockout({ matches, guesses, currentUser, onReload, onSelectMatchForStats }) {
   const knockoutMatches = matches.filter(m => m.stage === 'knockout');
   
   // Ordenação fixa para as fases do mata-mata
@@ -218,10 +218,21 @@ export default function Knockout({ matches, guesses, currentUser, onReload }) {
                   <span className="font-bold text-football-royalBlue bg-football-royalBlue/10 px-2.5 py-0.5 rounded">
                     {match.group}
                   </span>
-                  <span className="flex items-center gap-1">
-                    <Clock size={12} />
-                    {formatDate(match.date)}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    {!isPlaceholder && (
+                      <button
+                        onClick={() => onSelectMatchForStats(match)}
+                        className="text-[10px] font-bold bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-slate-300 px-2 py-0.5 rounded transition-all cursor-pointer flex items-center gap-1"
+                        title="Ver palpites e estatísticas"
+                      >
+                        <span>📊 Estatísticas</span>
+                      </button>
+                    )}
+                    <span className="flex items-center gap-1">
+                      <Clock size={12} />
+                      {formatDate(match.date)}
+                    </span>
+                  </div>
                 </div>
 
                 {/* Times Layout */}
