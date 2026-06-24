@@ -56,31 +56,22 @@ export default function BracketPredictions({ matches, bracketGuesses, groupQuali
     }
   }, [bracketGuesses, currentUser]);
 
-  // Seeding dos times com base nos palpites de grupo do usuário
-  const userGroupPicks = groupQualifiers?.guesses?.filter(g => g.user === currentUser) || [];
-
-  const groupPicksMap = {};
-  userGroupPicks.forEach(p => {
-    groupPicksMap[p.group] = {
-      first: p.first || '',
-      second: p.second || '',
-      third: p.third || ''
-    };
-  });
+  // Seeding dos times com base nos resultados oficiais do grupo (definidos pelo admin)
+  const groupResultsMap = groupQualifiers?.results || {};
 
   const getTeamByRank = (groupName, rank) => {
-    const group = groupPicksMap[groupName];
+    const group = groupResultsMap[groupName];
     if (!group) return `${rank}º do ${groupName}`;
     if (rank === 1) return group.first || `1º do ${groupName}`;
     if (rank === 2) return group.second || `2º do ${groupName}`;
     return group.third || `3º do ${groupName}`;
   };
 
-  // Extração dos 8 melhores terceiros colocados
-  const userThirds = [];
-  Object.entries(groupPicksMap).forEach(([groupName, picks]) => {
+  // Extração dos 8 melhores terceiros colocados oficiais
+  const officialThirds = [];
+  Object.entries(groupResultsMap).forEach(([groupName, picks]) => {
     if (picks.third) {
-      userThirds.push({
+      officialThirds.push({
         teamName: picks.third,
         groupName: groupName
       });
@@ -88,7 +79,7 @@ export default function BracketPredictions({ matches, bracketGuesses, groupQuali
   });
 
   // Preenche com placeholders se faltarem terceiros colocados
-  const paddedThirds = [...userThirds];
+  const paddedThirds = [...officialThirds];
   while (paddedThirds.length < 8) {
     paddedThirds.push({
       teamName: `3º Colocado #${paddedThirds.length + 1}`,
