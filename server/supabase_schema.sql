@@ -95,6 +95,12 @@ CREATE TABLE IF NOT EXISTS oracle_results (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );
 
+CREATE TABLE IF NOT EXISTS settings (
+    id INTEGER PRIMARY KEY DEFAULT 1,
+    knockout_enabled BOOLEAN DEFAULT FALSE,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
+);
+
 -- Habilitar acesso público
 ALTER TABLE users DISABLE ROW LEVEL SECURITY;
 ALTER TABLE matches DISABLE ROW LEVEL SECURITY;
@@ -105,6 +111,7 @@ ALTER TABLE bracket_guesses DISABLE ROW LEVEL SECURITY;
 ALTER TABLE bracket_results DISABLE ROW LEVEL SECURITY;
 ALTER TABLE oracle_guesses DISABLE ROW LEVEL SECURITY;
 ALTER TABLE oracle_results DISABLE ROW LEVEL SECURITY;
+ALTER TABLE settings DISABLE ROW LEVEL SECURITY;
 
 -- Limpar dados antigos
 TRUNCATE TABLE guesses CASCADE;
@@ -114,6 +121,7 @@ TRUNCATE TABLE bracket_guesses CASCADE;
 TRUNCATE TABLE bracket_results CASCADE;
 TRUNCATE TABLE oracle_guesses CASCADE;
 TRUNCATE TABLE oracle_results CASCADE;
+TRUNCATE TABLE settings CASCADE;
 TRUNCATE TABLE matches CASCADE;
 TRUNCATE TABLE users CASCADE;
 
@@ -276,6 +284,9 @@ INSERT INTO bracket_results (id, oitavas, quartas, semis, finalists, champion) V
 -- 10. Inserir Resultados Oficiais do Oraculo
 INSERT INTO oracle_results (id, champion, top_scorer, best_attack, zebra, first_red_card, deception, most_goals_match) VALUES
 (1, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+
+-- 10b. Inserir Configurações Iniciais
+INSERT INTO settings (id, knockout_enabled) VALUES (1, FALSE) ON CONFLICT (id) DO NOTHING;
 
 
 -- 11. Triggers de Trava de Palpites (Segurança do Banco de Dados)

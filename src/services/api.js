@@ -587,24 +587,43 @@ export async function deleteUser(username) {
 
 export async function fetchSettings() {
   if (isSupabaseEnabled) {
-    const { data, error } = await supabase.from('settings').select('*').eq('id', 1).maybeSingle();
-    if (error) throw error;
-    return data ? { knockoutEnabled: data.knockout_enabled } : { knockoutEnabled: false };
+    try {
+      const { data, error } = await supabase.from('settings').select('*').eq('id', 1).maybeSingle();
+      if (error) {
+        console.warn("Erro ao buscar configurações no Supabase (tabela settings pode não existir):", error);
+        return { knockoutEnabled: false };
+      }
+      return data ? { knockoutEnabled: data.knockout_enabled } : { knockoutEnabled: false };
+    } catch (err) {
+      console.warn("Falha de conexão com a tabela settings no Supabase:", err);
+      return { knockoutEnabled: false };
+    }
   } else {
-    const res = await fetch(`${API_BASE}/api/settings`);
-    return await res.json();
+    try {
+      const res = await fetch(`${API_BASE}/api/settings`);
+      if (!res.ok) return { knockoutEnabled: false };
+      return await res.json();
+    } catch (err) {
+      console.error("Falha ao se conectar à API settings local:", err);
+      return { knockoutEnabled: false };
+    }
   }
 }
 
 export async function saveSettings(knockoutEnabled) {
   if (isSupabaseEnabled) {
-    const { data, error } = await supabase.from('settings').upsert({
-      id: 1,
-      knockout_enabled: knockoutEnabled,
-      updated_at: new Date().toISOString()
-    }, { onConflict: 'id' }).select();
-    if (error) throw error;
-    return { success: true, settings: { knockoutEnabled: data[0].knockout_enabled } };
+    try {
+      const { data, error } = await supabase.from('settings').upsert({
+        id: 1,
+        knockout_enabled: knockoutEnabled,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'id' }).select();
+      if (error) throw error;
+      return { success: true, settings: { knockoutEnabled: data[0].knockout_enabled } };
+    } catch (err) {
+      console.error("Erro ao salvar configurações no Supabase:", err);
+      return { success: false, error: err.message, settings: { knockoutEnabled } };
+    }
   } else {
     const res = await fetch(`${API_BASE}/api/settings`, {
       method: 'POST',
