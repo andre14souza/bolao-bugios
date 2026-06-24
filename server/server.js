@@ -24,11 +24,16 @@ const readDB = () => {
         bracketGuesses: [],
         bracketResults: { oitavas: [], quartas: [], semis: [], finalists: [], champion: null },
         oracle: [],
-        oracleResults: {}
+        oracleResults: {},
+        settings: { knockoutEnabled: false }
       };
     }
     const data = fs.readFileSync(dbPath, 'utf8');
-    return JSON.parse(data);
+    const parsed = JSON.parse(data);
+    if (!parsed.settings) {
+      parsed.settings = { knockoutEnabled: false };
+    }
+    return parsed;
   } catch (err) {
     console.error("Erro ao ler banco de dados local:", err);
     return {
@@ -39,7 +44,8 @@ const readDB = () => {
       bracketGuesses: [],
       bracketResults: { oitavas: [], quartas: [], semis: [], finalists: [], champion: null },
       oracle: [],
-      oracleResults: {}
+      oracleResults: {},
+      settings: { knockoutEnabled: false }
     };
   }
 };
@@ -613,6 +619,26 @@ app.post('/api/oracle/results', (req, res) => {
 
   writeDB(db);
   res.json({ success: true, results: db.oracleResults });
+});
+
+// ==========================================
+// ROTAS DE CONFIGURAÇÕES GERAIS
+// ==========================================
+
+app.get('/api/settings', (req, res) => {
+  const db = readDB();
+  res.json(db.settings || { knockoutEnabled: false });
+});
+
+app.post('/api/settings', (req, res) => {
+  const { knockoutEnabled } = req.body;
+  const db = readDB();
+  db.settings = {
+    ...db.settings,
+    knockoutEnabled: !!knockoutEnabled
+  };
+  writeDB(db);
+  res.json({ success: true, settings: db.settings });
 });
 
 // Servir arquivos estáticos do frontend em produção

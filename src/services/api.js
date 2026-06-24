@@ -585,6 +585,36 @@ export async function deleteUser(username) {
   }
 }
 
+export async function fetchSettings() {
+  if (isSupabaseEnabled) {
+    const { data, error } = await supabase.from('settings').select('*').eq('id', 1).maybeSingle();
+    if (error) throw error;
+    return data ? { knockoutEnabled: data.knockout_enabled } : { knockoutEnabled: false };
+  } else {
+    const res = await fetch(`${API_BASE}/api/settings`);
+    return await res.json();
+  }
+}
+
+export async function saveSettings(knockoutEnabled) {
+  if (isSupabaseEnabled) {
+    const { data, error } = await supabase.from('settings').upsert({
+      id: 1,
+      knockout_enabled: knockoutEnabled,
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'id' }).select();
+    if (error) throw error;
+    return { success: true, settings: { knockoutEnabled: data[0].knockout_enabled } };
+  } else {
+    const res = await fetch(`${API_BASE}/api/settings`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ knockoutEnabled })
+    });
+    return await res.json();
+  }
+}
+
 // ==========================================
 // CÁLCULO GERAL DE RANKING DINÂMICO
 // ==========================================

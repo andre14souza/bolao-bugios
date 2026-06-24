@@ -9,7 +9,7 @@ import BracketPredictions from './views/BracketPredictions';
 import Oracle from './views/Oracle';
 import Ranking from './views/Ranking';
 import Admin from './views/Admin';
-import { fetchMatches, fetchGuesses, fetchGroupQualifiers, fetchBracket, fetchOracle, fetchUsers, updateUser } from './services/api';
+import { fetchMatches, fetchGuesses, fetchGroupQualifiers, fetchBracket, fetchOracle, fetchUsers, updateUser, fetchSettings } from './services/api';
 import { Trophy, X } from 'lucide-react';
 import { calculateMatchScore, isMatchTimeOver } from './services/points';
 import { TEAM_FLAGS } from './services/flags';
@@ -27,6 +27,7 @@ export default function App() {
   const [oracle, setOracle] = useState({ guesses: [], results: {} });
   const [users, setUsers] = useState([]);
   const [selectedMatchForStats, setSelectedMatchForStats] = useState(null);
+  const [globalSettings, setGlobalSettings] = useState({ knockoutEnabled: false });
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -77,14 +78,16 @@ export default function App() {
         groupQualifiersData,
         bracketData,
         oracleData,
-        usersData
+        usersData,
+        settingsData
       ] = await Promise.all([
         fetchMatches(),
         fetchGuesses(),
         fetchGroupQualifiers(),
         fetchBracket(),
         fetchOracle(),
-        fetchUsers()
+        fetchUsers(),
+        fetchSettings()
       ]);
       setMatches(matchesData);
       setGuesses(guessesData);
@@ -92,6 +95,7 @@ export default function App() {
       setBracketGuesses(bracketData);
       setOracle(oracleData);
       setUsers(usersData);
+      setGlobalSettings(settingsData);
     } catch (err) {
       console.error("Erro ao carregar dados do bolão:", err);
       setError("Não foi possível conectar ao servidor. Certifique-se de que o backend Express está ativo!");
@@ -192,6 +196,7 @@ export default function App() {
             currentUser={currentUser}
             onReload={loadData}
             onSelectMatchForStats={setSelectedMatchForStats}
+            isKnockoutDisabled={!globalSettings.knockoutEnabled && !isAdmin}
           />
         );
       case 'group-stage-predictions':
@@ -211,6 +216,7 @@ export default function App() {
             groupQualifiers={groupQualifiers}
             currentUser={currentUser}
             onReload={loadData}
+            isKnockoutDisabled={!globalSettings.knockoutEnabled && !isAdmin}
           />
         );
       case 'oracle':
@@ -244,6 +250,7 @@ export default function App() {
             groupQualifiers={groupQualifiers}
             bracketGuesses={bracketGuesses}
             oracle={oracle}
+            globalSettings={globalSettings}
             onReload={loadData}
           />
         );
@@ -543,6 +550,7 @@ export default function App() {
         setActiveTab={setActiveTab}
         currentUser={currentUser}
         isAdmin={isAdmin}
+        knockoutEnabled={globalSettings.knockoutEnabled}
         onLogout={handleLogout}
         onOpenSettings={handleOpenSettings}
       />
