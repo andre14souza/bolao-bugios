@@ -101,6 +101,13 @@ CREATE TABLE IF NOT EXISTS settings (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );
 
+CREATE TABLE IF NOT EXISTS points_adjustments (
+    user_name TEXT PRIMARY KEY,
+    points INTEGER NOT NULL DEFAULT 0,
+    description TEXT,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
+);
+
 -- Habilitar acesso público
 ALTER TABLE users DISABLE ROW LEVEL SECURITY;
 ALTER TABLE matches DISABLE ROW LEVEL SECURITY;
@@ -112,6 +119,7 @@ ALTER TABLE bracket_results DISABLE ROW LEVEL SECURITY;
 ALTER TABLE oracle_guesses DISABLE ROW LEVEL SECURITY;
 ALTER TABLE oracle_results DISABLE ROW LEVEL SECURITY;
 ALTER TABLE settings DISABLE ROW LEVEL SECURITY;
+ALTER TABLE points_adjustments DISABLE ROW LEVEL SECURITY;
 
 -- Limpar dados antigos
 TRUNCATE TABLE guesses CASCADE;
@@ -122,6 +130,7 @@ TRUNCATE TABLE bracket_results CASCADE;
 TRUNCATE TABLE oracle_guesses CASCADE;
 TRUNCATE TABLE oracle_results CASCADE;
 TRUNCATE TABLE settings CASCADE;
+TRUNCATE TABLE points_adjustments CASCADE;
 TRUNCATE TABLE matches CASCADE;
 TRUNCATE TABLE users CASCADE;
 

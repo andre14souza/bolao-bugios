@@ -641,6 +641,37 @@ app.post('/api/settings', (req, res) => {
   res.json({ success: true, settings: db.settings });
 });
 
+
+app.get('/api/points-adjustments', (req, res) => {
+  const db = readDB();
+  res.json(db.pointsAdjustments || []);
+});
+
+app.post('/api/points-adjustments', (req, res) => {
+  const { user, points, description } = req.body;
+  const db = readDB();
+  if (!db.pointsAdjustments) db.pointsAdjustments = [];
+
+  const idx = db.pointsAdjustments.findIndex(a => a.user.toLowerCase() === user.toLowerCase());
+  const pts = parseInt(points, 10) || 0;
+
+  if (pts === 0) {
+    if (idx !== -1) {
+      db.pointsAdjustments.splice(idx, 1);
+    }
+  } else {
+    const data = { user, points: pts, description, updatedAt: new Date().toISOString() };
+    if (idx !== -1) {
+      db.pointsAdjustments[idx] = data;
+    } else {
+      db.pointsAdjustments.push(data);
+    }
+  }
+
+  writeDB(db);
+  res.json({ success: true, pointsAdjustments: db.pointsAdjustments });
+});
+
 // Servir arquivos estáticos do frontend em produção
 const distPath = path.join(__dirname, '../dist');
 app.use(express.static(distPath));

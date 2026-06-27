@@ -634,11 +634,67 @@ export async function saveSettings(knockoutEnabled) {
   }
 }
 
+export async function fetchPointsAdjustments() {
+  if (isSupabaseEnabled) {
+    try {
+      const { data, error } = await supabase.from('points_adjustments').select('*');
+      if (error) {
+        console.warn("Erro ao buscar ajustes de pontos no Supabase:", error);
+        return [];
+      }
+      return data ? data.map(a => ({
+        user: a.user_name,
+        points: a.points,
+        description: a.description
+      })) : [];
+    } catch (err) {
+      console.warn("Falha de conexão com a tabela points_adjustments no Supabase:", err);
+      return [];
+    }
+  } else {
+    try {
+      const res = await fetch(`${API_BASE}/api/points-adjustments`);
+      if (!res.ok) return [];
+      return await res.json();
+    } catch (err) {
+      console.error("Falha ao se conectar à API points-adjustments local:", err);
+      return [];
+    }
+  }
+}
+
+export async function savePointsAdjustment(user, points, description) {
+  const pts = parseInt(points, 10) || 0;
+  if (isSupabaseEnabled) {
+    if (pts === 0) {
+      const { error } = await supabase.from('points_adjustments').delete().eq('user_name', user);
+      if (error) throw error;
+      return { success: true };
+    } else {
+      const { data, error } = await supabase.from('points_adjustments').upsert({
+        user_name: user,
+        points: pts,
+        description,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'user_name' }).select();
+      if (error) throw error;
+      return { success: true, data };
+    }
+  } else {
+    const res = await fetch(`${API_BASE}/api/points-adjustments`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user, points: pts, description })
+    });
+    return await res.json();
+  }
+}
+
 // ==========================================
 // CÁLCULO GERAL DE RANKING DINÂMICO
 // ==========================================
 
-export function computeRanking(users, matches, guesses, groupQualifiersData = {}, bracketData = {}, oracleData = {}) {
+export function computeRanking(users, matches, guesses, groupQualifiersData = {}, bracketData = {}, oracleData = {}, pointsAdjustments = []) {
   // Inicializa a pontuação dos 7 amigos
   const ranking = users.map(u => ({
     user: u,
@@ -650,7 +706,10 @@ export function computeRanking(users, matches, guesses, groupQualifiersData = {}
     exactMatches: 0, // Mosca
     winnerMatches: 0, // Vencedor/Saldo/Empate
     totalGuesses: 0,
-    penaltyPoints: 0
+    penaltyPoints: 0,
+    penaltyReason: '',
+    bonusPoints: 0,
+    bonusReason: ''
   }));
 
   // 1. Pontos das partidas individuais (placar por aproximação)
@@ -784,13 +843,23 @@ export function computeRanking(users, matches, guesses, groupQualifiersData = {}
     }
   });
 
-  // Aplica as penalidades se houverem
-  ranking.forEach(r => {
-    if (r.user === "Victor") {
-      r.penaltyPoints = 10;
-      r.points -= 10;
-    }
-  });
+  // Aplica as penalidades / bônus dinâmicos se houverem
+  if (Array.isArray(pointsAdjustments)) {
+    pointsAdjustments.forEach(adj => {
+      const userRank = ranking.find(r => r.user.toLowerCase() === adj.user.toLowerCase());
+      if (userRank) {
+        if (adj.points < 0) {
+          userRank.penaltyPoints = Math.abs(adj.points);
+          userRank.penaltyReason = adj.description || '';
+          userRank.points += adj.points;
+        } else if (adj.points > 0) {
+          userRank.bonusPoints = adj.points;
+          userRank.bonusReason = adj.description || '';
+          userRank.points += adj.points;
+        }
+      }
+    });
+  }
 
   // Ordena a classificação: Pontos Totais (desc), Placares Exatos (desc), Acertos Vencedores (desc), Nome Alfabético (asc)
   ranking.sort((a, b) => {

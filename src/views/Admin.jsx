@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { updateMatch, saveGroupQualifierResults, saveBracketResults, saveOracleResults, fetchUsersList, updateUser, deleteUser, toggleMatchLock, saveSettings } from '../services/api';
-import { Save, RefreshCw, Check, AlertCircle, Calendar, Layers, Trophy, HelpCircle, Users, Trash2, Eye, EyeOff, Lock, Unlock, ArrowRight } from 'lucide-react';
+import { updateMatch, saveGroupQualifierResults, saveBracketResults, saveOracleResults, fetchUsersList, updateUser, deleteUser, toggleMatchLock, saveSettings, fetchPointsAdjustments, savePointsAdjustment } from '../services/api';
+import { Save, RefreshCw, Check, AlertCircle, Calendar, Layers, Trophy, HelpCircle, Users, Trash2, Eye, EyeOff, Lock, Unlock, ArrowRight, Award } from 'lucide-react';
 import { TEAM_FLAGS } from './DailyMatches';
 import { checkIsPlaceholder } from './Knockout';
 
@@ -57,6 +57,11 @@ export default function Admin({ matches, groupQualifiers, bracketGuesses, oracle
   const [editFields, setEditFields] = useState({}); // { [username]: { username, password } }
   const [visiblePasswords, setVisiblePasswords] = useState({}); // { [username]: boolean }
 
+  // Estados para gerenciamento de ajustes de pontos (Admin)
+  const [adjustmentsList, setAdjustmentsList] = useState([]);
+  const [loadingAdjustments, setLoadingAdjustments] = useState(false);
+  const [adjFields, setAdjFields] = useState({}); // { [username]: { points, description } }
+
   const loadUsersList = async () => {
     setLoadingUsers(true);
     try {
@@ -74,11 +79,64 @@ export default function Admin({ matches, groupQualifiers, bracketGuesses, oracle
     }
   };
 
+  const loadAdjustmentsList = async () => {
+    setLoadingAdjustments(true);
+    try {
+      const data = await fetchPointsAdjustments();
+      setAdjustmentsList(data);
+      setAdjFields(prev => {
+        const updated = { ...prev };
+        data.forEach(a => {
+          updated[a.user] = { points: String(a.points), description: a.description || '' };
+        });
+        return updated;
+      });
+    } catch (err) {
+      console.error("Erro ao carregar ajustes:", err);
+    } finally {
+      setLoadingAdjustments(false);
+    }
+  };
+
   useEffect(() => {
     if (subTab === 'users') {
       loadUsersList();
+    } else if (subTab === 'adjustments') {
+      loadUsersList();
+      loadAdjustmentsList();
     }
   }, [subTab]);
+
+  const handleAdjChange = (username, field, val) => {
+    setAdjFields(prev => ({
+      ...prev,
+      [username]: {
+        ...prev[username],
+        [field]: val
+      }
+    }));
+  };
+
+  const handleSaveAdjustment = async (username) => {
+    setLoadingId(`adj-${username}`);
+    setSuccessId(null);
+    setErrorId(null);
+    const { points, description } = adjFields[username] || { points: '', description: '' };
+    const pts = parseInt(points, 10) || 0;
+
+    try {
+      await savePointsAdjustment(username, pts, description);
+      setSuccessId(`adj-${username}`);
+      onReload(); // Recarrega os dados globais no App.jsx
+      loadAdjustmentsList();
+      setTimeout(() => setSuccessId(null), 3000);
+    } catch (err) {
+      console.error(err);
+      setErrorId(`adj-${username}`);
+    } finally {
+      setLoadingId(null);
+    }
+  };
 
   const handleUserChange = (originalUsername, field, val) => {
     setEditFields(prev => ({
@@ -645,6 +703,15 @@ export default function Admin({ matches, groupQualifiers, bracketGuesses, oracle
         >
           <Users size={14} />
           <span>Contas</span>
+        </button>
+        <button
+          onClick={() => setSubTab('adjustments')}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold uppercase transition-all duration-300 cursor-pointer ${
+            subTab === 'adjustments' ? 'bg-football-gold text-football-darkGreen font-extrabold scale-105 shadow-md shadow-amber-500/10' : 'glass-panel text-slate-300 hover:text-white border-football-glassBorder'
+          }`}
+        >
+          <Award size={14} />
+          <span>Ajustar Pontos</span>
         </button>
       </div>
 
@@ -1272,6 +1339,102 @@ export default function Admin({ matches, groupQualifiers, bracketGuesses, oracle
                   </div>
                 );
               })}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ==========================================
+          SUBTAB: ADJUSTMENTS (AJUSTAR PONTOS)
+         ========================================== */}
+      {subTab === 'adjustments' && (
+        <div className="glass-panel p-6 rounded-3xl border border-football-glassBorder flex flex-col gap-6 animate-fadeIn text-left">
+          <div className="border-b border-white/5 pb-4 select-none">
+            <h3 className="text-xl font-bold text-football-gold">
+              Ajuste de Pontos (Bônus e Penalidades)
+            </h3>
+            <p className="text-xs text-slate-350 mt-1">
+              Adicione bônus (pontos positivos) ou penalidades (pontos negativos) aos participantes do bolão. Use 0 para remover qualquer ajuste.
+            </p>
+          </div>
+
+          {loadingUsers || loadingAdjustments ? (
+            <div className="text-center py-8 text-slate-400">Carregando dados...</div>
+          ) : usersList.length === 0 ? (
+            <div className="text-center py-8 text-slate-400 font-bold">Nenhum participante encontrado.</div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-football-grassGreen/20 border-b border-football-glassBorder text-xs font-bold uppercase tracking-wider text-slate-300 select-none">
+                    <th className="py-4 px-4">Participante</th>
+                    <th className="py-4 px-4 w-32">Pontos (+/-)</th>
+                    <th className="py-4 px-4">Justificativa / Descrição</th>
+                    <th className="py-4 px-4 w-28 text-center">Ação</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/5">
+                  {usersList.map((user) => {
+                    const username = user.username;
+                    const fields = adjFields[username] || { points: '', description: '' };
+                    const isLoading = loadingId === `adj-${username}`;
+                    const isSuccess = successId === `adj-${username}`;
+                    const isError = errorId === `adj-${username}`;
+
+                    return (
+                      <tr key={username} className="hover:bg-white/5 transition-colors">
+                        <td className="py-4 px-4 font-bold text-white text-sm">
+                          👤 {username}
+                        </td>
+                        <td className="py-4 px-4">
+                          <input
+                            type="text"
+                            placeholder="Ex: 50 ou -10"
+                            value={fields.points}
+                            onChange={(e) => handleAdjChange(username, 'points', e.target.value)}
+                            className="w-full px-3 py-2 rounded-xl glass-input text-xs font-semibold focus:border-football-gold text-center text-white"
+                            disabled={isLoading}
+                          />
+                        </td>
+                        <td className="py-4 px-4">
+                          <input
+                            type="text"
+                            placeholder="Ex: Bônus de participação"
+                            value={fields.description}
+                            onChange={(e) => handleAdjChange(username, 'description', e.target.value)}
+                            className="w-full px-3 py-2 rounded-xl glass-input text-xs font-semibold focus:border-football-gold text-white"
+                            disabled={isLoading}
+                          />
+                        </td>
+                        <td className="py-4 px-4 text-center">
+                          <button
+                            onClick={() => handleSaveAdjustment(username)}
+                            disabled={isLoading}
+                            className={`w-full flex items-center justify-center gap-1.5 font-bold py-2 px-3 rounded-xl text-xs uppercase tracking-wider transition-all cursor-pointer ${
+                              isSuccess
+                                ? 'bg-emerald-600 text-white shadow shadow-emerald-500/20'
+                                : isError
+                                ? 'bg-rose-600 text-white'
+                                : 'bg-football-gold text-football-darkGreen hover:bg-amber-400 active:scale-95 shadow shadow-amber-500/10'
+                            }`}
+                          >
+                            {isLoading ? (
+                              <RefreshCw size={12} className="animate-spin" />
+                            ) : isSuccess ? (
+                              <Check size={12} />
+                            ) : isError ? (
+                              <AlertCircle size={12} />
+                            ) : (
+                              <Save size={12} />
+                            )}
+                            <span>{isSuccess ? 'Salvo!' : 'Salvar'}</span>
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
           )}
         </div>

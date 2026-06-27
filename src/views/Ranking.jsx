@@ -153,6 +153,14 @@ export default function Ranking({ users, matches, guesses, groupQualifiers, brac
                             -{row.penaltyPoints} pts ⚠️
                           </span>
                         )}
+                        {row.bonusPoints > 0 && (
+                          <span 
+                            className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded text-[10px] font-bold"
+                            title="Bônus aplicado"
+                          >
+                            +{row.bonusPoints} pts ⭐
+                          </span>
+                        )}
                       </div>
                     </td>
 
@@ -198,19 +206,38 @@ export default function Ranking({ users, matches, guesses, groupQualifiers, brac
         </div>
       </div>
 
-      {/* Penalidades / Advertências */}
-      {ranking.some(r => r.penaltyPoints > 0) && (
-        <div className="mt-6 p-5 rounded-3xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs select-none">
-          <h4 className="font-extrabold text-sm text-rose-400 mb-2 flex items-center gap-1.5">
-            <span>⚠️</span> Penalidades Aplicadas
-          </h4>
-          <ul className="list-disc pl-4 space-y-1">
-            {ranking.filter(r => r.penaltyPoints > 0).map(r => (
-              <li key={r.user}>
-                O usuário <strong>{r.user}</strong> sofreu uma redução de <strong>{r.penaltyPoints} pontos</strong> por irregularidade em palpite de empate.
-              </li>
-            ))}
-          </ul>
+      {/* Penalidades e Bônus Aplicados */}
+      {(ranking.some(r => r.penaltyPoints > 0) || ranking.some(r => r.bonusPoints > 0)) && (
+        <div className="mt-6 space-y-4">
+          {ranking.some(r => r.penaltyPoints > 0) && (
+            <div className="p-5 rounded-3xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs select-none">
+              <h4 className="font-extrabold text-sm text-rose-400 mb-2 flex items-center gap-1.5">
+                <span>⚠️</span> Penalidades Aplicadas
+              </h4>
+              <ul className="list-disc pl-4 space-y-1">
+                {ranking.filter(r => r.penaltyPoints > 0).map(r => (
+                  <li key={r.user}>
+                    O usuário <strong>{r.user}</strong> sofreu uma redução de <strong>{r.penaltyPoints} pontos</strong>{r.penaltyReason ? ` (${r.penaltyReason})` : ' por irregularidade em palpite de empate'}.
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {ranking.some(r => r.bonusPoints > 0) && (
+            <div className="p-5 rounded-3xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs select-none">
+              <h4 className="font-extrabold text-sm text-emerald-400 mb-2 flex items-center gap-1.5">
+                <span>⭐</span> Bônus Aplicados
+              </h4>
+              <ul className="list-disc pl-4 space-y-1">
+                {ranking.filter(r => r.bonusPoints > 0).map(r => (
+                  <li key={r.user}>
+                    O usuário <strong>{r.user}</strong> recebeu um bônus de <strong>{r.bonusPoints} pontos</strong>{r.bonusReason ? ` (${r.bonusReason})` : ''}.
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       )}
 

@@ -9,7 +9,7 @@ import BracketPredictions from './views/BracketPredictions';
 import Oracle from './views/Oracle';
 import Ranking from './views/Ranking';
 import Admin from './views/Admin';
-import { fetchMatches, fetchGuesses, fetchGroupQualifiers, fetchBracket, fetchOracle, fetchUsers, updateUser, fetchSettings } from './services/api';
+import { fetchMatches, fetchGuesses, fetchGroupQualifiers, fetchBracket, fetchOracle, fetchUsers, updateUser, fetchSettings, fetchPointsAdjustments } from './services/api';
 import { Trophy, X } from 'lucide-react';
 import { calculateMatchScore, isMatchTimeOver } from './services/points';
 import { TEAM_FLAGS } from './services/flags';
@@ -28,6 +28,7 @@ export default function App() {
   const [users, setUsers] = useState([]);
   const [selectedMatchForStats, setSelectedMatchForStats] = useState(null);
   const [globalSettings, setGlobalSettings] = useState({ knockoutEnabled: false });
+  const [pointsAdjustments, setPointsAdjustments] = useState([]);
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -79,7 +80,8 @@ export default function App() {
         bracketData,
         oracleData,
         usersData,
-        settingsData
+        settingsData,
+        adjustmentsData
       ] = await Promise.all([
         fetchMatches(),
         fetchGuesses(),
@@ -87,7 +89,8 @@ export default function App() {
         fetchBracket(),
         fetchOracle(),
         fetchUsers(),
-        fetchSettings()
+        fetchSettings(),
+        fetchPointsAdjustments()
       ]);
       setMatches(matchesData);
       setGuesses(guessesData);
@@ -96,6 +99,7 @@ export default function App() {
       setOracle(oracleData);
       setUsers(usersData);
       setGlobalSettings(settingsData);
+      setPointsAdjustments(adjustmentsData);
     } catch (err) {
       console.error("Erro ao carregar dados do bolão:", err);
       setError("Não foi possível conectar ao servidor. Certifique-se de que o backend Express está ativo!");
@@ -236,6 +240,7 @@ export default function App() {
             groupQualifiers={groupQualifiers}
             bracketGuesses={bracketGuesses}
             oracle={oracle}
+            pointsAdjustments={pointsAdjustments}
             onSelectMatchForStats={setSelectedMatchForStats}
           />
         );
