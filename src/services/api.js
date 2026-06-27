@@ -546,7 +546,7 @@ export async function updateUser(oldUsername, newUsername, newPassword) {
 
 export async function fetchUsersList() {
   if (isSupabaseEnabled) {
-    const { data, error } = await supabase.from('users').select('id, username, password');
+    const { data, error } = await supabase.from('users').select('*');
     if (error) throw error;
     return data.map(u => ({ id: u.id, username: u.username, password: u.password }));
   } else {

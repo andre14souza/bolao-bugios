@@ -4,9 +4,9 @@ import { computeRanking } from '../services/api';
 import { TEAM_FLAGS } from './DailyMatches';
 import { isMatchTimeOver, calculateMatchScore } from '../services/points';
 
-export default function Ranking({ users, matches, guesses, groupQualifiers, bracketGuesses, oracle, onSelectMatchForStats }) {
+export default function Ranking({ users, matches, guesses, groupQualifiers, bracketGuesses, oracle, pointsAdjustments, onSelectMatchForStats }) {
   const [selectedUser, setSelectedUser] = useState(null);
-  const ranking = computeRanking(users || [], matches, guesses, groupQualifiers, bracketGuesses, oracle);
+  const ranking = computeRanking(users || [], matches, guesses, groupQualifiers, bracketGuesses, oracle, pointsAdjustments);
 
   const first = ranking[0];
   const second = ranking[1];
