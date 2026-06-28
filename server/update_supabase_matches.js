@@ -49,15 +49,35 @@ async function run() {
   for (const m of db.matches) {
     const { error } = await supabase
       .from('matches')
-      .update({ date: m.date })
+      .update({ 
+        home_team: m.homeTeam, 
+        away_team: m.awayTeam, 
+        date: m.date,
+        stage: m.stage,
+        group_name: m.group
+      })
       .eq('id', parseInt(m.id, 10));
 
     if (error) {
       console.error(`❌ Erro ao atualizar partida ${m.id} (${m.homeTeam} x ${m.awayTeam}):`, error.message);
       errorCount++;
     } else {
-      console.log(`✅ Partida ${m.id} (${m.homeTeam} x ${m.awayTeam}) atualizada para ${m.date}`);
+      console.log(`✅ Partida ${m.id} (${m.homeTeam} x ${m.awayTeam}) atualizada!`);
       successCount++;
+    }
+  }
+
+  if (db.settings) {
+    console.log("\n🔄 Atualizando as configurações globais no Supabase...");
+    const { error } = await supabase
+      .from('settings')
+      .update({ knockout_enabled: db.settings.knockoutEnabled })
+      .eq('id', 1);
+
+    if (error) {
+      console.error("❌ Erro ao atualizar configurações no Supabase:", error.message);
+    } else {
+      console.log("✅ Configurações (knockout_enabled) atualizadas no Supabase com sucesso!");
     }
   }
 

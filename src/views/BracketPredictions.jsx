@@ -118,24 +118,33 @@ export default function BracketPredictions({ matches, bracketGuesses, groupQuali
 
   const pairedThirds = pairThirds(paddedThirds);
 
+  // Helper para buscar time do confronto oficial (banco de dados) se não for placeholder
+  const getMatchTeam = (matchId, side, fallback) => {
+    const match = matches.find(m => String(m.id) === String(matchId));
+    if (match && match.homeTeam && match.awayTeam && !checkIsPlaceholder(match.homeTeam) && !checkIsPlaceholder(match.awayTeam)) {
+      return side === 'home' ? match.homeTeam : match.awayTeam;
+    }
+    return fallback;
+  };
+
   // Definição dos 16 confrontos da rodada de 32 (16-avos de final)
   const r32Matches = [
-    { id: 73, home: getTeamByRank('Grupo A', 2), away: getTeamByRank('Grupo B', 2), label: '16-avos' },
-    { id: 74, home: getTeamByRank('Grupo C', 1), away: getTeamByRank('Grupo F', 2), label: '16-avos' },
-    { id: 75, home: getTeamByRank('Grupo E', 1), away: pairedThirds[0], label: '16-avos' },
-    { id: 76, home: getTeamByRank('Grupo F', 1), away: getTeamByRank('Grupo C', 2), label: '16-avos' },
-    { id: 77, home: getTeamByRank('Grupo E', 2), away: getTeamByRank('Grupo I', 2), label: '16-avos' },
-    { id: 78, home: getTeamByRank('Grupo I', 1), away: pairedThirds[1], label: '16-avos' },
-    { id: 79, home: getTeamByRank('Grupo A', 1), away: pairedThirds[2], label: '16-avos' },
-    { id: 80, home: getTeamByRank('Grupo L', 1), away: pairedThirds[3], label: '16-avos' },
-    { id: 81, home: getTeamByRank('Grupo G', 1), away: pairedThirds[4], label: '16-avos' },
-    { id: 82, home: getTeamByRank('Grupo D', 1), away: pairedThirds[5], label: '16-avos' },
-    { id: 83, home: getTeamByRank('Grupo H', 1), away: getTeamByRank('Grupo J', 2), label: '16-avos' },
-    { id: 84, home: getTeamByRank('Grupo K', 2), away: getTeamByRank('Grupo L', 2), label: '16-avos' },
-    { id: 85, home: getTeamByRank('Grupo B', 1), away: pairedThirds[6], label: '16-avos' },
-    { id: 86, home: getTeamByRank('Grupo D', 2), away: getTeamByRank('Grupo G', 2), label: '16-avos' },
-    { id: 87, home: getTeamByRank('Grupo J', 1), away: getTeamByRank('Grupo H', 2), label: '16-avos' },
-    { id: 88, home: getTeamByRank('Grupo K', 1), away: pairedThirds[7], label: '16-avos' }
+    { id: 73, home: getMatchTeam(73, 'home', getTeamByRank('Grupo A', 2)), away: getMatchTeam(73, 'away', getTeamByRank('Grupo B', 2)), label: '16-avos' },
+    { id: 74, home: getMatchTeam(74, 'home', getTeamByRank('Grupo C', 1)), away: getMatchTeam(74, 'away', getTeamByRank('Grupo F', 2)), label: '16-avos' },
+    { id: 75, home: getMatchTeam(75, 'home', getTeamByRank('Grupo E', 1)), away: getMatchTeam(75, 'away', pairedThirds[0]), label: '16-avos' },
+    { id: 76, home: getMatchTeam(76, 'home', getTeamByRank('Grupo F', 1)), away: getMatchTeam(76, 'away', getTeamByRank('Grupo C', 2)), label: '16-avos' },
+    { id: 77, home: getMatchTeam(77, 'home', getTeamByRank('Grupo E', 2)), away: getMatchTeam(77, 'away', getTeamByRank('Grupo I', 2)), label: '16-avos' },
+    { id: 78, home: getMatchTeam(78, 'home', getTeamByRank('Grupo I', 1)), away: getMatchTeam(78, 'away', pairedThirds[1]), label: '16-avos' },
+    { id: 79, home: getMatchTeam(79, 'home', getTeamByRank('Grupo A', 1)), away: getMatchTeam(79, 'away', pairedThirds[2]), label: '16-avos' },
+    { id: 80, home: getMatchTeam(80, 'home', getTeamByRank('Grupo L', 1)), away: getMatchTeam(80, 'away', pairedThirds[3]), label: '16-avos' },
+    { id: 81, home: getMatchTeam(81, 'home', getTeamByRank('Grupo G', 1)), away: getMatchTeam(81, 'away', pairedThirds[4]), label: '16-avos' },
+    { id: 82, home: getMatchTeam(82, 'home', getTeamByRank('Grupo D', 1)), away: getMatchTeam(82, 'away', pairedThirds[5]), label: '16-avos' },
+    { id: 83, home: getMatchTeam(83, 'home', getTeamByRank('Grupo H', 1)), away: getMatchTeam(83, 'away', getTeamByRank('Grupo J', 2)), label: '16-avos' },
+    { id: 84, home: getMatchTeam(84, 'home', getTeamByRank('Grupo K', 2)), away: getMatchTeam(84, 'away', getTeamByRank('Grupo L', 2)), label: '16-avos' },
+    { id: 85, home: getMatchTeam(85, 'home', getTeamByRank('Grupo B', 1)), away: getMatchTeam(85, 'away', pairedThirds[6]), label: '16-avos' },
+    { id: 86, home: getMatchTeam(86, 'home', getTeamByRank('Grupo D', 2)), away: getMatchTeam(86, 'away', getTeamByRank('Grupo G', 2)), label: '16-avos' },
+    { id: 87, home: getMatchTeam(87, 'home', getTeamByRank('Grupo J', 1)), away: getMatchTeam(87, 'away', getTeamByRank('Grupo H', 2)), label: '16-avos' },
+    { id: 88, home: getMatchTeam(88, 'home', getTeamByRank('Grupo K', 1)), away: getMatchTeam(88, 'away', pairedThirds[7]), label: '16-avos' }
   ];
 
   // Cascata recursiva: remove time alterado das fases subsequentes

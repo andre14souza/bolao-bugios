@@ -1039,23 +1039,32 @@ export default function Admin({ matches, groupQualifiers, bracketGuesses, oracle
         }
         const pairedOfficialThirds = pairThirds(padded);
 
+        // Helper para buscar time do confronto oficial (banco de dados) se não for placeholder
+        const getOfficialMatchTeam = (matchId, side, fallback) => {
+          const match = matches.find(m => String(m.id) === String(matchId));
+          if (match && match.homeTeam && match.awayTeam && !checkIsPlaceholder(match.homeTeam) && !checkIsPlaceholder(match.awayTeam)) {
+            return side === 'home' ? match.homeTeam : match.awayTeam;
+          }
+          return fallback;
+        };
+
         const r32Matches = [
-          { id: 73, home: getOfficialTeamByRank('Grupo A', 2), away: getOfficialTeamByRank('Grupo B', 2), label: '16-avos' },
-          { id: 74, home: getOfficialTeamByRank('Grupo C', 1), away: getOfficialTeamByRank('Grupo F', 2), label: '16-avos' },
-          { id: 75, home: getOfficialTeamByRank('Grupo E', 1), away: pairedOfficialThirds[0], label: '16-avos' },
-          { id: 76, home: getOfficialTeamByRank('Grupo F', 1), away: getOfficialTeamByRank('Grupo C', 2), label: '16-avos' },
-          { id: 77, home: getOfficialTeamByRank('Grupo E', 2), away: getOfficialTeamByRank('Grupo I', 2), label: '16-avos' },
-          { id: 78, home: getOfficialTeamByRank('Grupo I', 1), away: pairedOfficialThirds[1], label: '16-avos' },
-          { id: 79, home: getOfficialTeamByRank('Grupo A', 1), away: pairedOfficialThirds[2], label: '16-avos' },
-          { id: 80, home: getOfficialTeamByRank('Grupo L', 1), away: pairedOfficialThirds[3], label: '16-avos' },
-          { id: 81, home: getOfficialTeamByRank('Grupo G', 1), away: pairedOfficialThirds[4], label: '16-avos' },
-          { id: 82, home: getOfficialTeamByRank('Grupo D', 1), away: pairedOfficialThirds[5], label: '16-avos' },
-          { id: 83, home: getOfficialTeamByRank('Grupo H', 1), away: getOfficialTeamByRank('Grupo J', 2), label: '16-avos' },
-          { id: 84, home: getOfficialTeamByRank('Grupo K', 2), away: getOfficialTeamByRank('Grupo L', 2), label: '16-avos' },
-          { id: 85, home: getOfficialTeamByRank('Grupo B', 1), away: pairedOfficialThirds[6], label: '16-avos' },
-          { id: 86, home: getOfficialTeamByRank('Grupo D', 2), away: getOfficialTeamByRank('Grupo G', 2), label: '16-avos' },
-          { id: 87, home: getOfficialTeamByRank('Grupo J', 1), away: getOfficialTeamByRank('Grupo H', 2), label: '16-avos' },
-          { id: 88, home: getOfficialTeamByRank('Grupo K', 1), away: pairedOfficialThirds[7], label: '16-avos' }
+          { id: 73, home: getOfficialMatchTeam(73, 'home', getOfficialTeamByRank('Grupo A', 2)), away: getOfficialMatchTeam(73, 'away', getOfficialTeamByRank('Grupo B', 2)), label: '16-avos' },
+          { id: 74, home: getOfficialMatchTeam(74, 'home', getOfficialTeamByRank('Grupo C', 1)), away: getOfficialMatchTeam(74, 'away', getOfficialTeamByRank('Grupo F', 2)), label: '16-avos' },
+          { id: 75, home: getOfficialMatchTeam(75, 'home', getOfficialTeamByRank('Grupo E', 1)), away: getOfficialMatchTeam(75, 'away', pairedOfficialThirds[0]), label: '16-avos' },
+          { id: 76, home: getOfficialMatchTeam(76, 'home', getOfficialTeamByRank('Grupo F', 1)), away: getOfficialMatchTeam(76, 'away', getOfficialTeamByRank('Grupo C', 2)), label: '16-avos' },
+          { id: 77, home: getOfficialMatchTeam(77, 'home', getOfficialTeamByRank('Grupo E', 2)), away: getOfficialMatchTeam(77, 'away', getOfficialTeamByRank('Grupo I', 2)), label: '16-avos' },
+          { id: 78, home: getOfficialMatchTeam(78, 'home', getOfficialTeamByRank('Grupo I', 1)), away: getOfficialMatchTeam(78, 'away', pairedOfficialThirds[1]), label: '16-avos' },
+          { id: 79, home: getOfficialMatchTeam(79, 'home', getOfficialTeamByRank('Grupo A', 1)), away: getOfficialMatchTeam(79, 'away', pairedOfficialThirds[2]), label: '16-avos' },
+          { id: 80, home: getOfficialMatchTeam(80, 'home', getOfficialTeamByRank('Grupo L', 1)), away: getOfficialMatchTeam(80, 'away', pairedOfficialThirds[3]), label: '16-avos' },
+          { id: 81, home: getOfficialMatchTeam(81, 'home', getOfficialTeamByRank('Grupo G', 1)), away: getOfficialMatchTeam(81, 'away', pairedOfficialThirds[4]), label: '16-avos' },
+          { id: 82, home: getOfficialMatchTeam(82, 'home', getOfficialTeamByRank('Grupo D', 1)), away: getOfficialMatchTeam(82, 'away', pairedOfficialThirds[5]), label: '16-avos' },
+          { id: 83, home: getOfficialMatchTeam(83, 'home', getOfficialTeamByRank('Grupo H', 1)), away: getOfficialMatchTeam(83, 'away', getOfficialTeamByRank('Grupo J', 2)), label: '16-avos' },
+          { id: 84, home: getOfficialMatchTeam(84, 'home', getOfficialTeamByRank('Grupo K', 2)), away: getOfficialMatchTeam(84, 'away', getOfficialTeamByRank('Grupo L', 2)), label: '16-avos' },
+          { id: 85, home: getOfficialMatchTeam(85, 'home', getOfficialTeamByRank('Grupo B', 1)), away: getOfficialMatchTeam(85, 'away', pairedOfficialThirds[6]), label: '16-avos' },
+          { id: 86, home: getOfficialMatchTeam(86, 'home', getOfficialTeamByRank('Grupo D', 2)), away: getOfficialMatchTeam(86, 'away', getOfficialTeamByRank('Grupo G', 2)), label: '16-avos' },
+          { id: 87, home: getOfficialMatchTeam(87, 'home', getOfficialTeamByRank('Grupo J', 1)), away: getOfficialMatchTeam(87, 'away', getOfficialTeamByRank('Grupo H', 2)), label: '16-avos' },
+          { id: 88, home: getOfficialMatchTeam(88, 'home', getOfficialTeamByRank('Grupo K', 1)), away: getOfficialMatchTeam(88, 'away', pairedOfficialThirds[7]), label: '16-avos' }
         ];
 
         return (
