@@ -218,14 +218,15 @@ export async function fetchBracket() {
     if (guessesRes.error) throw guessesRes.error;
     
     // Suporta o caso em que o registro de resultados do chaveamento não existe
-    let bracketResult = { oitavas: [], quartas: [], semis: [], finalists: [], champion: null };
+    let bracketResult = { oitavas: [], quartas: [], semis: [], finalists: [], champion: null, thirdPlace: null };
     if (!resultsRes.error && resultsRes.data) {
       bracketResult = {
         oitavas: resultsRes.data.oitavas || [],
         quartas: resultsRes.data.quartas || [],
         semis: resultsRes.data.semis || [],
         finalists: resultsRes.data.finalists || [],
-        champion: resultsRes.data.champion
+        champion: resultsRes.data.champion,
+        thirdPlace: resultsRes.data.third_place
       };
     }
 
@@ -236,7 +237,8 @@ export async function fetchBracket() {
         quartas: b.quartas || [],
         semis: b.semis || [],
         finalists: b.finalists || [],
-        champion: b.champion
+        champion: b.champion,
+        thirdPlace: b.third_place
       })),
       results: bracketResult
     };
@@ -246,7 +248,7 @@ export async function fetchBracket() {
   }
 }
 
-export async function saveBracket(user, oitavas, quartas, semis, finalists, champion) {
+export async function saveBracket(user, oitavas, quartas, semis, finalists, champion, thirdPlace) {
   if (isSupabaseEnabled) {
     const { data, error } = await supabase.from('bracket_guesses').upsert({
       user_name: user,
@@ -255,6 +257,7 @@ export async function saveBracket(user, oitavas, quartas, semis, finalists, cham
       semis,
       finalists,
       champion,
+      third_place: thirdPlace,
       updated_at: new Date().toISOString()
     }, { onConflict: 'user_name' }).select();
     if (error) throw error;
@@ -263,13 +266,13 @@ export async function saveBracket(user, oitavas, quartas, semis, finalists, cham
     const res = await fetch(`${API_BASE}/api/bracket`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ user, oitavas, quartas, semis, finalists, champion })
+      body: JSON.stringify({ user, oitavas, quartas, semis, finalists, champion, thirdPlace })
     });
     return await res.json();
   }
 }
 
-export async function saveBracketResults(oitavas, quartas, semis, finalists, champion) {
+export async function saveBracketResults(oitavas, quartas, semis, finalists, champion, thirdPlace) {
   if (isSupabaseEnabled) {
     // Seta ID fixo = 1 para termos apenas uma linha de resultado oficial
     const { data, error } = await supabase.from('bracket_results').upsert({
@@ -279,6 +282,7 @@ export async function saveBracketResults(oitavas, quartas, semis, finalists, cha
       semis,
       finalists,
       champion,
+      third_place: thirdPlace,
       updated_at: new Date().toISOString()
     }, { onConflict: 'id' }).select();
     if (error) throw error;
@@ -287,7 +291,7 @@ export async function saveBracketResults(oitavas, quartas, semis, finalists, cha
     const res = await fetch(`${API_BASE}/api/bracket/results`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ oitavas, quartas, semis, finalists, champion })
+      body: JSON.stringify({ oitavas, quartas, semis, finalists, champion, thirdPlace })
     });
     return await res.json();
   }

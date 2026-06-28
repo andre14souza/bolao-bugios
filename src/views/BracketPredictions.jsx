@@ -29,7 +29,8 @@ export default function BracketPredictions({ matches, bracketGuesses, groupQuali
     quartas: Array(8).fill(''),
     semis: Array(4).fill(''),
     finalists: Array(2).fill(''),
-    champion: ''
+    champion: '',
+    thirdPlace: ''
   });
   const [isSaving, setIsSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState(null);
@@ -43,7 +44,8 @@ export default function BracketPredictions({ matches, bracketGuesses, groupQuali
         quartas: userGuess.quartas || Array(8).fill(''),
         semis: userGuess.semis || Array(4).fill(''),
         finalists: userGuess.finalists || Array(2).fill(''),
-        champion: userGuess.champion || ''
+        champion: userGuess.champion || '',
+        thirdPlace: userGuess.thirdPlace || ''
       });
     } else {
       setLocalBracket({
@@ -51,7 +53,8 @@ export default function BracketPredictions({ matches, bracketGuesses, groupQuali
         quartas: Array(8).fill(''),
         semis: Array(4).fill(''),
         finalists: Array(2).fill(''),
-        champion: ''
+        champion: '',
+        thirdPlace: ''
       });
     }
   }, [bracketGuesses, currentUser]);
@@ -155,6 +158,7 @@ export default function BracketPredictions({ matches, bracketGuesses, groupQuali
     updated.semis = updated.semis.map(t => t === oldTeam ? '' : t);
     updated.finalists = updated.finalists.map(t => t === oldTeam ? '' : t);
     if (updated.champion === oldTeam) updated.champion = '';
+    if (updated.thirdPlace === oldTeam) updated.thirdPlace = '';
   };
 
   const handleSelect = (stage, index, selectedTeam) => {
@@ -197,6 +201,8 @@ export default function BracketPredictions({ matches, bracketGuesses, groupQuali
         if (oldTeam && oldTeam !== selectedTeam) {
           removeTeamFromFutureStages(updated, oldTeam);
         }
+      } else if (stage === 'thirdPlace') {
+        updated.thirdPlace = selectedTeam;
       }
 
       return updated;
@@ -214,7 +220,8 @@ export default function BracketPredictions({ matches, bracketGuesses, groupQuali
         localBracket.quartas,
         localBracket.semis,
         localBracket.finalists,
-        localBracket.champion
+        localBracket.champion,
+        localBracket.thirdPlace
       );
       setSaveStatus('success');
       onReload();
@@ -228,8 +235,8 @@ export default function BracketPredictions({ matches, bracketGuesses, groupQuali
   };
 
   // Informações de Resultados Oficiais
-  const actual = bracketGuesses.results || { oitavas: [], quartas: [], semis: [], finalists: [], champion: null };
-  const hasActualResults = (actual.oitavas && actual.oitavas.length > 0) || (actual.quartas && actual.quartas.length > 0) || (actual.semis && actual.semis.length > 0) || actual.champion !== null;
+  const actual = bracketGuesses.results || { oitavas: [], quartas: [], semis: [], finalists: [], champion: null, thirdPlace: null };
+  const hasActualResults = (actual.oitavas && actual.oitavas.length > 0) || (actual.quartas && actual.quartas.length > 0) || (actual.semis && actual.semis.length > 0) || actual.champion !== null || actual.thirdPlace !== null;
 
   // Cálculo de pontuação
   let oitavasPts = 0;
@@ -237,6 +244,7 @@ export default function BracketPredictions({ matches, bracketGuesses, groupQuali
   let semisPts = 0;
   let finalistsPts = 0;
   let championPts = 0;
+  let thirdPlacePts = 0;
 
   if (hasActualResults) {
     localBracket.oitavas.forEach(t => {
@@ -254,9 +262,12 @@ export default function BracketPredictions({ matches, bracketGuesses, groupQuali
     if (localBracket.champion && localBracket.champion === actual.champion) {
       championPts = 16;
     }
+    if (localBracket.thirdPlace && localBracket.thirdPlace === actual.thirdPlace) {
+      thirdPlacePts = 8;
+    }
   }
 
-  const totalBracketPoints = oitavasPts + quartasPts + semisPts + finalistsPts + championPts;
+  const totalBracketPoints = oitavasPts + quartasPts + semisPts + finalistsPts + championPts + thirdPlacePts;
 
   // Componente de Cartão de Partida
   const MatchCard = ({ matchId, teamA, teamB, winner, onSelect, stageName, actualWinner }) => {
@@ -505,10 +516,10 @@ export default function BracketPredictions({ matches, bracketGuesses, groupQuali
                       matchId={103} 
                       teamA={semi1Loser} 
                       teamB={semi2Loser} 
-                      winner={null} 
-                      onSelect={() => {}} 
+                      winner={localBracket.thirdPlace} 
+                      onSelect={(team) => handleSelect('thirdPlace', null, team)} 
                       stageName="3º Lugar" 
-                      actualWinner={actual.match103Winner /* se houver no futuro */} 
+                      actualWinner={actual.thirdPlace} 
                     />
                   );
                 })()}

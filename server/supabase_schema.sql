@@ -58,6 +58,7 @@ CREATE TABLE IF NOT EXISTS bracket_guesses (
     semis JSONB,
     finalists JSONB,
     champion TEXT,
+    third_place TEXT,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );
 
@@ -68,6 +69,7 @@ CREATE TABLE IF NOT EXISTS bracket_results (
     semis JSONB,
     finalists JSONB,
     champion TEXT,
+    third_place TEXT,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );
 

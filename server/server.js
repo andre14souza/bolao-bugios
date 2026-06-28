@@ -515,19 +515,19 @@ app.get('/api/bracket', (req, res) => {
   const db = readDB();
   res.json({
     guesses: db.bracketGuesses || [],
-    results: db.bracketResults || { oitavas: [], quartas: [], semis: [], finalists: [], champion: null }
+    results: db.bracketResults || { oitavas: [], quartas: [], semis: [], finalists: [], champion: null, thirdPlace: null }
   });
 });
 
 app.post('/api/bracket', (req, res) => {
-  const { user, oitavas, quartas, semis, finalists, champion } = req.body;
+  const { user, oitavas, quartas, semis, finalists, champion, thirdPlace } = req.body;
   const db = readDB();
 
   if (!db.bracketGuesses) db.bracketGuesses = [];
 
   const idx = db.bracketGuesses.findIndex(b => b.user === user);
 
-  const data = { user, oitavas, quartas, semis, finalists, champion, updatedAt: new Date().toISOString() };
+  const data = { user, oitavas, quartas, semis, finalists, champion, thirdPlace, updatedAt: new Date().toISOString() };
 
   if (idx !== -1) {
     db.bracketGuesses[idx] = data;
@@ -540,7 +540,7 @@ app.post('/api/bracket', (req, res) => {
 });
 
 app.post('/api/bracket/results', (req, res) => {
-  const { oitavas, quartas, semis, finalists, champion } = req.body;
+  const { oitavas, quartas, semis, finalists, champion, thirdPlace } = req.body;
   const db = readDB();
 
   db.bracketResults = {
@@ -548,7 +548,8 @@ app.post('/api/bracket/results', (req, res) => {
     quartas: quartas || [],
     semis: semis || [],
     finalists: finalists || [],
-    champion: champion || null
+    champion: champion || null,
+    thirdPlace: thirdPlace || null
   };
 
   writeDB(db);
