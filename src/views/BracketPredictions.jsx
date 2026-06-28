@@ -396,106 +396,167 @@ export default function BracketPredictions({ matches, bracketGuesses, groupQuali
         </div>
       </div>
 
-      {/* Árvore de Chaveamento Horizontal - Fluxo da Esquerda para a Direita */}
-      <div className="w-full overflow-auto max-h-[70vh] border border-white/5 rounded-3xl bg-black/20 p-4 select-none scroll-smooth">
-        <div className="flex gap-8 items-center min-w-[1400px] h-[1250px] px-4">
+      {/* Árvore de Chaveamento Horizontal - Design Lado a Lado (Copa do Mundo) */}
+      <div className="w-full overflow-auto max-h-[85vh] border border-zinc-800/40 rounded-3xl bg-zinc-950 p-6 select-none scroll-smooth">
+        <div className="flex gap-2 justify-between items-center min-w-[1300px] h-[950px] px-2 relative">
           
-          {/* COLUNA 1: 16-avos de Final (16 jogos) */}
-          <div className="flex flex-col justify-between h-full py-2">
-            <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-widest text-center border-b border-white/5 pb-2">16-avos (2 pts)</h3>
-            <MatchCard matchId={73} teamA={r32Matches[0].home} teamB={r32Matches[0].away} winner={localBracket.oitavas[0]} onSelect={(team) => handleSelect('r32', 0, team)} stageName="16-avos" actualWinner={actual.oitavas?.[0]} />
-            <MatchCard matchId={75} teamA={r32Matches[2].home} teamB={r32Matches[2].away} winner={localBracket.oitavas[2]} onSelect={(team) => handleSelect('r32', 2, team)} stageName="16-avos" actualWinner={actual.oitavas?.[2]} />
-            <MatchCard matchId={74} teamA={r32Matches[1].home} teamB={r32Matches[1].away} winner={localBracket.oitavas[1]} onSelect={(team) => handleSelect('r32', 1, team)} stageName="16-avos" actualWinner={actual.oitavas?.[1]} />
-            <MatchCard matchId={77} teamA={r32Matches[4].home} teamB={r32Matches[4].away} winner={localBracket.oitavas[4]} onSelect={(team) => handleSelect('r32', 4, team)} stageName="16-avos" actualWinner={actual.oitavas?.[4]} />
-            <MatchCard matchId={76} teamA={r32Matches[3].home} teamB={r32Matches[3].away} winner={localBracket.oitavas[3]} onSelect={(team) => handleSelect('r32', 3, team)} stageName="16-avos" actualWinner={actual.oitavas?.[3]} />
-            <MatchCard matchId={78} teamA={r32Matches[5].home} teamB={r32Matches[5].away} winner={localBracket.oitavas[5]} onSelect={(team) => handleSelect('r32', 5, team)} stageName="16-avos" actualWinner={actual.oitavas?.[5]} />
-            <MatchCard matchId={79} teamA={r32Matches[6].home} teamB={r32Matches[6].away} winner={localBracket.oitavas[6]} onSelect={(team) => handleSelect('r32', 6, team)} stageName="16-avos" actualWinner={actual.oitavas?.[6]} />
-            <MatchCard matchId={80} teamA={r32Matches[7].home} teamB={r32Matches[7].away} winner={localBracket.oitavas[7]} onSelect={(team) => handleSelect('r32', 7, team)} stageName="16-avos" actualWinner={actual.oitavas?.[7]} />
-            <MatchCard matchId={83} teamA={r32Matches[10].home} teamB={r32Matches[10].away} winner={localBracket.oitavas[10]} onSelect={(team) => handleSelect('r32', 10, team)} stageName="16-avos" actualWinner={actual.oitavas?.[10]} />
-            <MatchCard matchId={84} teamA={r32Matches[11].home} teamB={r32Matches[11].away} winner={localBracket.oitavas[11]} onSelect={(team) => handleSelect('r32', 11, team)} stageName="16-avos" actualWinner={actual.oitavas?.[11]} />
-            <MatchCard matchId={81} teamA={r32Matches[8].home} teamB={r32Matches[8].away} winner={localBracket.oitavas[8]} onSelect={(team) => handleSelect('r32', 8, team)} stageName="16-avos" actualWinner={actual.oitavas?.[8]} />
-            <MatchCard matchId={82} teamA={r32Matches[9].home} teamB={r32Matches[9].away} winner={localBracket.oitavas[9]} onSelect={(team) => handleSelect('r32', 9, team)} stageName="16-avos" actualWinner={actual.oitavas?.[9]} />
-            <MatchCard matchId={86} teamA={r32Matches[13].home} teamB={r32Matches[13].away} winner={localBracket.oitavas[13]} onSelect={(team) => handleSelect('r32', 13, team)} stageName="16-avos" actualWinner={actual.oitavas?.[13]} />
-            <MatchCard matchId={88} teamA={r32Matches[15].home} teamB={r32Matches[15].away} winner={localBracket.oitavas[15]} onSelect={(team) => handleSelect('r32', 15, team)} stageName="16-avos" actualWinner={actual.oitavas?.[15]} />
-            <MatchCard matchId={85} teamA={r32Matches[12].home} teamB={r32Matches[12].away} winner={localBracket.oitavas[12]} onSelect={(team) => handleSelect('r32', 12, team)} stageName="16-avos" actualWinner={actual.oitavas?.[12]} />
-            <MatchCard matchId={87} teamA={r32Matches[14].home} teamB={r32Matches[14].away} winner={localBracket.oitavas[14]} onSelect={(team) => handleSelect('r32', 14, team)} stageName="16-avos" actualWinner={actual.oitavas?.[14]} />
+          {/* LADO ESQUERDO */}
+          <div className="flex gap-6 items-center h-full">
+            {/* 16-avos Esquerda (8 jogos) */}
+            <div className="flex flex-col justify-between h-full py-6">
+              <h4 className="text-[8px] font-black text-zinc-500 uppercase tracking-widest text-center">16-avos</h4>
+              <MatchCard matchId={73} teamA={r32Matches[0].home} teamB={r32Matches[0].away} winner={localBracket.oitavas[0]} onSelect={(team) => handleSelect('r32', 0, team)} stageName="16-avos" actualWinner={actual.oitavas?.[0]} />
+              <MatchCard matchId={75} teamA={r32Matches[2].home} teamB={r32Matches[2].away} winner={localBracket.oitavas[2]} onSelect={(team) => handleSelect('r32', 2, team)} stageName="16-avos" actualWinner={actual.oitavas?.[2]} />
+              <MatchCard matchId={74} teamA={r32Matches[1].home} teamB={r32Matches[1].away} winner={localBracket.oitavas[1]} onSelect={(team) => handleSelect('r32', 1, team)} stageName="16-avos" actualWinner={actual.oitavas?.[1]} />
+              <MatchCard matchId={77} teamA={r32Matches[4].home} teamB={r32Matches[4].away} winner={localBracket.oitavas[4]} onSelect={(team) => handleSelect('r32', 4, team)} stageName="16-avos" actualWinner={actual.oitavas?.[4]} />
+              <MatchCard matchId={76} teamA={r32Matches[3].home} teamB={r32Matches[3].away} winner={localBracket.oitavas[3]} onSelect={(team) => handleSelect('r32', 3, team)} stageName="16-avos" actualWinner={actual.oitavas?.[3]} />
+              <MatchCard matchId={78} teamA={r32Matches[5].home} teamB={r32Matches[5].away} winner={localBracket.oitavas[5]} onSelect={(team) => handleSelect('r32', 5, team)} stageName="16-avos" actualWinner={actual.oitavas?.[5]} />
+              <MatchCard matchId={79} teamA={r32Matches[6].home} teamB={r32Matches[6].away} winner={localBracket.oitavas[6]} onSelect={(team) => handleSelect('r32', 6, team)} stageName="16-avos" actualWinner={actual.oitavas?.[6]} />
+              <MatchCard matchId={80} teamA={r32Matches[7].home} teamB={r32Matches[7].away} winner={localBracket.oitavas[7]} onSelect={(team) => handleSelect('r32', 7, team)} stageName="16-avos" actualWinner={actual.oitavas?.[7]} />
+            </div>
+
+            {/* Oitavas Esquerda (4 jogos) */}
+            <div className="flex flex-col justify-between h-full py-16">
+              <h4 className="text-[8px] font-black text-zinc-500 uppercase tracking-widest text-center">Oitavas</h4>
+              <MatchCard matchId={89} teamA={localBracket.oitavas[0]} teamB={localBracket.oitavas[2]} winner={localBracket.quartas[0]} onSelect={(team) => handleSelect('oitavas', 0, team)} stageName="Oitavas" actualWinner={actual.quartas?.[0]} />
+              <MatchCard matchId={90} teamA={localBracket.oitavas[1]} teamB={localBracket.oitavas[4]} winner={localBracket.quartas[1]} onSelect={(team) => handleSelect('oitavas', 1, team)} stageName="Oitavas" actualWinner={actual.quartas?.[1]} />
+              <MatchCard matchId={91} teamA={localBracket.oitavas[3]} teamB={localBracket.oitavas[5]} winner={localBracket.quartas[2]} onSelect={(team) => handleSelect('oitavas', 2, team)} stageName="Oitavas" actualWinner={actual.quartas?.[2]} />
+              <MatchCard matchId={92} teamA={localBracket.oitavas[6]} teamB={localBracket.oitavas[7]} winner={localBracket.quartas[3]} onSelect={(team) => handleSelect('oitavas', 3, team)} stageName="Oitavas" actualWinner={actual.quartas?.[3]} />
+            </div>
+
+            {/* Quartas Esquerda (2 jogos) */}
+            <div className="flex flex-col justify-between h-full py-36">
+              <h4 className="text-[8px] font-black text-zinc-500 uppercase tracking-widest text-center">Quartas</h4>
+              <MatchCard matchId={97} teamA={localBracket.quartas[0]} teamB={localBracket.quartas[1]} winner={localBracket.semis[0]} onSelect={(team) => handleSelect('quartas', 0, team)} stageName="Quartas" actualWinner={actual.semis?.[0]} />
+              <MatchCard matchId={98} teamA={localBracket.quartas[2]} teamB={localBracket.quartas[3]} winner={localBracket.semis[1]} onSelect={(team) => handleSelect('quartas', 1, team)} stageName="Quartas" actualWinner={actual.semis?.[1]} />
+            </div>
+
+            {/* Semi Esquerda (1 jogo) */}
+            <div className="flex flex-col justify-center h-full gap-4">
+              <h4 className="text-[8px] font-black text-zinc-500 uppercase tracking-widest text-center mb-2">Semi</h4>
+              <MatchCard matchId={101} teamA={localBracket.semis[0]} teamB={localBracket.semis[1]} winner={localBracket.finalists[0]} onSelect={(team) => handleSelect('semis', 0, team)} stageName="Semi" actualWinner={actual.finalists?.[0]} />
+            </div>
           </div>
 
-          {/* COLUNA 2: Oitavas de Final (8 jogos) */}
-          <div className="flex flex-col justify-between h-full py-10">
-            <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-widest text-center border-b border-white/5 pb-2">Oitavas (4 pts)</h3>
-            <MatchCard matchId={89} teamA={localBracket.oitavas[0]} teamB={localBracket.oitavas[2]} winner={localBracket.quartas[0]} onSelect={(team) => handleSelect('oitavas', 0, team)} stageName="Oitavas" actualWinner={actual.quartas?.[0]} />
-            <MatchCard matchId={90} teamA={localBracket.oitavas[1]} teamB={localBracket.oitavas[4]} winner={localBracket.quartas[1]} onSelect={(team) => handleSelect('oitavas', 1, team)} stageName="Oitavas" actualWinner={actual.quartas?.[1]} />
-            <MatchCard matchId={91} teamA={localBracket.oitavas[3]} teamB={localBracket.oitavas[5]} winner={localBracket.quartas[2]} onSelect={(team) => handleSelect('oitavas', 2, team)} stageName="Oitavas" actualWinner={actual.quartas?.[2]} />
-            <MatchCard matchId={92} teamA={localBracket.oitavas[6]} teamB={localBracket.oitavas[7]} winner={localBracket.quartas[3]} onSelect={(team) => handleSelect('oitavas', 3, team)} stageName="Oitavas" actualWinner={actual.quartas?.[3]} />
-            <MatchCard matchId={93} teamA={localBracket.oitavas[10]} teamB={localBracket.oitavas[11]} winner={localBracket.quartas[4]} onSelect={(team) => handleSelect('oitavas', 4, team)} stageName="Oitavas" actualWinner={actual.quartas?.[4]} />
-            <MatchCard matchId={94} teamA={localBracket.oitavas[8]} teamB={localBracket.oitavas[9]} winner={localBracket.quartas[5]} onSelect={(team) => handleSelect('oitavas', 5, team)} stageName="Oitavas" actualWinner={actual.quartas?.[5]} />
-            <MatchCard matchId={95} teamA={localBracket.oitavas[13]} teamB={localBracket.oitavas[15]} winner={localBracket.quartas[6]} onSelect={(team) => handleSelect('oitavas', 6, team)} stageName="Oitavas" actualWinner={actual.quartas?.[6]} />
-            <MatchCard matchId={96} teamA={localBracket.oitavas[12]} teamB={localBracket.oitavas[14]} winner={localBracket.quartas[7]} onSelect={(team) => handleSelect('oitavas', 7, team)} stageName="Oitavas" actualWinner={actual.quartas?.[7]} />
-          </div>
-
-          {/* COLUNA 3: Quartas de Final (4 jogos) */}
-          <div className="flex flex-col justify-between h-full py-24">
-            <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-widest text-center border-b border-white/5 pb-2">Quartas (8 pts)</h3>
-            <MatchCard matchId={97} teamA={localBracket.quartas[0]} teamB={localBracket.quartas[1]} winner={localBracket.semis[0]} onSelect={(team) => handleSelect('quartas', 0, team)} stageName="Quartas" actualWinner={actual.semis?.[0]} />
-            <MatchCard matchId={98} teamA={localBracket.quartas[2]} teamB={localBracket.quartas[3]} winner={localBracket.semis[1]} onSelect={(team) => handleSelect('quartas', 1, team)} stageName="Quartas" actualWinner={actual.semis?.[1]} />
-            <MatchCard matchId={99} teamA={localBracket.quartas[4]} teamB={localBracket.quartas[5]} winner={localBracket.semis[2]} onSelect={(team) => handleSelect('quartas', 2, team)} stageName="Quartas" actualWinner={actual.semis?.[2]} />
-            <MatchCard matchId={100} teamA={localBracket.quartas[6]} teamB={localBracket.quartas[7]} winner={localBracket.semis[3]} onSelect={(team) => handleSelect('quartas', 3, team)} stageName="Quartas" actualWinner={actual.semis?.[3]} />
-          </div>
-
-          {/* COLUNA 4: Semifinais (2 jogos) */}
-          <div className="flex flex-col justify-between h-full py-[240px]">
-            <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-widest text-center border-b border-white/5 pb-2">Semis (12 pts)</h3>
-            <MatchCard matchId={101} teamA={localBracket.semis[0]} teamB={localBracket.semis[1]} winner={localBracket.finalists[0]} onSelect={(team) => handleSelect('semis', 0, team)} stageName="Semi" actualWinner={actual.finalists?.[0]} />
-            <MatchCard matchId={102} teamA={localBracket.semis[2]} teamB={localBracket.semis[3]} winner={localBracket.finalists[1]} onSelect={(team) => handleSelect('semis', 1, team)} stageName="Semi" actualWinner={actual.finalists?.[1]} />
-          </div>
-
-          {/* COLUNA 5: Grande Final (1 jogo) */}
-          <div className="flex flex-col justify-center h-full gap-24">
-            <h3 className="text-[9px] font-black text-zinc-450 uppercase tracking-widest text-center border-b border-zinc-850 pb-2">Final (MetLife)</h3>
-            <MatchCard matchId={104} teamA={localBracket.finalists[0]} teamB={localBracket.finalists[1]} winner={localBracket.champion} onSelect={(team) => handleSelect('final', null, team)} stageName="Final" actualWinner={actual.champion} />
-          </div>
-
-          {/* COLUNA 6: Grande Campeão (1 bloco) */}
-          <div className="flex flex-col justify-center h-full">
-            <div className="glass-panel p-5 rounded-3xl border border-zinc-850 relative overflow-hidden flex flex-col items-center text-center w-[185px] md:w-[205px] select-none">
-              <Trophy className="text-zinc-400 mb-2" size={36} />
-              <h3 className="font-extrabold text-[9px] text-zinc-400 uppercase tracking-widest border-b border-zinc-850 pb-1.5 w-full">
-                Grande Campeão
+          {/* CENTRO: Campeão, Final, 3º Lugar e Troféu */}
+          <div className="flex flex-col items-center justify-between h-full py-4 w-[280px]">
+            {/* World Champion */}
+            <div className="flex flex-col items-center mt-6">
+              <h3 className="font-extrabold text-[10px] text-zinc-400 uppercase tracking-widest mb-2">
+                WORLD CHAMPION
               </h3>
-              
-              <div className="mt-4 flex flex-col items-center w-full">
-                {localBracket.champion ? (
-                  <div className="flex flex-col items-center gap-2">
-                    <span className="text-4xl filter drop-shadow select-none">
-                      {TEAM_FLAGS[localBracket.champion] || '🏳️'}
-                    </span>
-                    <span className="font-black text-xs text-white truncate max-w-[160px]">
-                      {localBracket.champion}
-                    </span>
-                    <span className="text-[8.5px] uppercase font-bold text-white bg-zinc-800 px-2.5 py-0.5 rounded border border-zinc-700 mt-1">
-                      🏆 Vencedor (+16 pts)
-                    </span>
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center gap-2 p-2">
-                    <span className="text-4xl filter drop-shadow opacity-25 select-none">🏳️</span>
-                    <span className="text-xs text-slate-500 italic">Escolha o campeão</span>
+              <div className="glass-panel p-5 rounded-3xl border border-zinc-800 flex flex-col items-center text-center w-[200px] select-none">
+                <Trophy className="text-zinc-400 mb-2" size={32} />
+                <div className="flex flex-col items-center w-full">
+                  {localBracket.champion ? (
+                    <div className="flex flex-col items-center gap-1.5">
+                      <span className="text-4xl filter drop-shadow select-none">
+                        {TEAM_FLAGS[localBracket.champion] || '🏳️'}
+                      </span>
+                      <span className="font-black text-xs text-white truncate max-w-[160px]">
+                        {localBracket.champion}
+                      </span>
+                      <span className="text-[8.5px] uppercase font-bold text-white bg-zinc-800 px-2.5 py-0.5 rounded border border-zinc-700 mt-1">
+                        🏆 Vencedor (+16 pts)
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center gap-2 p-1">
+                      <span className="text-4xl filter drop-shadow opacity-25 select-none">🏳️</span>
+                      <span className="text-xs text-zinc-500 italic">Escolha o campeão</span>
+                    </div>
+                  )}
+                </div>
+
+                {hasActualResults && actual.champion && (
+                  <div className="mt-3 pt-3 border-t border-zinc-800 w-full text-center">
+                    <p className="text-[8px] uppercase font-extrabold text-zinc-500">Campeão Oficial</p>
+                    <p className="font-black text-xs text-zinc-300 mt-1">
+                      {TEAM_FLAGS[actual.champion] || '🏳️'} {actual.champion}
+                    </p>
+                    <p className="text-[9px] font-bold mt-1">
+                      {localBracket.champion === actual.champion ? '👑 Acertou! (+16 pts)' : '❌ Errou'}
+                    </p>
                   </div>
                 )}
               </div>
+            </div>
 
-              {hasActualResults && actual.champion && (
-                <div className="mt-4 pt-3 border-t border-zinc-800 w-full text-center">
-                  <p className="text-[8px] uppercase font-extrabold text-slate-400">Campeão Oficial</p>
-                  <p className="font-black text-xs text-zinc-300 mt-1">
-                    {TEAM_FLAGS[actual.champion] || '🏳️'} {actual.champion}
-                  </p>
-                  <p className="text-[9px] font-bold mt-1">
-                    {localBracket.champion === actual.champion ? '👑 Acertou! (+16 pts)' : '❌ Errou'}
-                  </p>
-                </div>
-              )}
+            {/* Final MatchCard e Bronze Final */}
+            <div className="flex flex-col gap-6 items-center w-full my-auto">
+              <div className="flex flex-col items-center">
+                <h4 className="text-[8px] font-black text-zinc-500 uppercase tracking-widest text-center mb-1">Grande Final</h4>
+                <MatchCard matchId={104} teamA={localBracket.finalists[0]} teamB={localBracket.finalists[1]} winner={localBracket.champion} onSelect={(team) => handleSelect('final', null, team)} stageName="Final" actualWinner={actual.champion} />
+              </div>
+
+              {/* Bronze Final (Calculada dinamicamente) */}
+              <div className="flex flex-col items-center">
+                <h4 className="text-[8px] font-black text-zinc-500 uppercase tracking-widest text-center mb-1">Bronze Final (3º Lugar)</h4>
+                {/* Nota: como o palpite de 3º lugar é calculado com base nas perdas das semis, podemos apenas exibir os semifinalistas perdedores */}
+                {(() => {
+                  const semi1Loser = localBracket.finalists[0] && localBracket.semis[0]
+                    ? (localBracket.finalists[0] === localBracket.semis[0] ? localBracket.semis[1] : localBracket.semis[0])
+                    : '';
+                  const semi2Loser = localBracket.finalists[1] && localBracket.semis[2]
+                    ? (localBracket.finalists[1] === localBracket.semis[2] ? localBracket.semis[3] : localBracket.semis[2])
+                    : '';
+                  return (
+                    <MatchCard 
+                      matchId={103} 
+                      teamA={semi1Loser} 
+                      teamB={semi2Loser} 
+                      winner={null} 
+                      onSelect={() => {}} 
+                      stageName="3º Lugar" 
+                      actualWinner={actual.match103Winner /* se houver no futuro */} 
+                    />
+                  );
+                })()}
+              </div>
+            </div>
+
+            {/* Imagem do Troféu e Marca */}
+            <div className="flex flex-col items-center mt-2 mb-4 select-none opacity-80">
+              <span className="text-zinc-650 text-[10px] font-black tracking-widest">FIFA WORLD CUP</span>
+              <span className="text-white text-lg font-black tracking-tighter">2026</span>
+            </div>
+          </div>
+
+          {/* LADO DIREITO (Ordem reversa dos fluxos para espelhar) */}
+          <div className="flex gap-6 items-center h-full flex-row-reverse">
+            {/* 16-avos Direita (8 jogos) */}
+            <div className="flex flex-col justify-between h-full py-6">
+              <h4 className="text-[8px] font-black text-zinc-500 uppercase tracking-widest text-center">16-avos</h4>
+              <MatchCard matchId={83} teamA={r32Matches[10].home} teamB={r32Matches[10].away} winner={localBracket.oitavas[10]} onSelect={(team) => handleSelect('r32', 10, team)} stageName="16-avos" actualWinner={actual.oitavas?.[10]} />
+              <MatchCard matchId={84} teamA={r32Matches[11].home} teamB={r32Matches[11].away} winner={localBracket.oitavas[11]} onSelect={(team) => handleSelect('r32', 11, team)} stageName="16-avos" actualWinner={actual.oitavas?.[11]} />
+              <MatchCard matchId={81} teamA={r32Matches[8].home} teamB={r32Matches[8].away} winner={localBracket.oitavas[8]} onSelect={(team) => handleSelect('r32', 8, team)} stageName="16-avos" actualWinner={actual.oitavas?.[8]} />
+              <MatchCard matchId={82} teamA={r32Matches[9].home} teamB={r32Matches[9].away} winner={localBracket.oitavas[9]} onSelect={(team) => handleSelect('r32', 9, team)} stageName="16-avos" actualWinner={actual.oitavas?.[9]} />
+              <MatchCard matchId={86} teamA={r32Matches[13].home} teamB={r32Matches[13].away} winner={localBracket.oitavas[13]} onSelect={(team) => handleSelect('r32', 13, team)} stageName="16-avos" actualWinner={actual.oitavas?.[13]} />
+              <MatchCard matchId={88} teamA={r32Matches[15].home} teamB={r32Matches[15].away} winner={localBracket.oitavas[15]} onSelect={(team) => handleSelect('r32', 15, team)} stageName="16-avos" actualWinner={actual.oitavas?.[15]} />
+              <MatchCard matchId={85} teamA={r32Matches[12].home} teamB={r32Matches[12].away} winner={localBracket.oitavas[12]} onSelect={(team) => handleSelect('r32', 12, team)} stageName="16-avos" actualWinner={actual.oitavas?.[12]} />
+              <MatchCard matchId={87} teamA={r32Matches[14].home} teamB={r32Matches[14].away} winner={localBracket.oitavas[14]} onSelect={(team) => handleSelect('r32', 14, team)} stageName="16-avos" actualWinner={actual.oitavas?.[14]} />
+            </div>
+
+            {/* Oitavas Direita (4 jogos) */}
+            <div className="flex flex-col justify-between h-full py-16">
+              <h4 className="text-[8px] font-black text-zinc-500 uppercase tracking-widest text-center">Oitavas</h4>
+              <MatchCard matchId={93} teamA={localBracket.oitavas[10]} teamB={localBracket.oitavas[11]} winner={localBracket.quartas[4]} onSelect={(team) => handleSelect('oitavas', 4, team)} stageName="Oitavas" actualWinner={actual.quartas?.[4]} />
+              <MatchCard matchId={94} teamA={localBracket.oitavas[8]} teamB={localBracket.oitavas[9]} winner={localBracket.quartas[5]} onSelect={(team) => handleSelect('oitavas', 5, team)} stageName="Oitavas" actualWinner={actual.quartas?.[5]} />
+              <MatchCard matchId={95} teamA={localBracket.oitavas[13]} teamB={localBracket.oitavas[15]} winner={localBracket.quartas[6]} onSelect={(team) => handleSelect('oitavas', 6, team)} stageName="Oitavas" actualWinner={actual.quartas?.[6]} />
+              <MatchCard matchId={96} teamA={localBracket.oitavas[12]} teamB={localBracket.oitavas[14]} winner={localBracket.quartas[7]} onSelect={(team) => handleSelect('oitavas', 7, team)} stageName="Oitavas" actualWinner={actual.quartas?.[7]} />
+            </div>
+
+            {/* Quartas Direita (2 jogos) */}
+            <div className="flex flex-col justify-between h-full py-36">
+              <h4 className="text-[8px] font-black text-zinc-500 uppercase tracking-widest text-center">Quartas</h4>
+              <MatchCard matchId={99} teamA={localBracket.quartas[4]} teamB={localBracket.quartas[5]} winner={localBracket.semis[2]} onSelect={(team) => handleSelect('quartas', 2, team)} stageName="Quartas" actualWinner={actual.semis?.[2]} />
+              <MatchCard matchId={100} teamA={localBracket.quartas[6]} teamB={localBracket.quartas[7]} winner={localBracket.semis[3]} onSelect={(team) => handleSelect('quartas', 3, team)} stageName="Quartas" actualWinner={actual.semis?.[3]} />
+            </div>
+
+            {/* Semi Direita (1 jogo) */}
+            <div className="flex flex-col justify-center h-full gap-4">
+              <h4 className="text-[8px] font-black text-zinc-500 uppercase tracking-widest text-center mb-2">Semi</h4>
+              <MatchCard matchId={102} teamA={localBracket.semis[2]} teamB={localBracket.semis[3]} winner={localBracket.finalists[1]} onSelect={(team) => handleSelect('semis', 1, team)} stageName="Semi" actualWinner={actual.finalists?.[1]} />
             </div>
           </div>
 
