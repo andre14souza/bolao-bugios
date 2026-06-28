@@ -18,11 +18,9 @@
 
 @layer base {
   body {
-    @apply bg-football-darkGreen text-slate-100 font-sans antialiased min-h-screen selection:bg-football-gold selection:text-white;
-    background-image: 
-      radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.03) 0%, transparent 50%),
-      linear-gradient(to bottom, #09090b, #121215);
-    background-attachment: fixed;
+    @apply bg-zinc-950 text-zinc-100 font-sans antialiased min-h-screen selection:bg-zinc-800 selection:text-white;
+    background-color: #09090b;
+    background-image: none;
   }
   
   h1, h2, h3, h4, h5, h6 {
@@ -30,79 +28,69 @@
   }
 }
 
-/* Estilos de Painel de Vidro (Glassmorphism) */
+/* Estilos de Painel de Vidro (Glassmorphism) -> Agora Planos e Minimalistas */
 .glass-panel {
-  background: rgba(18, 18, 20, 0.55);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+  background: #18181b; /* zinc-900 */
+  border: 1px solid #27272a; /* zinc-800 */
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
 
 .glass-panel-hover {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .glass-panel-hover:hover {
-  background: rgba(24, 24, 27, 0.65);
-  border-color: rgba(255, 255, 255, 0.15);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-  transform: translateY(-2px);
+  background: #27272a; /* zinc-800 */
+  border-color: #3f3f46; /* zinc-700 */
+  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
 }
 
 .glass-input {
-  background: rgba(18, 18, 20, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #09090b; /* zinc-950 */
+  border: 1px solid #27272a; /* zinc-800 */
   color: #fff;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.15s ease-in-out;
 }
 
 .glass-input:focus {
   outline: none;
-  border-color: #d97706;
-  box-shadow: 0 0 10px rgba(217, 119, 6, 0.15);
-  background: rgba(24, 24, 27, 0.6);
+  border-color: #52525b; /* zinc-600 */
+  box-shadow: none;
+  background: #09090b;
 }
 
 /* Barra de Rolagem Customizada */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(9, 9, 11, 0.5);
+  background: #09090b;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 4px;
+  background: #27272a;
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: #3f3f46;
 }
 
-/* Efeito de Brilho de Texto */
-.text-glow-gold {
-  text-shadow: 0 0 8px rgba(217, 119, 6, 0.3);
-}
-
-.text-glow-green {
-  text-shadow: 0 0 8px rgba(16, 185, 129, 0.3);
-}
-
-.text-glow-blue {
-  text-shadow: 0 0 8px rgba(59, 130, 246, 0.3);
+/* Efeito de Brilho de Texto (Removido para o Minimalismo) */
+.text-glow-gold, .text-glow-green, .text-glow-blue {
+  text-shadow: none;
 }
 
 /* Animações e Transições */
 @keyframes pulse-gold {
   0%, 100% {
-    box-shadow: 0 0 5px rgba(217, 119, 6, 0.1);
+    box-shadow: 0 0 0 1px rgba(250, 204, 21, 0.2);
   }
   50% {
-    box-shadow: 0 0 15px rgba(217, 119, 6, 0.3);
+    box-shadow: 0 0 0 2px rgba(250, 204, 21, 0.4);
   }
 }
 
@@ -110,19 +98,11 @@
   animation: pulse-gold 2.5s infinite;
 }
 
-/* Estilo do gramado de futebol de fundo discreto */
+/* Estilo do gramado de futebol de fundo discreto (Removido para o Minimalismo) */
 .bg-field-pattern {
   position: relative;
 }
 
 .bg-field-pattern::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
-  background-size: 50px 50px;
-  pointer-events: none;
-  z-index: 0;
+  display: none;
 }

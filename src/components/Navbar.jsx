@@ -48,7 +48,7 @@ export default function Navbar({ activeTab, setActiveTab, currentUser, isAdmin, 
                 onClick={() => handleNavClick(item.id)}
                 className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-200 cursor-pointer ${
                   isActive
-                    ? 'bg-football-vibrantGreen text-white shadow-md shadow-emerald-500/20'
+                    ? 'bg-white text-zinc-950 border border-white'
                     : isLocked
                     ? 'text-slate-500 hover:text-slate-400 hover:bg-white/5 opacity-80'
                     : 'text-slate-300 hover:text-white hover:bg-white/5'
@@ -115,7 +115,7 @@ export default function Navbar({ activeTab, setActiveTab, currentUser, isAdmin, 
                 onClick={() => handleNavClick(item.id)}
                 className={`flex items-center gap-3 p-3 rounded-xl text-sm font-bold transition-all cursor-pointer ${
                   isActive
-                    ? 'bg-football-vibrantGreen text-white'
+                    ? 'bg-white text-zinc-950 border border-white'
                     : isLocked
                     ? 'text-slate-500 hover:text-slate-400 hover:bg-white/5 opacity-85'
                     : 'text-slate-300 hover:text-white hover:bg-white/5'

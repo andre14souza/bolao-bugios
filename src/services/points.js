@@ -14,7 +14,7 @@
  * @param {number|string} realAway Gols reais do time visitante
  * @returns {{points: number, isExact: boolean, isWinner: boolean, isDiff: boolean}}
  */
-export function calculateMatchScore(guessHome, guessAway, realHome, realAway) {
+export function calculateMatchScore(guessHome, guessAway, realHome, realAway, stage = 'group', group = '') {
   if (
     realHome === null || realAway === null || 
     realHome === undefined || realAway === undefined ||
@@ -33,33 +33,65 @@ export function calculateMatchScore(guessHome, guessAway, realHome, realAway) {
     return { points: 0, isExact: false, isWinner: false, isDiff: false };
   }
 
-  // 1. Acerto na mosca (Placar Exato) -> 10 pontos
+  let basePoints = 0;
+  let isExact = false;
+  let isWinner = false;
+  let isDiff = false;
+
+  // 1. Acerto na mosca (Placar Exato) -> 10 pontos base
   if (gHome === rHome && gAway === rAway) {
-    return { points: 10, isExact: true, isWinner: true, isDiff: true };
-  }
+    basePoints = 10;
+    isExact = true;
+    isWinner = true;
+    isDiff = true;
+  } else {
+    const guessDiff = gHome - gAway;
+    const realDiff = rHome - rAway;
 
-  const guessDiff = gHome - gAway;
-  const realDiff = rHome - rAway;
+    const gotWinner = (guessDiff > 0 && realDiff > 0) || (guessDiff < 0 && realDiff < 0);
+    const gotDraw = (guessDiff === 0 && realDiff === 0);
 
-  const gotWinner = (guessDiff > 0 && realDiff > 0) || (guessDiff < 0 && realDiff < 0);
-  const gotDraw = (guessDiff === 0 && realDiff === 0);
-
-  // 2. Acertou um empate, mas errou a quantidade de gols -> 5 pontos
-  if (gotDraw) {
-    return { points: 5, isExact: false, isWinner: true, isDiff: false };
-  }
-
-  // 3. Acertou Vencedor
-  if (gotWinner) {
-    // 3a. Acertou o vencedor e o saldo/diferença de gols -> 7 pontos
-    if (guessDiff === realDiff) {
-      return { points: 7, isExact: false, isWinner: true, isDiff: true };
+    // 2. Acertou um empate, mas errou a quantidade de gols -> 5 pontos base
+    if (gotDraw) {
+      basePoints = 5;
+      isWinner = true;
     }
-    // 3b. Acertou apenas o vencedor (errou o saldo) -> 5 pontos
-    return { points: 5, isExact: false, isWinner: true, isDiff: false };
+    // 3. Acertou Vencedor
+    else if (gotWinner) {
+      // 3a. Acertou o vencedor e o saldo/diferença de gols -> 7 pontos base
+      if (guessDiff === realDiff) {
+        basePoints = 7;
+        isWinner = true;
+        isDiff = true;
+      } else {
+        // 3b. Acertou apenas o vencedor (errou o saldo) -> 5 pontos base
+        basePoints = 5;
+        isWinner = true;
+      }
+    }
   }
 
-  return { points: 0, isExact: false, isWinner: false, isDiff: false };
+  // Multiplicadores baseados na fase (mata-mata)
+  let multiplier = 1;
+  if (stage === 'knockout') {
+    const cleanGroup = (group || '').trim().toLowerCase();
+    if (cleanGroup.includes('16-avos')) {
+      multiplier = 1.5;
+    } else if (cleanGroup.includes('oitavas')) {
+      multiplier = 2;
+    } else if (cleanGroup.includes('quartas')) {
+      multiplier = 3;
+    } else if (cleanGroup.includes('semifinal') || cleanGroup.includes('semi')) {
+      multiplier = 4;
+    } else if (cleanGroup.includes('final') || cleanGroup.includes('campeão')) {
+      multiplier = 5;
+    } else {
+      multiplier = 2; // fallback
+    }
+  }
+
+  const points = Math.round(basePoints * multiplier);
+  return { points, isExact, isWinner, isDiff };
 }
 
 /**

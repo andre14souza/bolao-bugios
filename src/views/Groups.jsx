@@ -165,18 +165,18 @@ export default function Groups({ matches, guesses, currentUser, onReload, onSele
             if (hasResult) {
               const dbGuess = guesses.find(g => g.user === currentUser && String(g.matchId) === String(match.id));
               if (dbGuess) {
-                const scoreResult = calculateMatchScore(dbGuess.homeScore, dbGuess.awayScore, match.homeScore, match.awayScore);
+                const scoreResult = calculateMatchScore(dbGuess.homeScore, dbGuess.awayScore, match.homeScore, match.awayScore, match.stage, match.group);
                 pointsEarned = scoreResult.points;
-                if (scoreResult.points === 10) {
+                if (scoreResult.isExact) {
                   pointsBadgeColor = 'bg-football-gold/20 text-football-gold border border-football-gold/30 text-glow-gold';
-                  pointsText = 'Placar Exato (+10 pts) 🎯';
-                } else if (scoreResult.points === 7) {
+                  pointsText = `Placar Exato (+${scoreResult.points} pts) 🎯`;
+                } else if (scoreResult.isWinner && scoreResult.isDiff) {
                   pointsBadgeColor = 'bg-football-royalBlue/20 text-football-lightBlue border border-football-royalBlue/30';
-                  pointsText = 'Vencedor & Saldo (+7 pts) ⚖️';
-                } else if (scoreResult.points === 5) {
+                  pointsText = `Vencedor & Saldo (+${scoreResult.points} pts) ⚖️`;
+                } else if (scoreResult.isWinner) {
                   pointsBadgeColor = 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/25';
                   const isDraw = parseInt(match.homeScore, 10) === parseInt(match.awayScore, 10);
-                  pointsText = isDraw ? 'Acertou Empate (+5 pts) 🤝' : 'Acertou Vencedor (+5 pts) 👍';
+                  pointsText = isDraw ? `Acertou Empate (+${scoreResult.points} pts) 🤝` : `Acertou Vencedor (+${scoreResult.points} pts) 👍`;
                 } else {
                   pointsBadgeColor = 'bg-slate-500/15 text-slate-400 border border-slate-500/25';
                   pointsText = 'Não pontuou (0 pts) ❌';

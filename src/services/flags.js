@@ -26,6 +26,7 @@ export const TEAM_FLAGS = {
   "Equador": "🇪🇨",
   // Grupo F
   "Holanda": "🇳🇱",
+  "Países Baixos": "🇳🇱",
   "Japão": "🇯🇵",
   "Suécia": "🇸🇪",
   "Tunísia": "🇹🇳",

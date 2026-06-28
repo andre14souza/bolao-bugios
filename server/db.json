@@ -722,68 +722,88 @@
     },
     {
       "id": "73",
-      "homeTeam": "16-avos (Casa #1)",
-      "awayTeam": "16-avos (Fora #1)",
+      "homeTeam": "África do Sul",
+      "awayTeam": "Canadá",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-06-28T17:00:00",
+      "date": "2026-06-28T16:00:00",
       "stage": "knockout",
       "group": "16-avos de Final"
     },
     {
       "id": "74",
-      "homeTeam": "16-avos (Casa #2)",
-      "awayTeam": "16-avos (Fora #2)",
+      "homeTeam": "Brasil",
+      "awayTeam": "Japão",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-06-28T21:00:00",
+      "date": "2026-06-29T14:00:00",
       "stage": "knockout",
       "group": "16-avos de Final"
     },
     {
       "id": "75",
-      "homeTeam": "16-avos (Casa #3)",
-      "awayTeam": "16-avos (Fora #3)",
+      "homeTeam": "Alemanha",
+      "awayTeam": "Paraguai",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-06-29T17:00:00",
+      "date": "2026-06-29T17:30:00",
       "stage": "knockout",
       "group": "16-avos de Final"
     },
     {
       "id": "76",
-      "homeTeam": "16-avos (Casa #4)",
-      "awayTeam": "16-avos (Fora #4)",
+      "homeTeam": "Países Baixos",
+      "awayTeam": "Marrocos",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-06-29T21:00:00",
+      "date": "2026-06-29T22:00:00",
       "stage": "knockout",
       "group": "16-avos de Final"
     },
     {
       "id": "77",
-      "homeTeam": "16-avos (Casa #5)",
-      "awayTeam": "16-avos (Fora #5)",
+      "homeTeam": "Costa do Marfim",
+      "awayTeam": "Noruega",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-06-30T17:00:00",
+      "date": "2026-06-30T14:00:00",
       "stage": "knockout",
       "group": "16-avos de Final"
     },
     {
       "id": "78",
-      "homeTeam": "16-avos (Casa #6)",
-      "awayTeam": "16-avos (Fora #6)",
+      "homeTeam": "França",
+      "awayTeam": "Suécia",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-06-30T21:00:00",
+      "date": "2026-06-30T18:00:00",
       "stage": "knockout",
       "group": "16-avos de Final"
     },
     {
       "id": "79",
-      "homeTeam": "16-avos (Casa #7)",
-      "awayTeam": "16-avos (Fora #7)",
+      "homeTeam": "México",
+      "awayTeam": "Equador",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-30T22:00:00",
+      "stage": "knockout",
+      "group": "16-avos de Final"
+    },
+    {
+      "id": "80",
+      "homeTeam": "Inglaterra",
+      "awayTeam": "RD Congo",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-07-01T13:00:00",
+      "stage": "knockout",
+      "group": "16-avos de Final"
+    },
+    {
+      "id": "81",
+      "homeTeam": "Bélgica",
+      "awayTeam": "Senegal",
       "homeScore": null,
       "awayScore": null,
       "date": "2026-07-01T17:00:00",
@@ -791,9 +811,9 @@
       "group": "16-avos de Final"
     },
     {
-      "id": "80",
-      "homeTeam": "16-avos (Casa #8)",
-      "awayTeam": "16-avos (Fora #8)",
+      "id": "82",
+      "homeTeam": "Estados Unidos",
+      "awayTeam": "Bósnia e Herzegovina",
       "homeScore": null,
       "awayScore": null,
       "date": "2026-07-01T21:00:00",
@@ -801,82 +821,62 @@
       "group": "16-avos de Final"
     },
     {
-      "id": "81",
-      "homeTeam": "16-avos (Casa #9)",
-      "awayTeam": "16-avos (Fora #9)",
-      "homeScore": null,
-      "awayScore": null,
-      "date": "2026-07-02T17:00:00",
-      "stage": "knockout",
-      "group": "16-avos de Final"
-    },
-    {
-      "id": "82",
-      "homeTeam": "16-avos (Casa #10)",
-      "awayTeam": "16-avos (Fora #10)",
-      "homeScore": null,
-      "awayScore": null,
-      "date": "2026-07-02T17:00:00",
-      "stage": "knockout",
-      "group": "16-avos de Final"
-    },
-    {
       "id": "83",
-      "homeTeam": "16-avos (Casa #11)",
-      "awayTeam": "16-avos (Fora #11)",
+      "homeTeam": "Espanha",
+      "awayTeam": "Áustria",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-07-02T21:00:00",
+      "date": "2026-07-02T16:00:00",
       "stage": "knockout",
       "group": "16-avos de Final"
     },
     {
       "id": "84",
-      "homeTeam": "16-avos (Casa #12)",
-      "awayTeam": "16-avos (Fora #12)",
+      "homeTeam": "Portugal",
+      "awayTeam": "Croácia",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-07-03T17:00:00",
+      "date": "2026-07-02T20:00:00",
       "stage": "knockout",
       "group": "16-avos de Final"
     },
     {
       "id": "85",
-      "homeTeam": "16-avos (Casa #13)",
-      "awayTeam": "16-avos (Fora #13)",
+      "homeTeam": "Suíça",
+      "awayTeam": "Argélia",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-07-03T17:00:00",
+      "date": "2026-07-03T00:00:00",
       "stage": "knockout",
       "group": "16-avos de Final"
     },
     {
       "id": "86",
-      "homeTeam": "16-avos (Casa #14)",
-      "awayTeam": "16-avos (Fora #14)",
+      "homeTeam": "Austrália",
+      "awayTeam": "Egito",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-07-03T21:00:00",
+      "date": "2026-07-03T15:00:00",
       "stage": "knockout",
       "group": "16-avos de Final"
     },
     {
       "id": "87",
-      "homeTeam": "16-avos (Casa #15)",
-      "awayTeam": "16-avos (Fora #15)",
+      "homeTeam": "Argentina",
+      "awayTeam": "Cabo Verde",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-07-03T21:00:00",
+      "date": "2026-07-03T19:00:00",
       "stage": "knockout",
       "group": "16-avos de Final"
     },
     {
       "id": "88",
-      "homeTeam": "16-avos (Casa #16)",
-      "awayTeam": "16-avos (Fora #16)",
+      "homeTeam": "Colômbia",
+      "awayTeam": "Gana",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-07-03T22:00:00",
+      "date": "2026-07-03T22:30:00",
       "stage": "knockout",
       "group": "16-avos de Final"
     },
@@ -1272,5 +1272,8 @@
       "password": "123"
     }
   ],
-  "pointsAdjustments": []
+  "pointsAdjustments": [],
+  "settings": {
+    "knockoutEnabled": true
+  }
 }

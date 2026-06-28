@@ -328,17 +328,17 @@ export default function Ranking({ users, matches, guesses, groupQualifiers, brac
 
                   if (hasResult) {
                     if (guess) {
-                      const scoreResult = calculateMatchScore(guess.homeScore, guess.awayScore, match.homeScore, match.awayScore);
-                      if (scoreResult.points === 10) {
+                      const scoreResult = calculateMatchScore(guess.homeScore, guess.awayScore, match.homeScore, match.awayScore, match.stage, match.group);
+                      if (scoreResult.isExact) {
                         pointsBadgeColor = 'bg-football-gold/20 text-football-gold border border-football-gold/30 text-glow-gold';
-                        pointsText = 'Placar Exato (+10 pts) 🎯';
-                      } else if (scoreResult.points === 7) {
+                        pointsText = `Placar Exato (+${scoreResult.points} pts) 🎯`;
+                      } else if (scoreResult.isWinner && scoreResult.isDiff) {
                         pointsBadgeColor = 'bg-football-royalBlue/20 text-football-lightBlue border border-football-royalBlue/30';
-                        pointsText = 'Vencedor & Saldo (+7 pts) ⚖️';
-                      } else if (scoreResult.points === 5) {
+                        pointsText = `Vencedor & Saldo (+${scoreResult.points} pts) ⚖️`;
+                      } else if (scoreResult.isWinner) {
                         pointsBadgeColor = 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/25';
                         const isDraw = parseInt(match.homeScore, 10) === parseInt(match.awayScore, 10);
-                        pointsText = isDraw ? 'Empate (+5 pts) 🤝' : 'Vencedor (+5 pts) 👍';
+                        pointsText = isDraw ? `Empate (+${scoreResult.points} pts) 🤝` : `Vencedor (+${scoreResult.points} pts) 👍`;
                       } else {
                         pointsBadgeColor = 'bg-rose-500/10 text-rose-400 border border-rose-500/20';
                         pointsText = 'Não pontuou (0 pts) ❌';

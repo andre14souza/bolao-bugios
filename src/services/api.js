@@ -742,7 +742,7 @@ export function computeRanking(users, matches, guesses, groupQualifiersData = {}
     if (match && match.homeScore !== null && match.awayScore !== null) {
       const userRank = ranking.find(r => r.user === g.user);
       if (userRank) {
-        const score = calculateMatchScore(g.homeScore, g.awayScore, match.homeScore, match.awayScore);
+        const score = calculateMatchScore(g.homeScore, g.awayScore, match.homeScore, match.awayScore, match.stage, match.group);
         userRank.matchPoints += score.points;
         userRank.points += score.points;
         userRank.totalGuesses += 1;

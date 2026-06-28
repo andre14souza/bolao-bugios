@@ -282,11 +282,11 @@ export default function App() {
 
       if (g) {
         if (hasResult) {
-          const scoreResult = calculateMatchScore(g.homeScore, g.awayScore, match.homeScore, match.awayScore);
+          const scoreResult = calculateMatchScore(g.homeScore, g.awayScore, match.homeScore, match.awayScore, match.stage, match.group);
           points = scoreResult.points;
-          if (scoreResult.points === 10) scoreCategory = 'exact';
-          else if (scoreResult.points === 7) scoreCategory = 'winner_diff';
-          else if (scoreResult.points === 5) scoreCategory = 'winner';
+          if (scoreResult.isExact) scoreCategory = 'exact';
+          else if (scoreResult.isWinner && scoreResult.isDiff) scoreCategory = 'winner_diff';
+          else if (scoreResult.isWinner) scoreCategory = 'winner';
           else scoreCategory = 'none';
         }
       } else {
@@ -517,7 +517,7 @@ export default function App() {
                       <div className="flex items-center gap-3">
                         {hasResult && canSeeGuess && ug.guess && (
                           <span className="text-[10px] font-semibold text-slate-400 uppercase">
-                            {ug.category === 'exact' ? '+10 pts 🎯' : ug.category === 'winner_diff' ? '+7 pts ⚖️' : ug.category === 'winner' ? '+5 pts 👍' : '0 pts ❌'}
+                            {ug.points > 0 ? `+${ug.points} pts ${ug.category === 'exact' ? '🎯' : ug.category === 'winner_diff' ? '⚖️' : '👍'}` : '0 pts ❌'}
                           </span>
                         )}
                         <span className={`text-xs font-black px-3 py-1 rounded-lg ${badgeStyle} font-mono`}>
