@@ -722,26 +722,6 @@
     },
     {
       "id": "73",
-      "homeTeam": "África do Sul",
-      "awayTeam": "Canadá",
-      "homeScore": null,
-      "awayScore": null,
-      "date": "2026-06-28T16:00:00",
-      "stage": "knockout",
-      "group": "16-avos de Final"
-    },
-    {
-      "id": "74",
-      "homeTeam": "Brasil",
-      "awayTeam": "Japão",
-      "homeScore": null,
-      "awayScore": null,
-      "date": "2026-06-29T14:00:00",
-      "stage": "knockout",
-      "group": "16-avos de Final"
-    },
-    {
-      "id": "75",
       "homeTeam": "Alemanha",
       "awayTeam": "Paraguai",
       "homeScore": null,
@@ -751,27 +731,17 @@
       "group": "16-avos de Final"
     },
     {
-      "id": "76",
-      "homeTeam": "Países Baixos",
-      "awayTeam": "Marrocos",
+      "id": "74",
+      "homeTeam": "África do Sul",
+      "awayTeam": "Canadá",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-06-29T22:00:00",
+      "date": "2026-06-28T16:00:00",
       "stage": "knockout",
       "group": "16-avos de Final"
     },
     {
-      "id": "77",
-      "homeTeam": "Costa do Marfim",
-      "awayTeam": "Noruega",
-      "homeScore": null,
-      "awayScore": null,
-      "date": "2026-06-30T14:00:00",
-      "stage": "knockout",
-      "group": "16-avos de Final"
-    },
-    {
-      "id": "78",
+      "id": "75",
       "homeTeam": "França",
       "awayTeam": "Suécia",
       "homeScore": null,
@@ -781,47 +751,27 @@
       "group": "16-avos de Final"
     },
     {
-      "id": "79",
-      "homeTeam": "México",
-      "awayTeam": "Equador",
+      "id": "76",
+      "homeTeam": "Croácia",
+      "awayTeam": "Portugal",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-06-30T22:00:00",
+      "date": "2026-07-02T20:00:00",
       "stage": "knockout",
       "group": "16-avos de Final"
     },
     {
-      "id": "80",
-      "homeTeam": "Inglaterra",
-      "awayTeam": "RD Congo",
+      "id": "77",
+      "homeTeam": "Países Baixos",
+      "awayTeam": "Marrocos",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-07-01T13:00:00",
+      "date": "2026-06-29T22:00:00",
       "stage": "knockout",
       "group": "16-avos de Final"
     },
     {
-      "id": "81",
-      "homeTeam": "Bélgica",
-      "awayTeam": "Senegal",
-      "homeScore": null,
-      "awayScore": null,
-      "date": "2026-07-01T17:00:00",
-      "stage": "knockout",
-      "group": "16-avos de Final"
-    },
-    {
-      "id": "82",
-      "homeTeam": "Estados Unidos",
-      "awayTeam": "Bósnia e Herzegovina",
-      "homeScore": null,
-      "awayScore": null,
-      "date": "2026-07-01T21:00:00",
-      "stage": "knockout",
-      "group": "16-avos de Final"
-    },
-    {
-      "id": "83",
+      "id": "78",
       "homeTeam": "Espanha",
       "awayTeam": "Áustria",
       "homeScore": null,
@@ -831,12 +781,62 @@
       "group": "16-avos de Final"
     },
     {
-      "id": "84",
-      "homeTeam": "Portugal",
-      "awayTeam": "Croácia",
+      "id": "79",
+      "homeTeam": "Estados Unidos",
+      "awayTeam": "Bósnia e Herzegovina",
       "homeScore": null,
       "awayScore": null,
-      "date": "2026-07-02T20:00:00",
+      "date": "2026-07-01T21:00:00",
+      "stage": "knockout",
+      "group": "16-avos de Final"
+    },
+    {
+      "id": "80",
+      "homeTeam": "Bélgica",
+      "awayTeam": "Senegal",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-07-01T17:00:00",
+      "stage": "knockout",
+      "group": "16-avos de Final"
+    },
+    {
+      "id": "81",
+      "homeTeam": "México",
+      "awayTeam": "Equador",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-30T22:00:00",
+      "stage": "knockout",
+      "group": "16-avos de Final"
+    },
+    {
+      "id": "82",
+      "homeTeam": "Inglaterra",
+      "awayTeam": "RD Congo",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-07-01T13:00:00",
+      "stage": "knockout",
+      "group": "16-avos de Final"
+    },
+    {
+      "id": "83",
+      "homeTeam": "Brasil",
+      "awayTeam": "Japão",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-29T14:00:00",
+      "stage": "knockout",
+      "group": "16-avos de Final"
+    },
+    {
+      "id": "84",
+      "homeTeam": "Costa do Marfim",
+      "awayTeam": "Noruega",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-06-30T14:00:00",
       "stage": "knockout",
       "group": "16-avos de Final"
     },
@@ -852,16 +852,6 @@
     },
     {
       "id": "86",
-      "homeTeam": "Austrália",
-      "awayTeam": "Egito",
-      "homeScore": null,
-      "awayScore": null,
-      "date": "2026-07-03T15:00:00",
-      "stage": "knockout",
-      "group": "16-avos de Final"
-    },
-    {
-      "id": "87",
       "homeTeam": "Argentina",
       "awayTeam": "Cabo Verde",
       "homeScore": null,
@@ -871,12 +861,22 @@
       "group": "16-avos de Final"
     },
     {
-      "id": "88",
+      "id": "87",
       "homeTeam": "Colômbia",
       "awayTeam": "Gana",
       "homeScore": null,
       "awayScore": null,
       "date": "2026-07-03T22:30:00",
+      "stage": "knockout",
+      "group": "16-avos de Final"
+    },
+    {
+      "id": "88",
+      "homeTeam": "Austrália",
+      "awayTeam": "Egito",
+      "homeScore": null,
+      "awayScore": null,
+      "date": "2026-07-03T15:00:00",
       "stage": "knockout",
       "group": "16-avos de Final"
     },

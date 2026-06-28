@@ -267,9 +267,9 @@ export default function BracketPredictions({ matches, bracketGuesses, groupQuali
 
     return (
       <div className={`glass-panel p-2.5 rounded-2xl border transition-all duration-300 w-[170px] md:w-[190px] relative flex flex-col gap-1.5 ${
-        hasResult ? 'opacity-90 border-white/5' : 'border-football-glassBorder hover:border-football-vibrantGreen/30'
+        hasResult ? 'opacity-90 border-white/5' : 'border-zinc-800 hover:border-zinc-700'
       }`}>
-        <div className="flex justify-between items-center text-[8px] font-bold text-slate-400 border-b border-white/5 pb-1 select-none">
+        <div className="flex justify-between items-center text-[8px] font-bold text-zinc-400 border-b border-zinc-800 pb-1 select-none">
           <span className="uppercase tracking-wider">{stageName}</span>
           <span>Jogo {matchId}</span>
         </div>
@@ -281,19 +281,19 @@ export default function BracketPredictions({ matches, bracketGuesses, groupQuali
             onClick={() => onSelect(teamA)}
             className={`flex items-center justify-between p-1.5 rounded-xl text-[10px] w-full text-left transition-all ${
               winner === teamA && teamA
-                ? 'bg-football-vibrantGreen/20 border border-football-vibrantGreen/50 text-white font-extrabold shadow shadow-emerald-500/25 scale-[1.02]'
+                ? 'bg-white text-zinc-950 font-extrabold border border-white'
                 : winner && teamA
-                ? 'opacity-45 text-slate-400 hover:opacity-75 cursor-pointer border border-transparent'
+                ? 'opacity-40 text-zinc-400 hover:opacity-75 cursor-pointer border border-transparent'
                 : isA_Placeholder
-                ? 'opacity-35 text-slate-500 italic cursor-not-allowed border border-transparent'
-                : 'hover:bg-white/5 text-slate-350 cursor-pointer border border-transparent'
+                ? 'opacity-30 text-zinc-500 italic cursor-not-allowed border border-transparent'
+                : 'hover:bg-zinc-800 text-zinc-350 cursor-pointer border border-transparent'
             }`}
           >
             <span className="truncate flex items-center gap-1.5">
               <span className="text-sm filter drop-shadow select-none">{TEAM_FLAGS[teamA] || '🏳️'}</span>
               <span className="truncate">{teamA || 'A definir'}</span>
             </span>
-            {winner === teamA && teamA && <span className="text-football-vibrantGreen font-black text-[10px]">✓</span>}
+            {winner === teamA && teamA && <span className="text-zinc-950 font-black text-[10px]">✓</span>}
           </button>
 
           {/* Time B */}
@@ -302,19 +302,19 @@ export default function BracketPredictions({ matches, bracketGuesses, groupQuali
             onClick={() => onSelect(teamB)}
             className={`flex items-center justify-between p-1.5 rounded-xl text-[10px] w-full text-left transition-all ${
               winner === teamB && teamB
-                ? 'bg-football-vibrantGreen/20 border border-football-vibrantGreen/50 text-white font-extrabold shadow shadow-emerald-500/25 scale-[1.02]'
+                ? 'bg-white text-zinc-950 font-extrabold border border-white'
                 : winner && teamB
-                ? 'opacity-45 text-slate-400 hover:opacity-75 cursor-pointer border border-transparent'
+                ? 'opacity-40 text-zinc-400 hover:opacity-75 cursor-pointer border border-transparent'
                 : isB_Placeholder
-                ? 'opacity-35 text-slate-500 italic cursor-not-allowed border border-transparent'
-                : 'hover:bg-white/5 text-slate-350 cursor-pointer border border-transparent'
+                ? 'opacity-30 text-zinc-500 italic cursor-not-allowed border border-transparent'
+                : 'hover:bg-zinc-800 text-zinc-350 cursor-pointer border border-transparent'
             }`}
           >
             <span className="truncate flex items-center gap-1.5">
               <span className="text-sm filter drop-shadow select-none">{TEAM_FLAGS[teamB] || '🏳️'}</span>
               <span className="truncate">{teamB || 'A definir'}</span>
             </span>
-            {winner === teamB && teamB && <span className="text-football-vibrantGreen font-black text-[10px]">✓</span>}
+            {winner === teamB && teamB && <span className="text-zinc-950 font-black text-[10px]">✓</span>}
           </button>
         </div>
 
@@ -332,14 +332,14 @@ export default function BracketPredictions({ matches, bracketGuesses, groupQuali
   };
 
   return (
-    <div className="max-w-full mx-auto px-4 py-8 relative bg-field-pattern overflow-hidden">
+    <div className="max-w-full mx-auto px-4 py-8 relative overflow-hidden">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 max-w-7xl mx-auto">
         <div>
           <h1 className="text-3xl md:text-4xl font-extrabold text-white">
             🏆 Chaveamento da Copa 2026
           </h1>
-          <p className="text-xs text-slate-300 mt-1">
+          <p className="text-xs text-slate-350 mt-1">
             Clique na seleção que você acha que vence cada partida para avançá-la na chave. O mata-mata corre da esquerda para a direita!
           </p>
         </div>
@@ -347,10 +347,10 @@ export default function BracketPredictions({ matches, bracketGuesses, groupQuali
         <button
           onClick={handleSave}
           disabled={isSaving}
-          className="flex items-center justify-center gap-2 bg-gradient-to-r from-football-vibrantGreen to-emerald-600 hover:from-emerald-500 hover:to-teal-600 text-white font-bold px-6 py-3.5 rounded-2xl shadow-lg shadow-emerald-500/20 active:scale-95 transition-all disabled:opacity-50 cursor-pointer text-xs md:text-sm whitespace-nowrap self-start md:self-auto"
+          className="flex items-center justify-center gap-2 bg-white hover:bg-zinc-200 text-zinc-950 font-bold px-6 py-3.5 rounded-2xl shadow-sm active:scale-95 transition-all disabled:opacity-50 cursor-pointer text-xs md:text-sm whitespace-nowrap self-start md:self-auto"
         >
           {isSaving ? (
-            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-5 h-5 border-2 border-zinc-950 border-t-transparent rounded-full animate-spin"></div>
           ) : (
             <Save size={18} />
           )}
@@ -375,22 +375,22 @@ export default function BracketPredictions({ matches, bracketGuesses, groupQuali
 
         {/* Banner de Pontuação Apurada */}
         {hasActualResults && (
-          <div className="mb-4 p-4 glass-panel rounded-2xl border border-football-gold/30 bg-football-gold/5 flex items-center justify-between select-none">
+          <div className="mb-4 p-4 glass-panel rounded-2xl border border-zinc-800 bg-zinc-900/50 flex items-center justify-between select-none">
             <div className="flex items-center gap-3">
-              <Award className="text-football-gold animate-bounce-slow" size={24} />
+              <Award className="text-zinc-400 animate-bounce-slow" size={24} />
               <div>
                 <p className="font-extrabold text-white text-sm">Mata-mata Apurado Oficial!</p>
-                <p className="text-[10px] text-slate-400">Pontuação obtida com base nas chaves concluídas.</p>
+                <p className="text-[10px] text-zinc-400">Pontuação obtida com base nas chaves concluídas.</p>
               </div>
             </div>
-            <span className="text-base font-black text-football-gold bg-football-gold/15 px-3 py-1.5 rounded-xl border border-football-gold/30">
+            <span className="text-base font-black text-white bg-zinc-850 px-3 py-1.5 rounded-xl border border-zinc-700">
               +{totalBracketPoints} pts
             </span>
           </div>
         )}
 
         {/* Instrução de Scroll Lateral */}
-        <div className="flex items-center gap-2 text-[10px] font-bold text-football-gold uppercase tracking-wider select-none mb-2 animate-pulse">
+        <div className="flex items-center gap-2 text-[10px] font-bold text-zinc-400 uppercase tracking-wider select-none mb-2 animate-pulse">
           <span>Role para o lado para ver o chaveamento completo</span>
           <ArrowRight size={12} className="animate-bounce-horizontal" />
         </div>
@@ -452,16 +452,15 @@ export default function BracketPredictions({ matches, bracketGuesses, groupQuali
 
           {/* COLUNA 5: Grande Final (1 jogo) */}
           <div className="flex flex-col justify-center h-full gap-24">
-            <h3 className="text-[9px] font-black text-football-gold uppercase tracking-widest text-center border-b border-football-gold/20 pb-2">Final (MetLife)</h3>
+            <h3 className="text-[9px] font-black text-zinc-450 uppercase tracking-widest text-center border-b border-zinc-850 pb-2">Final (MetLife)</h3>
             <MatchCard matchId={104} teamA={localBracket.finalists[0]} teamB={localBracket.finalists[1]} winner={localBracket.champion} onSelect={(team) => handleSelect('final', null, team)} stageName="Final" actualWinner={actual.champion} />
           </div>
 
           {/* COLUNA 6: Grande Campeão (1 bloco) */}
           <div className="flex flex-col justify-center h-full">
-            <div className="glass-panel p-5 rounded-3xl border-2 border-football-gold relative overflow-hidden flex flex-col items-center text-center w-[185px] md:w-[205px] select-none shadow-gold">
-              <div className="absolute top-0 right-0 w-16 h-16 bg-football-gold/10 rounded-full blur-xl animate-pulse"></div>
-              <Trophy className="text-football-gold animate-bounce-slow mb-2" size={36} />
-              <h3 className="font-extrabold text-[9px] text-football-gold uppercase tracking-widest border-b border-football-gold/20 pb-1.5 w-full">
+            <div className="glass-panel p-5 rounded-3xl border border-zinc-850 relative overflow-hidden flex flex-col items-center text-center w-[185px] md:w-[205px] select-none">
+              <Trophy className="text-zinc-400 mb-2" size={36} />
+              <h3 className="font-extrabold text-[9px] text-zinc-400 uppercase tracking-widest border-b border-zinc-850 pb-1.5 w-full">
                 Grande Campeão
               </h3>
               
@@ -474,7 +473,7 @@ export default function BracketPredictions({ matches, bracketGuesses, groupQuali
                     <span className="font-black text-xs text-white truncate max-w-[160px]">
                       {localBracket.champion}
                     </span>
-                    <span className="text-[8.5px] uppercase font-bold text-football-gold bg-football-gold/15 px-2.5 py-0.5 rounded border border-football-gold/30 mt-1">
+                    <span className="text-[8.5px] uppercase font-bold text-white bg-zinc-800 px-2.5 py-0.5 rounded border border-zinc-700 mt-1">
                       🏆 Vencedor (+16 pts)
                     </span>
                   </div>
@@ -487,9 +486,9 @@ export default function BracketPredictions({ matches, bracketGuesses, groupQuali
               </div>
 
               {hasActualResults && actual.champion && (
-                <div className="mt-4 pt-3 border-t border-football-gold/20 w-full text-center">
+                <div className="mt-4 pt-3 border-t border-zinc-800 w-full text-center">
                   <p className="text-[8px] uppercase font-extrabold text-slate-400">Campeão Oficial</p>
-                  <p className="font-black text-xs text-football-gold mt-1">
+                  <p className="font-black text-xs text-zinc-300 mt-1">
                     {TEAM_FLAGS[actual.champion] || '🏳️'} {actual.champion}
                   </p>
                   <p className="text-[9px] font-bold mt-1">
