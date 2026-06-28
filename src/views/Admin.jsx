@@ -1,8 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { updateMatch, saveGroupQualifierResults, saveBracketResults, saveOracleResults, fetchUsersList, updateUser, deleteUser, toggleMatchLock, saveSettings, fetchPointsAdjustments, savePointsAdjustment } from '../services/api';
-import { Save, RefreshCw, Check, AlertCircle, Calendar, Layers, Trophy, HelpCircle, Users, Trash2, Eye, EyeOff, Lock, Unlock, ArrowRight, Award } from 'lucide-react';
+import { updateMatch, saveGroupQualifierResults, saveBracketResults, saveOracleResults, fetchUsersList, updateUser, deleteUser, toggleMatchLock, saveSettings, fetchPointsAdjustments, savePointsAdjustment, parseOracleResult } from '../services/api';
+import { Save, RefreshCw, Check, AlertCircle, Calendar, Layers, Trophy, HelpCircle, Users, Trash2, Eye, EyeOff, Lock, Unlock, ArrowRight, Award, X, Zap } from 'lucide-react';
 import { TEAM_FLAGS } from './DailyMatches';
 import { checkIsPlaceholder } from './Knockout';
+
+const QUESTIONS = [
+  { key: 'champion', label: '🏆 Quem será o Grande Campeão?', desc: 'Preveja a seleção que vai levantar a taça da Copa.', placeholder: 'Ex: Brasil' },
+  { key: 'topScorer', label: '👟 Quem será o Artilheiro da Copa (Chuteira de Ouro)?', desc: 'Nome do jogador que marcará mais gols.', placeholder: 'Ex: Vinicius Jr' },
+  { key: 'bestAttack', label: '💥 Qual seleção terá o Melhor Ataque na fase de grupos?', desc: 'A equipe que marcará mais gols nos 3 primeiros jogos de grupo.', placeholder: 'Ex: França' },
+  { key: 'zebra', label: '🦓 Quem será a grande \'Zebra\' da Copa?', desc: 'A seleção menor que chegará mais longe ou surpreenderá gigantes.', placeholder: 'Ex: Marrocos' },
+  { key: 'firstRedCard', label: '🟥 Qual jogador vai tomar o primeiro cartão vermelho?', desc: 'O primeiro jogador a ser expulso na Copa (IA Pick).', placeholder: 'Ex: Casemiro' },
+  { key: 'deception', label: '📉 Qual seleção vai ser a maior decepção (sair cedo)?', desc: 'O país favorito que cairá ainda na primeira fase ou oitavas (IA Pick).', placeholder: 'Ex: Alemanha' },
+  { key: 'mostGoalsMatch', label: '⚽ Qual jogo da primeira fase terá mais gols?', desc: 'Diga o confronto. Exemplo: Brasil x Croácia (IA Pick).', placeholder: 'Ex: Brasil x Croácia' }
+];
 
 export default function Admin({ matches, groupQualifiers, bracketGuesses, oracle, globalSettings, onReload }) {
   const [isKnockoutReleased, setIsKnockoutReleased] = useState(globalSettings?.knockoutEnabled || false);
@@ -99,7 +109,7 @@ export default function Admin({ matches, groupQualifiers, bracketGuesses, oracle
   };
 
   useEffect(() => {
-    if (subTab === 'users') {
+    if (subTab === 'users' || subTab === 'oracle') {
       loadUsersList();
     } else if (subTab === 'adjustments') {
       loadUsersList();
@@ -228,13 +238,13 @@ export default function Admin({ matches, groupQualifiers, bracketGuesses, oracle
     champion: ''
   });
   const [oracleResults, setOracleResults] = useState({
-    champion: '',
-    topScorer: '',
-    bestAttack: '',
-    zebra: '',
-    firstRedCard: '',
-    deception: '',
-    mostGoalsMatch: ''
+    champion: { text: '', correct: [] },
+    topScorer: { text: '', correct: [] },
+    bestAttack: { text: '', correct: [] },
+    zebra: { text: '', correct: [] },
+    firstRedCard: { text: '', correct: [] },
+    deception: { text: '', correct: [] },
+    mostGoalsMatch: { text: '', correct: [] }
   });
 
   useEffect(() => {
@@ -301,13 +311,13 @@ export default function Admin({ matches, groupQualifiers, bracketGuesses, oracle
     // 5. Resultados do Oráculo
     const oAct = oracle.results || {};
     setOracleResults({
-      champion: oAct.champion || '',
-      topScorer: oAct.topScorer || '',
-      bestAttack: oAct.bestAttack || '',
-      zebra: oAct.zebra || '',
-      firstRedCard: oAct.firstRedCard || '',
-      deception: oAct.deception || '',
-      mostGoalsMatch: oAct.mostGoalsMatch || ''
+      champion: parseOracleResult(oAct.champion),
+      topScorer: parseOracleResult(oAct.topScorer),
+      bestAttack: parseOracleResult(oAct.bestAttack),
+      zebra: parseOracleResult(oAct.zebra),
+      firstRedCard: parseOracleResult(oAct.firstRedCard),
+      deception: parseOracleResult(oAct.deception),
+      mostGoalsMatch: parseOracleResult(oAct.mostGoalsMatch)
     });
   }, [matches, groupQualifiers, bracketGuesses, oracle]);
 
@@ -586,10 +596,59 @@ export default function Admin({ matches, groupQualifiers, bracketGuesses, oracle
   };
 
   // Ações de Oráculo
-  const handleOracleChange = (key, val) => {
+  const handleOracleTextChange = (key, textVal) => {
+    setOracleResults(prev => {
+      const current = prev[key] || { text: '', correct: [] };
+      return {
+        ...prev,
+        [key]: {
+          ...current,
+          text: textVal
+        }
+      };
+    });
+  };
+
+  const handleOracleToggleCorrect = (key, username) => {
+    setOracleResults(prev => {
+      const current = prev[key] || { text: '', correct: [] };
+      const alreadyCorrect = current.correct.map(u => u.toLowerCase()).includes(username.toLowerCase());
+      let newCorrect;
+      if (alreadyCorrect) {
+        newCorrect = current.correct.filter(u => u.toLowerCase() !== username.toLowerCase());
+      } else {
+        newCorrect = [...current.correct, username];
+      }
+      return {
+        ...prev,
+        [key]: {
+          ...current,
+          correct: newCorrect
+        }
+      };
+    });
+  };
+
+  const handleOracleAutoGrade = (key) => {
+    const current = oracleResults[key] || { text: '', correct: [] };
+    const officialText = current.text.trim().toLowerCase();
+    if (!officialText) return;
+    
+    // Encontra todos os usuários cujos palpites correspondem ao gabarito
+    const correctUsers = [];
+    (oracle.guesses || []).forEach(g => {
+      const userGuess = g[key] ? String(g[key]).trim().toLowerCase() : '';
+      if (userGuess && userGuess === officialText) {
+        correctUsers.push(g.user);
+      }
+    });
+
     setOracleResults(prev => ({
       ...prev,
-      [key]: val
+      [key]: {
+        ...prev[key],
+        correct: correctUsers
+      }
     }));
   };
 
@@ -1131,99 +1190,158 @@ export default function Admin({ matches, groupQualifiers, bracketGuesses, oracle
           SUBTAB: ORACLE
          ========================================== */}
       {subTab === 'oracle' && (
-        <div className="glass-panel p-6 rounded-3xl border border-football-glassBorder flex flex-col gap-6 animate-fadeIn">
-          <h3 className="text-xl font-bold text-football-gold border-b border-white/5 pb-2 select-none">
-            Respostas Oficiais do Oráculo
-          </h3>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-slate-300 select-none">🏆 Campeão Oficial</label>
-              <input
-                type="text"
-                value={oracleResults.champion}
-                onChange={(e) => handleOracleChange('champion', e.target.value)}
-                className="p-3 rounded-xl glass-input text-xs font-semibold focus:border-football-gold"
-                placeholder="Ex: Brasil"
-              />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-slate-300 select-none">👟 Artilheiro da Copa</label>
-              <input
-                type="text"
-                value={oracleResults.topScorer}
-                onChange={(e) => handleOracleChange('topScorer', e.target.value)}
-                className="p-3 rounded-xl glass-input text-xs font-semibold focus:border-football-gold"
-                placeholder="Ex: Vinicius Jr"
-              />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-slate-300 select-none">💥 Melhor Ataque (Grupos)</label>
-              <input
-                type="text"
-                value={oracleResults.bestAttack}
-                onChange={(e) => handleOracleChange('bestAttack', e.target.value)}
-                className="p-3 rounded-xl glass-input text-xs font-semibold focus:border-football-gold"
-                placeholder="Ex: França"
-              />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-slate-300 select-none">🦓 Zebra da Copa</label>
-              <input
-                type="text"
-                value={oracleResults.zebra}
-                onChange={(e) => handleOracleChange('zebra', e.target.value)}
-                className="p-3 rounded-xl glass-input text-xs font-semibold focus:border-football-gold"
-                placeholder="Ex: Marrocos"
-              />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-slate-300 select-none">🟥 Primeiro Cartão Vermelho</label>
-              <input
-                type="text"
-                value={oracleResults.firstRedCard}
-                onChange={(e) => handleOracleChange('firstRedCard', e.target.value)}
-                className="p-3 rounded-xl glass-input text-xs font-semibold focus:border-football-gold"
-                placeholder="Ex: Casemiro"
-              />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-slate-300 select-none">📉 Maior Decepção</label>
-              <input
-                type="text"
-                value={oracleResults.deception}
-                onChange={(e) => handleOracleChange('deception', e.target.value)}
-                className="p-3 rounded-xl glass-input text-xs font-semibold focus:border-football-gold"
-                placeholder="Ex: Alemanha"
-              />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-slate-300 select-none">⚽ Jogo com mais Gols</label>
-              <input
-                type="text"
-                value={oracleResults.mostGoalsMatch}
-                onChange={(e) => handleOracleChange('mostGoalsMatch', e.target.value)}
-                className="p-3 rounded-xl glass-input text-xs font-semibold focus:border-football-gold"
-                placeholder="Ex: Brasil x Croácia"
-              />
-            </div>
+        <div className="flex flex-col gap-6 animate-fadeIn">
+          <div className="glass-panel p-6 rounded-3xl border border-football-glassBorder select-none">
+            <h3 className="text-xl font-bold text-football-gold border-b border-white/5 pb-2">
+              🔮 Gabarito e Correção do Oráculo
+            </h3>
+            <p className="text-xs text-slate-300 mt-2">
+              Preencha o Gabarito Oficial de cada questão e marque quais integrantes acertaram a previsão. 
+              Você pode usar o botão <strong className="text-football-gold">Auto-marcar por texto</strong> para assinalar de forma automática todos cujos palpites coincidam exatamente com o Gabarito Oficial escrito.
+            </p>
           </div>
 
+          <div className="flex flex-col gap-6">
+            {QUESTIONS.map(q => {
+              const currentRes = oracleResults[q.key] || { text: '', correct: [] };
+              const correctUsers = currentRes.correct || [];
+
+              return (
+                <div key={q.key} className="glass-panel p-6 rounded-2xl border border-football-glassBorder flex flex-col gap-4">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 border-b border-white/5 pb-2">
+                    <div>
+                      <h4 className="text-base font-extrabold text-white">{q.label}</h4>
+                      <p className="text-[10px] text-slate-400 font-medium">{q.desc}</p>
+                    </div>
+                  </div>
+
+                  {/* Gabarito Input */}
+                  <div className="flex flex-col md:flex-row gap-3 items-end md:items-center">
+                    <div className="flex-grow w-full flex flex-col gap-1">
+                      <span className="text-[10px] text-slate-400 font-bold uppercase select-none">Gabarito Oficial</span>
+                      <input
+                        type="text"
+                        value={currentRes.text}
+                        onChange={(e) => handleOracleTextChange(q.key, e.target.value)}
+                        className="p-3 rounded-xl glass-input text-xs font-semibold focus:border-football-gold w-full"
+                        placeholder={q.placeholder}
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleOracleAutoGrade(q.key)}
+                      disabled={!currentRes.text.trim()}
+                      className="flex items-center gap-1 bg-football-royalBlue hover:bg-football-lightBlue text-white text-xs font-bold py-3 px-4 rounded-xl transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shrink-0 select-none font-sans"
+                      title="Auto-marcar como correto todos os palpites correspondentes ao texto escrito acima"
+                    >
+                      <Zap size={14} className="stroke-[2.5]" />
+                      <span>Auto-marcar por texto</span>
+                    </button>
+                  </div>
+
+                  {/* Respostas dos integrantes */}
+                  <div className="mt-2">
+                    <h5 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-3 select-none">
+                      Respostas dos Integrantes:
+                    </h5>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                      {usersList.length === 0 ? (
+                        <div className="col-span-full text-xs text-slate-400 italic py-2">
+                          Carregando lista de participantes...
+                        </div>
+                      ) : (
+                        usersList.map(user => {
+                          const username = user.username;
+                          
+                          // Encontra o palpite deste usuário
+                          const userGuessObj = (oracle.guesses || []).find(g => g.user.toLowerCase() === username.toLowerCase());
+                          const userGuess = userGuessObj ? userGuessObj[q.key] : null;
+                          const hasGuess = userGuess !== null && userGuess !== undefined && String(userGuess).trim() !== '';
+
+                          const isMarkedCorrect = correctUsers.map(u => u.toLowerCase()).includes(username.toLowerCase());
+
+                          return (
+                            <div
+                              key={username}
+                              className={`p-3 rounded-xl border transition-all flex flex-col justify-between gap-3 ${
+                                isMarkedCorrect
+                                  ? 'bg-emerald-500/10 border-emerald-500/30'
+                                  : 'bg-white/5 border-white/5 hover:border-white/10'
+                              }`}
+                            >
+                              <div className="flex flex-col">
+                                <span className="text-xs font-extrabold text-white flex items-center gap-1.5">
+                                  👤 {username}
+                                </span>
+                                <span className="text-[11px] text-slate-300 mt-1">
+                                  {hasGuess ? (
+                                    <>
+                                      Palpite: <strong className="text-football-gold italic">"{userGuess}"</strong>
+                                    </>
+                                  ) : (
+                                    <span className="text-slate-500 italic">Sem palpite</span>
+                                  )}
+                                </span>
+                              </div>
+
+                              <div className="flex gap-2 w-full select-none">
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    if (!isMarkedCorrect) handleOracleToggleCorrect(q.key, username);
+                                  }}
+                                  className={`flex-1 py-1.5 rounded-lg text-[10px] font-bold flex items-center justify-center gap-1 transition-all cursor-pointer border font-sans ${
+                                    isMarkedCorrect
+                                      ? 'bg-emerald-600 border-emerald-500 text-white font-extrabold shadow shadow-emerald-500/20'
+                                      : 'bg-transparent border-slate-700 hover:border-slate-500 text-slate-400 hover:text-slate-200'
+                                  }`}
+                                >
+                                  <Check size={10} className="stroke-[2.5]" />
+                                  <span>Certo</span>
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    if (isMarkedCorrect) handleOracleToggleCorrect(q.key, username);
+                                  }}
+                                  className={`flex-1 py-1.5 rounded-lg text-[10px] font-bold flex items-center justify-center gap-1 transition-all cursor-pointer border font-sans ${
+                                    !isMarkedCorrect
+                                      ? 'bg-rose-600 border-rose-500 text-white font-extrabold shadow shadow-rose-500/20'
+                                      : 'bg-transparent border-slate-700 hover:border-slate-500 text-slate-400 hover:text-slate-200'
+                                  }`}
+                                >
+                                  <X size={10} className="stroke-[2.5]" />
+                                  <span>Errado</span>
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        })
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Botão de Salvar tudo */}
           <button
             onClick={handleSaveOracle}
             disabled={loadingId === 'oracle'}
-            className={`flex items-center justify-center gap-1.5 font-bold py-3.5 px-6 rounded-xl text-sm tracking-wider transition-all uppercase w-full cursor-pointer mt-4 ${
+            className={`flex items-center justify-center gap-1.5 font-bold py-4 px-6 rounded-2xl text-sm tracking-wider transition-all uppercase w-full cursor-pointer mt-4 select-none font-sans ${
               successId === 'oracle'
                 ? 'bg-emerald-600 text-white shadow shadow-emerald-500/20'
                 : errorId === 'oracle'
                 ? 'bg-rose-600 text-white'
-                : 'bg-football-gold text-football-darkGreen hover:bg-amber-400 active:scale-95 shadow shadow-amber-500/10'
+                : 'bg-football-gold text-football-darkGreen hover:bg-amber-400 hover:scale-[1.01] active:scale-95 shadow shadow-amber-500/10'
             }`}
           >
             {loadingId === 'oracle' ? (
               <RefreshCw size={16} className="animate-spin" />
             ) : successId === 'oracle' ? (
-              <Check size={16} />
+              <Check size={16} className="stroke-[3]" />
             ) : errorId === 'oracle' ? (
               <AlertCircle size={16} />
             ) : (

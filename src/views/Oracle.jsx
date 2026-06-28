@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Save, Check, Lock, AlertCircle } from 'lucide-react';
-import { saveOracle } from '../services/api';
+import { saveOracle, parseOracleResult } from '../services/api';
 
 const QUESTIONS = [
   { key: 'champion', label: 'Quem será o Grande Campeão?', desc: 'Preveja a seleção que vai levantar a taça da Copa.' },
@@ -136,10 +136,15 @@ export default function Oracle({ oracle, currentUser, onReload }) {
       <div className="flex flex-col gap-6">
         {QUESTIONS.map(q => {
           const userAns = localAnswers[q.key] || '';
-          const realAns = actual[q.key] || '';
-          const hasResult = realAns !== null && realAns !== '';
-          // Comparação case-insensitive e aparando espaços vazios
-          const isCorrect = hasResult && userAns.trim().toLowerCase() === realAns.trim().toLowerCase();
+          const rawRealAns = actual[q.key] || '';
+          const { text: realAns, correct: correctUsers, isManual } = parseOracleResult(rawRealAns);
+          const hasResult = rawRealAns !== null && rawRealAns !== '';
+          
+          const isCorrect = hasResult && (
+            isManual
+              ? correctUsers.some(u => u.toLowerCase() === currentUser.toLowerCase())
+              : userAns.trim().toLowerCase() === realAns.trim().toLowerCase()
+          );
 
           return (
             <div key={q.key} className="glass-panel p-5 rounded-2xl border border-football-glassBorder flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -164,12 +169,14 @@ export default function Oracle({ oracle, currentUser, onReload }) {
               {/* Resultados reais e pontos ganhos */}
               {hasResult && (
                 <div className="md:w-1/3 flex flex-col items-center md:items-end justify-center gap-2 border-t md:border-t-0 border-white/5 pt-3 md:pt-0">
-                  <div className="text-center md:text-right select-none">
-                    <span className="text-[10px] text-slate-400 block uppercase font-semibold">Oficial:</span>
-                    <span className="text-sm font-extrabold text-football-gold text-glow-gold capitalize block">
-                      {realAns}
-                    </span>
-                  </div>
+                  {realAns && (
+                    <div className="text-center md:text-right select-none">
+                      <span className="text-[10px] text-slate-400 block uppercase font-semibold">Oficial:</span>
+                      <span className="text-sm font-extrabold text-football-gold text-glow-gold capitalize block">
+                        {realAns}
+                      </span>
+                    </div>
+                  )}
                   <span className={`text-xs font-bold px-3 py-1 rounded-full border select-none ${
                     isCorrect
                       ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400'

@@ -293,9 +293,33 @@ export async function saveBracketResults(oitavas, quartas, semis, finalists, cha
   }
 }
 
-// ==========================================
-// SERVIÇOS DO ORÁCULO (PERGUNTAS BÔNUS)
-// ==========================================
+export function parseOracleResult(rawResult) {
+  if (!rawResult) return { text: '', correct: [], isManual: false };
+  
+  if (typeof rawResult === 'string') {
+    const trimmed = rawResult.trim();
+    if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
+      try {
+        const parsed = JSON.parse(rawResult);
+        return {
+          text: parsed.text || '',
+          correct: parsed.correct || [],
+          isManual: true
+        };
+      } catch (e) {
+        return { text: rawResult, correct: [], isManual: false };
+      }
+    }
+    return { text: rawResult, correct: [], isManual: false };
+  } else if (typeof rawResult === 'object' && rawResult !== null) {
+    return {
+      text: rawResult.text || '',
+      correct: rawResult.correct || [],
+      isManual: true
+    };
+  }
+  return { text: String(rawResult), correct: [], isManual: false };
+}
 
 export async function fetchOracle() {
   if (isSupabaseEnabled) {
@@ -372,13 +396,13 @@ export async function saveOracleResults(oracleResultsData) {
     const { champion, topScorer, bestAttack, zebra, firstRedCard, deception, mostGoalsMatch } = oracleResultsData;
     const { data, error } = await supabase.from('oracle_results').upsert({
       id: 1,
-      champion,
-      top_scorer: topScorer,
-      best_attack: bestAttack,
-      zebra,
-      first_red_card: firstRedCard,
-      deception,
-      most_goals_match: mostGoalsMatch,
+      champion: typeof champion === 'object' ? JSON.stringify(champion) : champion,
+      top_scorer: typeof topScorer === 'object' ? JSON.stringify(topScorer) : topScorer,
+      best_attack: typeof bestAttack === 'object' ? JSON.stringify(bestAttack) : bestAttack,
+      zebra: typeof zebra === 'object' ? JSON.stringify(zebra) : zebra,
+      first_red_card: typeof firstRedCard === 'object' ? JSON.stringify(firstRedCard) : firstRedCard,
+      deception: typeof deception === 'object' ? JSON.stringify(deception) : deception,
+      most_goals_match: typeof mostGoalsMatch === 'object' ? JSON.stringify(mostGoalsMatch) : mostGoalsMatch,
       updated_at: new Date().toISOString()
     }, { onConflict: 'id' }).select();
     if (error) throw error;
@@ -830,11 +854,22 @@ export function computeRanking(users, matches, guesses, groupQualifiersData = {}
       const keys = ['champion', 'topScorer', 'bestAttack', 'zebra', 'firstRedCard', 'deception', 'mostGoalsMatch'];
       
       keys.forEach(k => {
-        const userAns = o[k] ? String(o[k]).trim().toLowerCase() : '';
-        const realAns = oResults[k] ? String(oResults[k]).trim().toLowerCase() : '';
-        // Pontua apenas se o palpite do usuário bater com o oficial do administrador
-        if (userAns && realAns && userAns === realAns) {
-          pts += 5;
+        const rawRes = oResults[k];
+        if (!rawRes) return;
+
+        const { text: realAns, correct: correctUsers, isManual } = parseOracleResult(rawRes);
+        
+        if (isManual) {
+          const hasPoints = correctUsers.some(u => u.toLowerCase() === o.user.toLowerCase());
+          if (hasPoints) {
+            pts += 5;
+          }
+        } else {
+          const userAns = o[k] ? String(o[k]).trim().toLowerCase() : '';
+          const cleanRealAns = realAns.trim().toLowerCase();
+          if (userAns && cleanRealAns && userAns === cleanRealAns) {
+            pts += 5;
+          }
         }
       });
       
