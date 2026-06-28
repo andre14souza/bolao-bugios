@@ -658,18 +658,18 @@ export default function Admin({ matches, groupQualifiers, bracketGuesses, oracle
     }));
   };
 
-  const handleSaveOracle = async () => {
-    setLoadingId('oracle');
+  const handleSaveOracle = async (key = 'oracle') => {
+    setLoadingId(`oracle-${key}`);
     setSuccessId(null);
     setErrorId(null);
     try {
       await saveOracleResults(oracleResults);
-      setSuccessId('oracle');
+      setSuccessId(`oracle-${key}`);
       onReload();
       setTimeout(() => setSuccessId(null), 3000);
     } catch (err) {
       console.error(err);
-      setErrorId('oracle');
+      setErrorId(`oracle-${key}`);
     } finally {
       setLoadingId(null);
     }
@@ -1396,6 +1396,31 @@ export default function Admin({ matches, groupQualifiers, bracketGuesses, oracle
                         })
                       )}
                     </div>
+                  </div>
+                  
+                  {/* Botão de salvar esta questão */}
+                  <div className="mt-2 pt-4 border-t border-white/5 flex justify-end">
+                    <button
+                      type="button"
+                      onClick={() => handleSaveOracle(q.key)}
+                      disabled={loadingId === `oracle-${q.key}`}
+                      className={`flex items-center justify-center gap-1.5 font-bold py-2.5 px-4 rounded-xl text-xs tracking-wider transition-all uppercase cursor-pointer ${
+                        successId === `oracle-${q.key}`
+                          ? 'bg-emerald-600 text-white shadow shadow-emerald-500/20'
+                          : errorId === `oracle-${q.key}`
+                          ? 'bg-rose-600 text-white'
+                          : 'bg-football-gold text-football-darkGreen hover:bg-amber-400 active:scale-95 shadow shadow-amber-500/10'
+                      }`}
+                    >
+                      {loadingId === `oracle-${q.key}` ? (
+                        <RefreshCw size={12} className="animate-spin" />
+                      ) : successId === `oracle-${q.key}` ? (
+                        <Check size={12} />
+                      ) : (
+                        <Save size={12} />
+                      )}
+                      <span>{successId === `oracle-${q.key}` ? 'Salvo!' : 'Salvar esta questão'}</span>
+                    </button>
                   </div>
                 </div>
               );
